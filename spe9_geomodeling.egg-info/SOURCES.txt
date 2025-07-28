@@ -1,0 +1,9 @@
+README.md
+pyproject.toml
+setup.py
+spe9_geomodeling.egg-info/PKG-INFO
+spe9_geomodeling.egg-info/SOURCES.txt
+spe9_geomodeling.egg-info/dependency_links.txt
+spe9_geomodeling.egg-info/entry_points.txt
+spe9_geomodeling.egg-info/requires.txt
+spe9_geomodeling.egg-info/top_level.txt

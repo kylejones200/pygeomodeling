@@ -1,0 +1,145 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spe9-geomodeling"
+version = "0.1.0"
+description = "Advanced Gaussian Process Regression and Kriging toolkit for SPE9 reservoir modeling"
+readme = "README.MD"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+  {name = "K. Jones", email = "kyletjones@gmail.com"}
+]
+maintainers = [
+  {name = "K. Jones", email = "kyletjones@gmail.com"}
+]
+homepage = "https://github.com/yourusername/spe9-geomodeling"
+repository = "https://github.com/yourusername/spe9-geomodeling"
+documentation = "https://github.com/yourusername/spe9-geomodeling/wiki"
+keywords = ["geomodeling", "GPR", "kriging", "SPE9", "reservoir", "gaussian-process", "geostatistics"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Topic :: Scientific/Engineering :: Hydrology",
+  "Topic :: Scientific/Engineering :: Mathematics",
+  "Topic :: Scientific/Engineering :: Physics"
+]
+
+# Core dependencies - always installed
+dependencies = [
+  # Core scientific computing
+  "numpy>=1.24.0,<2.0.0",
+  "pandas>=1.5.0,<3.0.0",
+  "scipy>=1.10.0,<2.0.0",
+  
+  # Machine learning
+  "scikit-learn>=1.3.0,<2.0.0",
+  "joblib>=1.2.0,<2.0.0",
+  
+  # Visualization
+  "matplotlib>=3.7.0,<4.0.0",
+  "seaborn>=0.12.0,<1.0.0",
+  
+  # Geostatistics
+  "pykrige>=1.6.0,<2.0.0",
+  "gstools>=1.4.0,<2.0.0",
+  
+  # Progress bars
+  "tqdm>=4.65.0,<5.0.0"
+]
+
+[project.optional-dependencies]
+# Development tools
+dev = [
+  "jupyter>=1.0.0,<2.0.0",
+  "ipykernel>=6.20.0,<7.0.0",
+  "black>=23.0.0",
+  "pytest>=7.0.0",
+  "pytest-cov>=4.0.0"
+]
+
+# Advanced machine learning (GPyTorch, optimization)
+advanced = [
+  "torch>=2.0.0,<3.0.0",
+  "gpytorch>=1.11.0,<2.0.0",
+  "botorch>=0.8.0,<1.0.0",
+  "optuna>=3.2.0,<4.0.0"
+]
+
+# Geospatial and file I/O
+geospatial = [
+  "rasterio>=1.3.0,<2.0.0",
+  "fiona>=1.9.0,<2.0.0",
+  "geopandas>=0.13.0,<1.0.0",
+  "shapely>=2.0.0,<3.0.0",
+  "xarray>=2023.1.0,<2024.0.0",
+  "netcdf4>=1.6.0,<2.0.0",
+  "h5py>=3.8.0,<4.0.0"
+]
+
+# Performance optimization
+performance = [
+  "numba>=0.57.0,<1.0.0"
+]
+
+# Interactive visualization
+visualization = [
+  "plotly>=5.15.0,<6.0.0",
+  "ipywidgets>=8.0.0"
+]
+
+# Complete installation (all optional dependencies)
+all = [
+  "spe9-geomodeling[advanced,geospatial,performance,visualization,dev]"
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/spe9-geomodeling"
+Repository = "https://github.com/yourusername/spe9-geomodeling"
+Documentation = "https://github.com/yourusername/spe9-geomodeling#readme"
+"Bug Tracker" = "https://github.com/yourusername/spe9-geomodeling/issues"
+
+[project.scripts]
+spe9-experiment = "spe9_geomodeling.experiments.deep_gp_experiment:main"
+
+[tool.setuptools.packages.find]
+where = ["."]  # Current directory
+include = ["spe9_geomodeling*"]
+exclude = ["tests*", "examples*", "docs*"]
+
+[tool.black]
+line-length = 88
+target-version = ['py39']
+include = '\.pyi?$'
+extend-exclude = '''
+(
+  /(
+      \.eggs
+    | \.git
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+  )/
+)
+'''
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q --strict-markers --strict-config"
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
