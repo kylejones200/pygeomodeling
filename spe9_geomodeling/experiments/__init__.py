@@ -11,4 +11,4 @@ except ImportError:
     # Handle case where GPyTorch dependencies aren't available
     pass
 
-__all__ = ['DeepGPExperiment']
+__all__ = ["DeepGPExperiment"]

@@ -15,9 +15,6 @@ authors = [
 maintainers = [
   {name = "K. Jones", email = "kyletjones@gmail.com"}
 ]
-homepage = "https://github.com/yourusername/spe9-geomodeling"
-repository = "https://github.com/yourusername/spe9-geomodeling"
-documentation = "https://github.com/yourusername/spe9-geomodeling/wiki"
 keywords = ["geomodeling", "GPR", "kriging", "SPE9", "reservoir", "gaussian-process", "geostatistics"]
 classifiers = [
   "Development Status :: 4 - Beta",

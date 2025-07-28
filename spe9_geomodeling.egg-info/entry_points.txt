@@ -1,2 +1,2 @@
 [console_scripts]
-spe9-toolkit = unified_toolkit:main
+spe9-experiment = spe9_geomodeling.experiments.deep_gp_experiment:main

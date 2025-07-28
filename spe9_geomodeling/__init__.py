@@ -34,13 +34,13 @@ except ImportError:
     pass
 
 __all__ = [
-    'GRDECLParser',
-    'load_spe9_data', 
-    'UnifiedSPE9Toolkit',
-    'SPE9Toolkit',
-    'SPE9Plotter',
-    'SPE9GPModel',
-    'DeepGPModel', 
-    'create_gp_model',
-    'DeepGPExperiment'
+    "GRDECLParser",
+    "load_spe9_data",
+    "UnifiedSPE9Toolkit",
+    "SPE9Toolkit",
+    "SPE9Plotter",
+    "SPE9GPModel",
+    "DeepGPModel",
+    "create_gp_model",
+    "DeepGPExperiment",
 ]

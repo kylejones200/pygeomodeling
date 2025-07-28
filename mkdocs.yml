@@ -16,7 +16,6 @@ nav:
   - API Reference: api.md
   - Deep GP: deep_gp.md
   - Model Comparison: model_comparison.md
-  - README: README.md
 
 # Theme
 theme:

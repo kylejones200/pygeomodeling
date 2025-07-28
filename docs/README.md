@@ -14,15 +14,12 @@ Welcome to the comprehensive documentation for the SPE9 Geomodeling Toolkit! Thi
 - **[Model Comparison Guide](model_comparison.md)** - Detailed comparison of Traditional GP vs Deep GP vs Kriging approaches
 - **[Deep GP Guide](deep_gp.md)** - Advanced guide to Deep Gaussian Process modeling techniques
 
-### Specialized Topics
-- **[Data Formats](data_formats.md)** - GRDECL parsing, data structures, and format specifications
-- **[Visualization Guide](visualization.md)** - Plotting utilities and advanced visualization techniques
-- **[Performance Optimization](performance.md)** - Tips for scaling to large datasets and improving efficiency
-
-### Development
-- **[Contributing Guide](contributing.md)** - How to contribute to the project
-- **[Development Setup](development.md)** - Setting up a development environment
-- **[Testing Guide](testing.md)** - Running and writing tests
+### Development & Usage
+- **Data Formats**: The toolkit supports GRDECL parsing and various data structures
+- **Visualization**: Built-in plotting utilities available through `SPE9Plotter` class
+- **Performance**: GPU acceleration and batch processing supported for large datasets
+- **Contributing**: Contributions welcome via GitHub pull requests
+- **Development**: Use virtual environment and run `pytest` for testing
 
 ## 🎯 Quick Navigation by Use Case
 

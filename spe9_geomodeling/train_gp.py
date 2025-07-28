@@ -5,8 +5,11 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from model_gp import GPModel
 
+
 def train_model(X, y, train_size=3000, seed=42, n_iter=100):
-    X_train, _, y_train, _ = train_test_split(X, y, train_size=train_size, random_state=seed)
+    X_train, _, y_train, _ = train_test_split(
+        X, y, train_size=train_size, random_state=seed
+    )
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X_train)
     X_tensor = torch.tensor(X_scaled, dtype=torch.float32)

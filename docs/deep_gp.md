@@ -515,6 +515,6 @@ print(f"Deep GP R² Score: {results.r2:.4f}")
 ---
 
 **Next Steps**: 
-- Explore [Visualization Guide](visualization.md) for plotting Deep GP results
-- Check [Performance Optimization](performance.md) for scaling to larger datasets
+- Use the built-in plotting utilities in the `SPE9Plotter` class for visualizing Deep GP results
+- For large datasets, consider using batch processing and GPU acceleration with GPyTorch
 - See [API Reference](api.md) for complete function documentation

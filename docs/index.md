@@ -12,17 +12,12 @@ Welcome to the comprehensive documentation for the SPE9 Geomodeling Toolkit - an
 ### Core Documentation
 - [API Reference](api.md) - Complete API documentation
 - [Model Comparison Guide](model_comparison.md) - Traditional GP vs Deep GP analysis
-- [Data Formats](data_formats.md) - GRDECL parsing and data handling
-
-### Advanced Topics
 - [Deep GP Experiments](deep_gp.md) - Advanced modeling techniques
-- [Visualization Guide](visualization.md) - Plotting and analysis tools
-- [Performance Optimization](performance.md) - Tips for large datasets
 
 ### Development
-- [Contributing Guide](contributing.md) - How to contribute to the project
-- [Development Setup](development.md) - Setting up a development environment
-- [Testing Guide](testing.md) - Running and writing tests
+- Development setup instructions are available in the project README
+- Testing can be run with `pytest` in the project root
+- Contributions are welcome via GitHub pull requests
 
 ## 🎯 What is SPE9 Geomodeling Toolkit?
 

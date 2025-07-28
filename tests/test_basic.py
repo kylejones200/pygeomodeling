@@ -15,6 +15,7 @@ def test_package_import():
     """Test that the main package can be imported."""
     try:
         import spe9_geomodeling
+
         assert True
     except ImportError:
         pytest.skip("Package not installed in development mode")

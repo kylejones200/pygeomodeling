@@ -16,7 +16,7 @@ setup(
         "scikit-learn>=1.2",
         "pykrige>=1.7",
         "matplotlib>=3.7",
-        "joblib>=1.2"
+        "joblib>=1.2",
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

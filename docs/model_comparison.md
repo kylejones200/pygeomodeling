@@ -370,5 +370,5 @@ def log_performance(model_name, results, training_time):
 
 **Next Steps**: 
 - Explore [Deep GP Experiments](deep_gp.md) for advanced modeling
-- Check [Visualization Guide](visualization.md) for plotting techniques
-- See [Performance Optimization](performance.md) for scaling tips
+- Use the built-in `SPE9Plotter` class for advanced plotting techniques
+- For performance optimization, consider using GPU acceleration and batch processing

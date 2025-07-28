@@ -4,7 +4,13 @@ import joblib
 import numpy as np
 from model_gp import GPModel
 
-def predict_all(X, y, model_path="gpr_model_gpytorch.pth", likelihood_path="gpr_likelihood_gpytorch.pth"):
+
+def predict_all(
+    X,
+    y,
+    model_path="gpr_model_gpytorch.pth",
+    likelihood_path="gpr_likelihood_gpytorch.pth",
+):
     scaler = joblib.load("x_scaler.save")
     X_scaled = scaler.transform(X)
     X_tensor = torch.tensor(X_scaled, dtype=torch.float32)
