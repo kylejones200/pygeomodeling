@@ -27,8 +27,10 @@ class TestSPE9Toolkit:
         assert str(toolkit.data_path) == sample_grdecl_file
 
     @patch("spe9_geomodeling.spe9_toolkit.load_spe9_data")
-    def test_load_data(self, mock_load, sample_grdecl_data):
+    @patch("pathlib.Path.exists")
+    def test_load_data(self, mock_exists, mock_load, sample_grdecl_data):
         """Test data loading."""
+        mock_exists.return_value = True
         mock_load.return_value = sample_grdecl_data
 
         toolkit = SPE9Toolkit()

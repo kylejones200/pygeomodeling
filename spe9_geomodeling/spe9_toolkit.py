@@ -29,7 +29,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import KFold, train_test_split
 from sklearn.preprocessing import StandardScaler
 
-from grdecl_parser import load_spe9_data
+from .grdecl_parser import load_spe9_data
 
 warnings.filterwarnings("ignore")
 
@@ -109,7 +109,7 @@ class SPE9Toolkit:
             raise FileNotFoundError(f"SPE9 data file not found: {self.data_path}")
 
         print(f"Loading SPE9 dataset from {self.data_path}")
-        self.data, _ = load_spe9_data(str(self.data_path))
+        self.data = load_spe9_data(str(self.data_path))
 
         nx, ny, nz = self.data["dimensions"]
         permx_3d = self.data["properties"]["PERMX"]
@@ -331,7 +331,7 @@ class SPE9Toolkit:
                 n_jobs=kwargs.get("n_jobs", -1),
             )
         else:
-            raise ValueError(f"Unknown model_type: {model_type}")
+            raise ValueError(f"Unknown model type: {model_type}")
 
         print(f"{model_type.upper()} model created")
         return model

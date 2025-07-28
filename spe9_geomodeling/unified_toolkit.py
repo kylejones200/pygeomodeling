@@ -41,7 +41,7 @@ except ImportError:
     gpytorch = None
     GPModel = None
 
-from grdecl_parser import load_spe9_data
+from .grdecl_parser import load_spe9_data
 
 warnings.filterwarnings("ignore")
 

@@ -82,6 +82,10 @@ class GRDECLParser:
 
         return {"dimensions": self.grid_dimensions, "properties": self.properties}
 
+    def parse(self) -> Dict:
+        """Alias for load_data() for backward compatibility"""
+        return self.load_data()
+
     def get_property_3d(self, property_name: str) -> Optional[np.ndarray]:
         """Get a 3D property array"""
         return self.properties.get(property_name)
@@ -109,12 +113,12 @@ def load_spe9_data(
 ):
     """Convenience function to load SPE9 dataset"""
     parser = GRDECLParser(data_path)
-    return parser.load_data(), parser
+    return parser.load_data()
 
 
 if __name__ == "__main__":
     # Test the parser
-    data, parser = load_spe9_data()
+    data = load_spe9_data()
     print("\nAvailable properties:", list(data["properties"].keys()))
 
     # Show some statistics

@@ -76,6 +76,271 @@ class SPE9Plotter:
 
         plt.show()
 
+    def plot_permeability_slice(
+        self,
+        permx_3d: np.ndarray,
+        z_slice: int = 0,
+        *,
+        filename: Optional[Union[str, Path]] = None,
+        figsize: Optional[Tuple[int, int]] = None,
+        cmap: str = "viridis",
+        title: Optional[str] = None,
+    ) -> Tuple[plt.Figure, plt.Axes]:
+        """Plot a permeability slice from 3D permeability data.
+
+        Args:
+            permx_3d: 3D permeability array (nx, ny, nz)
+            z_slice: Z-index of slice to plot
+            filename: Optional filename to save plot
+            figsize: Figure size override
+
+        Returns:
+            Tuple of (figure, axes) objects
+        """
+        if permx_3d.ndim != 3:
+            raise ValueError(f"Expected 3D array, got {permx_3d.ndim}D")
+        
+        # Handle negative indexing (Python style)
+        if z_slice < 0:
+            z_slice = permx_3d.shape[2] + z_slice
+        
+        if z_slice < 0 or z_slice >= permx_3d.shape[2]:
+            raise ValueError(f"z_slice out of range [0, {permx_3d.shape[2]-1}]")
+        
+        # Extract the 2D slice
+        slice_data = permx_3d[:, :, z_slice]
+        
+        # Create the plot
+        fig_size = figsize or self.figsize
+        fig, ax = plt.subplots(figsize=fig_size)
+        
+        # Use log scale for permeability
+        im = ax.imshow(slice_data.T, origin="lower", cmap=cmap, norm=LogNorm())
+        
+        plot_title = title if title is not None else f"Permeability Slice (z={z_slice})"
+        ax.set_title(plot_title, fontsize=14, fontweight="bold")
+        ax.set_xlabel("X Index")
+        ax.set_ylabel("Y Index")
+        
+        cbar = plt.colorbar(im, ax=ax, shrink=0.8)
+        cbar.set_label("Permeability (mD)", rotation=270, labelpad=20)
+        
+        plt.tight_layout()
+        
+        if filename:
+            plt.savefig(filename, dpi=self.dpi, bbox_inches="tight")
+            print(f"Plot saved: {filename}")
+        
+        return fig, ax
+
+    def plot_prediction_comparison(
+        self,
+        true_3d: np.ndarray,
+        pred_3d: np.ndarray,
+        z_slice: int = 0,
+        *,
+        sigma_3d: Optional[np.ndarray] = None,
+        filename: Optional[Union[str, Path]] = None,
+        figsize: Optional[Tuple[int, int]] = None,
+    ) -> Tuple[plt.Figure, np.ndarray]:
+        """Plot comparison between true and predicted values.
+
+        Args:
+            true_3d: True 3D data
+            pred_3d: Predicted 3D data
+            z_slice: Z-index of slice to plot
+            sigma_3d: Optional uncertainty data
+            filename: Optional filename to save plot
+            figsize: Figure size override
+
+        Returns:
+            Tuple of (figure, axes array)
+        """
+        if true_3d.shape != pred_3d.shape:
+            raise ValueError("true_3d and pred_3d must have the same shape")
+        
+        if true_3d.ndim != 3:
+            raise ValueError(f"Expected 3D arrays, got {true_3d.ndim}D")
+        
+        # Handle negative indexing
+        if z_slice < 0:
+            z_slice = true_3d.shape[2] + z_slice
+        
+        if z_slice < 0 or z_slice >= true_3d.shape[2]:
+            raise ValueError(f"z_slice out of range [0, {true_3d.shape[2]-1}]")
+        
+        # Extract slices
+        true_slice = true_3d[:, :, z_slice]
+        pred_slice = pred_3d[:, :, z_slice]
+        
+        # Create subplots
+        ncols = 3 if sigma_3d is not None else 2
+        fig_size = figsize or (15, 5)
+        fig, axes = plt.subplots(1, ncols, figsize=fig_size)
+        
+        # True data
+        im1 = axes[0].imshow(true_slice.T, origin="lower", cmap="viridis")
+        axes[0].set_title("True Data")
+        plt.colorbar(im1, ax=axes[0], shrink=0.8)
+        
+        # Predicted data
+        im2 = axes[1].imshow(pred_slice.T, origin="lower", cmap="viridis")
+        axes[1].set_title("Predicted Data")
+        plt.colorbar(im2, ax=axes[1], shrink=0.8)
+        
+        # Uncertainty if provided
+        if sigma_3d is not None:
+            sigma_slice = sigma_3d[:, :, z_slice]
+            im3 = axes[2].imshow(sigma_slice.T, origin="lower", cmap="plasma")
+            axes[2].set_title("Uncertainty")
+            plt.colorbar(im3, ax=axes[2], shrink=0.8)
+        
+        plt.tight_layout()
+        
+        if filename:
+            plt.savefig(filename, dpi=self.dpi, bbox_inches="tight")
+            print(f"Plot saved: {filename}")
+        
+        return fig, axes
+
+    def plot_residuals(
+        self,
+        y_true: np.ndarray,
+        y_pred: np.ndarray,
+        *,
+        filename: Optional[Union[str, Path]] = None,
+        figsize: Optional[Tuple[int, int]] = None,
+    ) -> Tuple[plt.Figure, np.ndarray]:
+        """Plot residuals analysis.
+
+        Args:
+            y_true: True values
+            y_pred: Predicted values
+            filename: Optional filename to save plot
+            figsize: Figure size override
+
+        Returns:
+            Tuple of (figure, axes array)
+        """
+        if len(y_true) != len(y_pred):
+            raise ValueError("y_true and y_pred must have the same length")
+        
+        residuals = y_true - y_pred
+        
+        fig_size = figsize or (12, 4)
+        fig, axes = plt.subplots(1, 3, figsize=fig_size)
+        
+        # Scatter plot
+        axes[0].scatter(y_true, y_pred, alpha=0.6)
+        axes[0].plot([y_true.min(), y_true.max()], [y_true.min(), y_true.max()], 'r--')
+        axes[0].set_xlabel("True Values")
+        axes[0].set_ylabel("Predicted Values")
+        axes[0].set_title("True vs Predicted")
+        
+        # Residuals vs predicted
+        axes[1].scatter(y_pred, residuals, alpha=0.6)
+        axes[1].axhline(y=0, color='r', linestyle='--')
+        axes[1].set_xlabel("Predicted Values")
+        axes[1].set_ylabel("Residuals")
+        axes[1].set_title("Residuals vs Predicted")
+        
+        # Residuals histogram
+        axes[2].hist(residuals, bins=30, alpha=0.7)
+        axes[2].set_xlabel("Residuals")
+        axes[2].set_ylabel("Frequency")
+        axes[2].set_title("Residuals Distribution")
+        
+        plt.tight_layout()
+        
+        if filename:
+            plt.savefig(filename, dpi=self.dpi, bbox_inches="tight")
+            print(f"Plot saved: {filename}")
+        
+        return fig, axes
+
+    def plot_training_curve(
+        self,
+        iterations: np.ndarray,
+        loss_values: np.ndarray,
+        *,
+        filename: Optional[Union[str, Path]] = None,
+        figsize: Optional[Tuple[int, int]] = None,
+    ) -> Tuple[plt.Figure, plt.Axes]:
+        """Plot training curve.
+
+        Args:
+            iterations: Iteration numbers
+            loss_values: Loss values
+            filename: Optional filename to save plot
+            figsize: Figure size override
+
+        Returns:
+            Tuple of (figure, axes)
+        """
+        if len(iterations) != len(loss_values):
+            raise ValueError("iterations and loss_values must have the same length")
+        
+        fig_size = figsize or (8, 6)
+        fig, ax = plt.subplots(figsize=fig_size)
+        
+        ax.plot(iterations, loss_values, 'b-', linewidth=2)
+        ax.set_xlabel("Iteration")
+        ax.set_ylabel("Loss")
+        ax.set_title("Training Curve")
+        ax.grid(True, alpha=0.3)
+        
+        plt.tight_layout()
+        
+        if filename:
+            plt.savefig(filename, dpi=self.dpi, bbox_inches="tight")
+            print(f"Plot saved: {filename}")
+        
+        return fig, ax
+
+    def plot_feature_importance(
+        self,
+        feature_names: List[str],
+        importance_values: np.ndarray,
+        *,
+        filename: Optional[Union[str, Path]] = None,
+        figsize: Optional[Tuple[int, int]] = None,
+    ) -> Tuple[plt.Figure, plt.Axes]:
+        """Plot feature importance.
+
+        Args:
+            feature_names: List of feature names
+            importance_values: Importance values
+            filename: Optional filename to save plot
+            figsize: Figure size override
+
+        Returns:
+            Tuple of (figure, axes)
+        """
+        if len(feature_names) != len(importance_values):
+            raise ValueError("feature_names and importance_values must have the same length")
+        
+        fig_size = figsize or (10, 6)
+        fig, ax = plt.subplots(figsize=fig_size)
+        
+        # Sort by importance
+        sorted_idx = np.argsort(importance_values)[::-1]
+        sorted_names = [feature_names[i] for i in sorted_idx]
+        sorted_values = importance_values[sorted_idx]
+        
+        ax.barh(range(len(sorted_names)), sorted_values)
+        ax.set_yticks(range(len(sorted_names)))
+        ax.set_yticklabels(sorted_names)
+        ax.set_xlabel("Importance")
+        ax.set_title("Feature Importance")
+        
+        plt.tight_layout()
+        
+        if filename:
+            plt.savefig(filename, dpi=self.dpi, bbox_inches="tight")
+            print(f"Plot saved: {filename}")
+        
+        return fig, ax
+
     def plot_comparison(
         self,
         original: np.ndarray,
@@ -266,7 +531,7 @@ class SPE9Plotter:
         *,
         metrics: List[str] = ["r2", "rmse", "mae"],
         filename: Optional[Union[str, Path]] = None,
-    ) -> None:
+    ) -> Tuple[plt.Figure, Union[plt.Axes, np.ndarray]]:
         """Plot comparison between multiple models.
 
         Args:
@@ -313,7 +578,7 @@ class SPE9Plotter:
             plt.savefig(filename, dpi=self.dpi, bbox_inches="tight")
             print(f"Model comparison plot saved: {filename}")
 
-        plt.show()
+        return fig, axes
 
 
 # Convenience functions for quick plotting

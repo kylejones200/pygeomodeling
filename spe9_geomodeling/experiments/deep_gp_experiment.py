@@ -25,7 +25,7 @@ import torch
 import gpytorch
 from tqdm import tqdm
 
-from grdecl_parser import GRDECLParser
+from ..grdecl_parser import GRDECLParser
 from model_gp import SPE9GPModel, DeepGPModel, create_gp_model
 from plot import SPE9Plotter
 

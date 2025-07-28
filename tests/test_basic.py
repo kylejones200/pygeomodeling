@@ -97,7 +97,7 @@ class TestDependencies:
         required_packages = [
             "numpy",
             "scipy",
-            "scikit-learn",
+            "sklearn",
             "matplotlib",
             "seaborn",
             "pandas",

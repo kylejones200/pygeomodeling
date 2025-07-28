@@ -18,7 +18,7 @@ from sklearn.model_selection import train_test_split, KFold
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import r2_score, mean_squared_error
 from pykrige.ok import OrdinaryKriging
-from grdecl_parser import load_spe9_data
+from spe9_geomodeling.grdecl_parser import load_spe9_data
 import warnings
 
 warnings.filterwarnings("ignore")
