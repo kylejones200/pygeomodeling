@@ -96,9 +96,17 @@ visualization = [
   "ipywidgets>=8.0.0"
 ]
 
+# Documentation dependencies
+docs = [
+  "mkdocs>=1.5.0",
+  "mkdocs-material>=9.0.0",
+  "mkdocstrings[python]>=0.20.0",
+  "pymdown-extensions>=10.0.0"
+]
+
 # Complete installation (all optional dependencies)
 all = [
-  "spe9-geomodeling[advanced,geospatial,performance,visualization,dev]"
+  "spe9-geomodeling[advanced,geospatial,performance,visualization,dev,docs]"
 ]
 
 [project.urls]
