@@ -18,7 +18,7 @@ def sample_grdecl_data():
             "PERMY": np.random.lognormal(mean=2.0, sigma=1.5, size=(10, 8, 5)),
             "PERMZ": np.random.lognormal(mean=1.0, sigma=1.0, size=(10, 8, 5)),
             "PORO": np.random.uniform(0.1, 0.3, size=(10, 8, 5)),
-        }
+        },
     }
 
 
@@ -26,12 +26,12 @@ def sample_grdecl_data():
 def sample_grdecl_file(tmp_path, sample_grdecl_data):
     """Create a temporary GRDECL file for testing."""
     grdecl_file = tmp_path / "test_spe9.grdecl"
-    
+
     # Write a simple GRDECL format file
-    with open(grdecl_file, 'w') as f:
+    with open(grdecl_file, "w") as f:
         nx, ny, nz = sample_grdecl_data["dimensions"]
         f.write(f"SPECGRID\n{nx} {ny} {nz} 1 F /\n\n")
-        
+
         # Write PERMX data
         f.write("PERMX\n")
         permx_flat = sample_grdecl_data["properties"]["PERMX"].ravel()
@@ -42,7 +42,7 @@ def sample_grdecl_file(tmp_path, sample_grdecl_data):
             else:
                 f.write(" ")
         f.write("\n/\n\n")
-        
+
         # Write PORO data
         f.write("PORO\n")
         poro_flat = sample_grdecl_data["properties"]["PORO"].ravel()
@@ -53,7 +53,7 @@ def sample_grdecl_file(tmp_path, sample_grdecl_data):
             else:
                 f.write(" ")
         f.write("\n/\n")
-    
+
     return str(grdecl_file)
 
 
@@ -71,30 +71,30 @@ def sample_features():
 def mock_spe9_toolkit():
     """Create a mock SPE9Toolkit for testing without real data."""
     from spe9_geomodeling.spe9_toolkit import SPE9Toolkit, GridData
-    
+
     toolkit = SPE9Toolkit()
-    
+
     # Mock data
     toolkit.data = {
         "dimensions": (5, 4, 3),
         "properties": {
             "PERMX": np.random.lognormal(mean=2.0, sigma=1.0, size=(5, 4, 3))
-        }
+        },
     }
-    
+
     # Mock grid data
     n_cells = 5 * 4 * 3
     X_grid = np.random.randn(n_cells, 3)  # x, y, z coordinates
     y_grid = np.random.lognormal(mean=2.0, sigma=1.0, size=n_cells)
-    
+
     toolkit.grid_data = GridData(
         X_grid=X_grid,
         y_grid=y_grid,
         feature_names=["x_norm", "y_norm", "z_norm"],
         permx_3d=toolkit.data["properties"]["PERMX"],
-        dimensions=(5, 4, 3)
+        dimensions=(5, 4, 3),
     )
-    
+
     return toolkit
 
 
@@ -104,6 +104,7 @@ def skip_if_no_gpytorch():
     try:
         import torch
         import gpytorch
+
         return False
     except ImportError:
         pytest.skip("GPyTorch not available")
@@ -114,6 +115,7 @@ def skip_if_no_sklearn():
     """Skip test if scikit-learn is not available."""
     try:
         import sklearn
+
         return False
     except ImportError:
         pytest.skip("scikit-learn not available")
