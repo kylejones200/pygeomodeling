@@ -35,16 +35,16 @@ Welcome to the comprehensive documentation for the SPE9 Geomodeling Toolkit! Thi
 → [API Reference](api.md)
 
 #### **Optimize Performance**
-→ [Performance Optimization](performance.md) → [Model Comparison](model_comparison.md)
+→ [Model Comparison](model_comparison.md) → [API Reference](api.md)
 
 #### **Create Visualizations**
-→ [Visualization Guide](visualization.md) → [Examples](examples.md)
+→ [Examples](examples.md) → [API Reference](api.md)
 
 #### **Work with GRDECL Data**
-→ [Data Formats](data_formats.md) → [API Reference](api.md)
+→ [API Reference](api.md) → [Examples](examples.md)
 
 #### **Contribute to the Project**
-→ [Contributing Guide](contributing.md) → [Development Setup](development.md)
+→ See project README for development setup and contribution guidelines
 
 ## 🔍 Documentation Features
 
@@ -90,14 +90,14 @@ All documentation includes:
 ### For Researchers
 1. **Model Theory**: [Model Comparison Guide](model_comparison.md)
 2. **Advanced Techniques**: [Deep GP Guide](deep_gp.md)
-3. **Performance Analysis**: [Performance Optimization](performance.md)
+3. **Performance Analysis**: See API documentation for optimization techniques
 4. **Custom Development**: [API Reference](api.md)
 
 ### For Developers
 1. **Architecture**: [API Reference](api.md)
-2. **Development Setup**: [Development Setup](development.md)
-3. **Contributing**: [Contributing Guide](contributing.md)
-4. **Testing**: [Testing Guide](testing.md)
+2. **Development Setup**: Use virtual environment and install with `pip install -e .[dev]`
+3. **Contributing**: Submit pull requests via GitHub
+4. **Testing**: Run `pytest` in project root
 
 ## 🔧 Documentation Tools
 
