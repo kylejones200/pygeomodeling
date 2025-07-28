@@ -71,7 +71,7 @@ advanced = [
   "torch>=2.0.0,<3.0.0",
   "gpytorch>=1.11.0,<2.0.0",
   "botorch>=0.8.0,<1.0.0",
-  "optuna>=3.2.0,<4.0.0"
+  "optuna>=3.2.0,<5.0.0"
 ]
 
 # Geospatial and file I/O
