@@ -11,7 +11,7 @@ from pathlib import Path
 # Add the parent directory to the path so we can import the package
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from spe9_geomodeling import GRDECLParser, UnifiedSPE9Toolkit, load_spe9_data
+from spe9_geomodeling import load_spe9_data, SPE9Toolkit
 
 
 def main():
@@ -26,16 +26,15 @@ def main():
         print(f"✅ Loaded SPE9 data: {data['grid_shape']} grid")
         print(f"   Properties: {list(data['properties'].keys())}")
     except FileNotFoundError:
-        print("❌ SPE9.GRDECL file not found. Please ensure the file is available.")
-        print(
-            "   Expected location: ~/Documents/Pandey_Ch05_Geomodeling_Code/data/SPE9.GRDECL"
-        )
+        print("❌ SPE9.GRDECL file not found. Please ensure the data file is available.")
+        print("   The bundled data file should be automatically detected.")
         return
 
     # Create toolkit
     print("\n🔧 Setting up toolkit...")
-    toolkit = UnifiedSPE9Toolkit()
-    toolkit.load_spe9_data(data)
+    toolkit = SPE9Toolkit()
+    toolkit.load_data()
+    toolkit.prepare_features()
 
     # Create train/test split
     print("📊 Creating train/test split...")

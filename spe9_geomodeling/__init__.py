@@ -12,9 +12,8 @@ __email__ = "kyletjones@gmail.com"
 # Import main classes for easy access
 try:
     from .grdecl_parser import GRDECLParser, load_spe9_data
-    from .unified_toolkit import UnifiedSPE9Toolkit
+    from .toolkit import SPE9Toolkit
     from .plot import SPE9Plotter
-    from .spe9_toolkit import SPE9Toolkit
 except ImportError:
     # Handle case where optional dependencies aren't installed
     pass
@@ -36,7 +35,6 @@ except ImportError:
 __all__ = [
     "GRDECLParser",
     "load_spe9_data",
-    "UnifiedSPE9Toolkit",
     "SPE9Toolkit",
     "SPE9Plotter",
     "SPE9GPModel",

@@ -55,9 +55,13 @@ class TestEndToEndWorkflow:
     """Test complete end-to-end workflows."""
 
     @patch("spe9_geomodeling.spe9_toolkit.load_spe9_data")
-    def test_spe9_toolkit_complete_workflow(self, mock_load, sample_grdecl_data):
+    @patch("pathlib.Path.exists")
+    def test_spe9_toolkit_complete_workflow(
+        self, mock_exists, mock_load, sample_grdecl_data
+    ):
         """Test complete SPE9Toolkit workflow."""
         mock_load.return_value = sample_grdecl_data
+        mock_exists.return_value = True
 
         # Initialize toolkit
         toolkit = SPE9Toolkit()
@@ -96,9 +100,13 @@ class TestEndToEndWorkflow:
         assert hasattr(rf_results, "r2")
 
     @patch("spe9_geomodeling.unified_toolkit.load_spe9_data")
-    def test_unified_toolkit_sklearn_workflow(self, mock_load, sample_grdecl_data):
+    @patch("pathlib.Path.exists")
+    def test_unified_toolkit_sklearn_workflow(
+        self, mock_exists, mock_load, sample_grdecl_data
+    ):
         """Test complete UnifiedSPE9Toolkit sklearn workflow."""
         mock_load.return_value = sample_grdecl_data
+        mock_exists.return_value = True
 
         # Initialize toolkit
         toolkit = UnifiedSPE9Toolkit(backend="sklearn")
@@ -254,7 +262,8 @@ class TestPerformanceAndMemory:
     """Test performance and memory considerations."""
 
     @patch("spe9_geomodeling.spe9_toolkit.load_spe9_data")
-    def test_memory_efficient_processing(self, mock_load):
+    @patch("pathlib.Path.exists")
+    def test_memory_efficient_processing(self, mock_exists, mock_load):
         """Test that processing doesn't consume excessive memory."""
         # Create moderately sized test data
         test_data = {
@@ -264,6 +273,7 @@ class TestPerformanceAndMemory:
             },
         }
         mock_load.return_value = test_data
+        mock_exists.return_value = True
 
         toolkit = SPE9Toolkit()
         toolkit.load_data()

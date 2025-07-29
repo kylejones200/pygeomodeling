@@ -23,3 +23,9 @@ spe9_geomodeling.egg-info/top_level.txt
 spe9_geomodeling/experiments/__init__.py
 spe9_geomodeling/experiments/deep_gp_experiment.py
 tests/test_basic.py
+tests/test_grdecl_parser.py
+tests/test_integration.py
+tests/test_model_gp.py
+tests/test_plot.py
+tests/test_spe9_toolkit.py
+tests/test_unified_toolkit.py

@@ -24,6 +24,13 @@ ipykernel<7.0.0,>=6.20.0
 black>=23.0.0
 pytest>=7.0.0
 pytest-cov>=4.0.0
+pytest-xdist>=3.0.0
+pytest-mock>=3.10.0
+pytest-timeout>=2.1.0
+coverage>=7.0.0
+flake8>=6.0.0
+mypy>=1.0.0
+pre-commit>=3.0.0
 
 [docs]
 mkdocs>=1.5.0

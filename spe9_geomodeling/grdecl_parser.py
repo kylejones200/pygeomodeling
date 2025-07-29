@@ -5,6 +5,7 @@ Parses Eclipse-format GRDECL files to extract grid properties
 
 import numpy as np
 import re
+from pathlib import Path
 from typing import Dict, Tuple, Optional
 
 
@@ -109,10 +110,22 @@ class GRDECLParser:
 
 
 def load_spe9_data(
-    data_path: str = "/Users/k.jones/Documents/Pandey_Ch05_Geomodeling_Code/data/SPE9.GRDECL",
+    data_path: Optional[str] = None,
 ):
-    """Convenience function to load SPE9 dataset"""
-    parser = GRDECLParser(data_path)
+    """Convenience function to load SPE9 dataset
+    
+    Args:
+        data_path: Path to SPE9 GRDECL file. If None, uses the bundled data file.
+        
+    Returns:
+        Dictionary containing parsed SPE9 data
+    """
+    if data_path is None:
+        # Use the bundled data file in the project
+        module_dir = Path(__file__).parent.parent
+        data_path = module_dir / "data" / "SPE9.GRDECL"
+        
+    parser = GRDECLParser(str(data_path))
     return parser.load_data()
 
 

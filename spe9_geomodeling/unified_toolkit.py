@@ -17,6 +17,7 @@ import seaborn as sns
 from sklearn.base import BaseEstimator
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.svm import SVR
 from sklearn.gaussian_process.kernels import (
     ConstantKernel,
     Kernel,
@@ -71,18 +72,24 @@ class UnifiedSPE9Toolkit:
             backend: Modeling backend ('sklearn' or 'gpytorch')
 
         Raises:
-            ValueError: If GPyTorch backend is requested but not available
+            ValueError: If backend is invalid or GPyTorch backend is requested but not available
         """
+        if backend not in ["sklearn", "gpytorch"]:
+            raise ValueError("Backend must be 'sklearn' or 'gpytorch'")
+
         if backend == "gpytorch" and not GPYTORCH_AVAILABLE:
             raise ValueError(
                 "GPyTorch backend requested but GPyTorch is not installed. "
                 "Install with: pip install torch gpytorch"
             )
 
-        default_path = (
-            Path.home() / "Downloads/Pandey_Ch05_Geomodeling_Code/data/SPE9.GRDECL"
-        )
-        self.data_path = Path(data_path) if data_path else default_path
+        if data_path is None:
+            # Use the bundled data file in the project
+            module_dir = Path(__file__).parent.parent
+            default_path = module_dir / "data" / "SPE9.GRDECL"
+        else:
+            default_path = Path(data_path)
+        self.data_path = default_path
         self.backend = backend
 
         self.data: Optional[Dict[str, Any]] = None
@@ -112,7 +119,7 @@ class UnifiedSPE9Toolkit:
             raise FileNotFoundError(f"SPE9 data file not found: {self.data_path}")
 
         print(f"Loading SPE9 dataset from {self.data_path}")
-        self.data, _ = load_spe9_data(str(self.data_path))
+        self.data = load_spe9_data(str(self.data_path))
 
         nx, ny, nz = self.data["dimensions"]
         self.permx_3d = self.data["properties"]["PERMX"]
@@ -280,13 +287,23 @@ class UnifiedSPE9Toolkit:
                 random_state=kwargs.get("random_state", 42),
                 n_jobs=kwargs.get("n_jobs", -1),
             )
+        elif model_type == "svr":
+            model = SVR(
+                kernel=kwargs.get("kernel", "rbf"),
+                C=kwargs.get("C", 1.0),
+                gamma=kwargs.get("gamma", "scale"),
+                epsilon=kwargs.get("epsilon", 0.1),
+            )
         else:
-            raise ValueError(f"Unknown sklearn model_type: {model_type}")
+            raise ValueError(f"Unknown sklearn model type: {model_type}")
 
         return model
 
     def create_gpytorch_model(self, **kwargs) -> Tuple[Any, Any]:
         """Create GPyTorch model and likelihood."""
+        if self.backend != "gpytorch":
+            raise ValueError("GPyTorch models require 'gpytorch' backend")
+
         if not GPYTORCH_AVAILABLE:
             raise ValueError("GPyTorch is not available")
 

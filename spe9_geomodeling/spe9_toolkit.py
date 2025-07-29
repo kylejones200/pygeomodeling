@@ -85,10 +85,13 @@ class SPE9Toolkit:
         Args:
             data_path: Path to SPE9 dataset file. If None, uses default path.
         """
-        default_path = (
-            Path.home() / "Downloads/Pandey_Ch05_Geomodeling_Code/data/SPE9.GRDECL"
-        )
-        self.data_path = Path(data_path) if data_path else default_path
+        if data_path is None:
+            # Use the bundled data file in the project
+            module_dir = Path(__file__).parent.parent
+            default_path = module_dir / "data" / "SPE9.GRDECL"
+        else:
+            default_path = Path(data_path)
+        self.data_path = default_path
 
         self.data: Optional[Dict[str, Any]] = None
         self.grid_data: Optional[GridData] = None
