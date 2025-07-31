@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="gpr_reservoir",
+    name="pygeomodeling",
     version="0.1.0",
     description="Gaussian Process Regression and Kriging for 3D Reservoir Simulation Data",
     author="Kyle T. Jones",

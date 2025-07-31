@@ -1,4 +1,4 @@
-"""Unified SPE9 Geomodeling Toolkit.
+"""Unified Geomodeling Toolkit.
 
 Supports both scikit-learn and GPyTorch workflows in a single, Pythonic interface.
 """

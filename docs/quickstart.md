@@ -6,12 +6,12 @@ Get up and running with the SPE9 Geomodeling Toolkit in just 5 minutes!
 
 ### Step 1: Installation
 ```bash
-pip install spe9-geomodeling[advanced]
+pip install pygeomodeling[advanced]
 ```
 
 ### Step 2: Basic Usage
 ```python
-from spe9_geomodeling import UnifiedSPE9Toolkit, load_spe9_data
+from pygeomodeling import UnifiedSPE9Toolkit, load_spe9_data
 
 # Load SPE9 dataset (or use synthetic data if not available)
 try:
@@ -43,7 +43,7 @@ print(f"Model R² Score: {results.r2:.4f}")
 
 ### Step 3: Run Deep GP Experiment
 ```python
-from spe9_geomodeling import DeepGPExperiment
+from pygeomodeling import DeepGPExperiment
 
 # Run comprehensive model comparison
 experiment = DeepGPExperiment()
@@ -58,7 +58,7 @@ print("✅ Experiment complete! Check deep_gp_comparison.png for results")
 ### Workflow 1: Traditional Geomodeling Pipeline
 
 ```python
-from spe9_geomodeling import UnifiedSPE9Toolkit, GRDECLParser
+from pygeomodeling import UnifiedSPE9Toolkit, GRDECLParser
 
 # 1. Load your GRDECL data
 parser = GRDECLParser('path/to/your/data.grdecl')
@@ -95,8 +95,8 @@ toolkit.plot_results('combined_gpr', save_path='results.png')
 ### Workflow 2: Deep GP Research
 
 ```python
-from spe9_geomodeling import DeepGPExperiment
-from spe9_geomodeling.experiments import DeepGPExperiment
+from pygeomodeling import DeepGPExperiment
+from pygeomodeling.experiments import DeepGPExperiment
 
 # Create experiment with custom configuration
 experiment = DeepGPExperiment()

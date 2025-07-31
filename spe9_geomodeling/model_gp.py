@@ -1,4 +1,4 @@
-"""GPyTorch models for SPE9 geomodeling.
+"""GPyTorch models for geomodeling.
 
 Defines Gaussian Process models optimized for reservoir property prediction.
 """

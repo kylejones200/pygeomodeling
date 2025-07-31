@@ -1,4 +1,4 @@
-"""Clean plotting utilities for SPE9 geomodeling.
+"""Clean plotting utilities for geomodeling.
 
 Focused plotting module with proper separation of concerns.
 """

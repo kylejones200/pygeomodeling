@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test runner script for SPE9 Geomodeling package.
+Test runner script for pygeomodeling package.
 
 This script provides various options for running tests with different configurations.
 """
