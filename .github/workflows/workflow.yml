@@ -15,7 +15,7 @@ jobs:
     environment: pypi  # This must match the environment name in your PyPI trusted publisher
     
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     
     - name: Set up Python
       uses: actions/setup-python@v4
