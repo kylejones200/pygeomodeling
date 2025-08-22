@@ -95,9 +95,7 @@ class SPE9Toolkit:
     """
 
     def __init__(
-        self, 
-        data_path: Optional[Union[str, Path]] = None, 
-        backend: str = "sklearn"
+        self, data_path: Optional[Union[str, Path]] = None, backend: str = "sklearn"
     ) -> None:
         """Initialize the toolkit.
 
@@ -125,14 +123,14 @@ class SPE9Toolkit:
             default_path = module_dir / "data" / "SPE9.GRDECL"
         else:
             default_path = Path(data_path)
-        
+
         self.data_path = default_path
         self.backend = backend
 
         # Initialize data containers
         self.data: Optional[Dict[str, Any]] = None
         self.grid_data: Optional[GridData] = None
-        
+
         # Model management
         self.models: Dict[str, BaseEstimator] = {}
         self.scalers: Dict[str, StandardScaler] = {}
@@ -165,10 +163,7 @@ class SPE9Toolkit:
         return self.data
 
     def prepare_features(
-        self, 
-        *, 
-        add_geological_features: bool = False,
-        log_transform: bool = True
+        self, *, add_geological_features: bool = False, log_transform: bool = True
     ) -> GridData:
         """Prepare features for modeling.
 
@@ -194,12 +189,8 @@ class SPE9Toolkit:
         )
 
         # Flatten coordinates
-        X_grid = np.column_stack([
-            x_coords.ravel(),
-            y_coords.ravel(), 
-            z_coords.ravel()
-        ])
-        
+        X_grid = np.column_stack([x_coords.ravel(), y_coords.ravel(), z_coords.ravel()])
+
         feature_names = ["x", "y", "z"]
 
         # Add geological features if requested
@@ -209,20 +200,16 @@ class SPE9Toolkit:
             dist_from_center = np.sqrt(
                 (x_coords - center_x) ** 2 + (y_coords - center_y) ** 2
             ).ravel()
-            
+
             # Depth-related features
             depth_normalized = z_coords.ravel() / nz
-            
-            X_grid = np.column_stack([
-                X_grid,
-                dist_from_center,
-                depth_normalized
-            ])
+
+            X_grid = np.column_stack([X_grid, dist_from_center, depth_normalized])
             feature_names.extend(["dist_from_center", "depth_normalized"])
 
         # Prepare target values
         y_grid = permx_3d.ravel()
-        
+
         # Apply log transform if requested
         if log_transform:
             # Add small constant to avoid log(0)
@@ -230,24 +217,23 @@ class SPE9Toolkit:
 
         # Create valid mask (remove invalid values)
         valid_mask = np.isfinite(y_grid) & np.isfinite(X_grid).all(axis=1)
-        
+
         self.grid_data = GridData(
             X_grid=X_grid[valid_mask],
             y_grid=y_grid[valid_mask],
             feature_names=feature_names,
             permx_3d=permx_3d,
             dimensions=(nx, ny, nz),
-            valid_mask=valid_mask
+            valid_mask=valid_mask,
         )
 
-        print(f"Features prepared: {len(feature_names)} features, {len(self.grid_data.X_grid)} valid samples")
+        print(
+            f"Features prepared: {len(feature_names)} features, {len(self.grid_data.X_grid)} valid samples"
+        )
         return self.grid_data
 
     def create_train_test_split(
-        self, 
-        *, 
-        test_size: float = 0.2, 
-        random_state: int = 42
+        self, *, test_size: float = 0.2, random_state: int = 42
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """Create train/test split.
 
@@ -262,7 +248,9 @@ class SPE9Toolkit:
             ValueError: If features haven't been prepared
         """
         if self.grid_data is None:
-            raise ValueError("Features must be prepared first. Call prepare_features().")
+            raise ValueError(
+                "Features must be prepared first. Call prepare_features()."
+            )
 
         X_train, X_test, y_train, y_test = train_test_split(
             self.grid_data.X_grid,
@@ -281,9 +269,7 @@ class SPE9Toolkit:
         return X_train, X_test, y_train, y_test
 
     def setup_scalers(
-        self, 
-        *, 
-        scaler_type: str = "standard"
+        self, *, scaler_type: str = "standard"
     ) -> Tuple[StandardScaler, StandardScaler]:
         """Set up feature and target scalers.
 
@@ -297,13 +283,16 @@ class SPE9Toolkit:
             ValueError: If train/test split hasn't been created
         """
         if self.grid_data is None or self.grid_data.X_train is None:
-            raise ValueError("Train/test split must be created first. Call create_train_test_split().")
+            raise ValueError(
+                "Train/test split must be created first. Call create_train_test_split()."
+            )
 
         if scaler_type == "standard":
             x_scaler = StandardScaler()
             y_scaler = StandardScaler()
         else:
             from sklearn.preprocessing import MinMaxScaler
+
             x_scaler = MinMaxScaler()
             y_scaler = MinMaxScaler()
 
@@ -323,11 +312,7 @@ class SPE9Toolkit:
         return x_scaler, y_scaler
 
     def create_model(
-        self, 
-        model_type: str, 
-        *, 
-        kernel_type: str = "combined", 
-        **kwargs
+        self, model_type: str, *, kernel_type: str = "combined", **kwargs
     ) -> BaseEstimator:
         """Create a model based on the current backend.
 
@@ -343,20 +328,20 @@ class SPE9Toolkit:
             ValueError: If backend is gpytorch but model_type is sklearn-specific
         """
         if self.backend == "sklearn":
-            return self._create_sklearn_model(model_type, kernel_type=kernel_type, **kwargs)
+            return self._create_sklearn_model(
+                model_type, kernel_type=kernel_type, **kwargs
+            )
         elif self.backend == "gpytorch":
             if model_type not in ["gp", "deep_gp"]:
-                raise ValueError(f"GPyTorch backend only supports 'gp' and 'deep_gp' models, got '{model_type}'")
+                raise ValueError(
+                    f"GPyTorch backend only supports 'gp' and 'deep_gp' models, got '{model_type}'"
+                )
             return self._create_gpytorch_model(**kwargs)
         else:
             raise ValueError(f"Unknown backend: {self.backend}")
 
     def _create_sklearn_model(
-        self, 
-        model_type: str, 
-        *, 
-        kernel_type: str = "combined", 
-        **kwargs
+        self, model_type: str, *, kernel_type: str = "combined", **kwargs
     ) -> BaseEstimator:
         """Create scikit-learn model."""
         if model_type == "gpr":
@@ -365,7 +350,8 @@ class SPE9Toolkit:
 
             kernels = {
                 "rbf": ConstantKernel(1.0) * RBF(length_scales) + WhiteKernel(1e-3),
-                "matern": ConstantKernel(1.0) * Matern(length_scales, nu=1.5) + WhiteKernel(1e-3),
+                "matern": ConstantKernel(1.0) * Matern(length_scales, nu=1.5)
+                + WhiteKernel(1e-3),
                 "combined": (
                     ConstantKernel(1.0) * RBF(length_scales)
                     + ConstantKernel(1.0) * Matern(length_scales, nu=1.5)
@@ -417,10 +403,7 @@ class SPE9Toolkit:
         return model, likelihood
 
     def train_model(
-        self, 
-        model: BaseEstimator, 
-        model_name: str, 
-        **kwargs
+        self, model: BaseEstimator, model_name: str, **kwargs
     ) -> BaseEstimator:
         """Train a model.
 
@@ -443,7 +426,7 @@ class SPE9Toolkit:
             model.fit(self.grid_data.X_train_scaled, self.grid_data.y_train_scaled)
             self.models[model_name] = model
             print(f"✅ {model_name} training completed")
-        
+
         elif self.backend == "gpytorch":
             # GPyTorch training would go here
             print(f"GPyTorch training for {model_name} not implemented in this version")
@@ -452,10 +435,7 @@ class SPE9Toolkit:
         return model
 
     def evaluate_model(
-        self, 
-        model_name: str, 
-        *, 
-        return_predictions: bool = False
+        self, model_name: str, *, return_predictions: bool = False
     ) -> ModelResults:
         """Evaluate a trained model.
 
@@ -470,7 +450,9 @@ class SPE9Toolkit:
             ValueError: If model hasn't been trained
         """
         if model_name not in self.models:
-            raise ValueError(f"Model '{model_name}' not found. Available models: {list(self.models.keys())}")
+            raise ValueError(
+                f"Model '{model_name}' not found. Available models: {list(self.models.keys())}"
+            )
 
         model = self.models[model_name]
         x_scaler = self.scalers["x_scaler"]
@@ -482,7 +464,9 @@ class SPE9Toolkit:
 
         # Inverse transform predictions
         y_pred = y_scaler.inverse_transform(y_pred_scaled.reshape(-1, 1)).ravel()
-        y_true = y_scaler.inverse_transform(self.grid_data.y_test.reshape(-1, 1)).ravel()
+        y_true = y_scaler.inverse_transform(
+            self.grid_data.y_test.reshape(-1, 1)
+        ).ravel()
 
         # Calculate metrics
         r2 = r2_score(y_true, y_pred)
@@ -498,13 +482,7 @@ class SPE9Toolkit:
             except:
                 pass
 
-        results = ModelResults(
-            r2=r2,
-            rmse=rmse,
-            mae=mae,
-            y_pred=y_pred,
-            y_std=y_std
-        )
+        results = ModelResults(r2=r2, rmse=rmse, mae=mae, y_pred=y_pred, y_std=y_std)
 
         self.results[model_name] = results
 
@@ -532,7 +510,7 @@ class SPE9Toolkit:
             "model": self.models[model_name],
             "scalers": self.scalers,
             "feature_names": self.grid_data.feature_names if self.grid_data else None,
-            "backend": self.backend
+            "backend": self.backend,
         }
 
         joblib.dump(model_data, filepath)
@@ -546,10 +524,10 @@ class SPE9Toolkit:
             filepath: Path to the saved model
         """
         model_data = joblib.load(filepath)
-        
+
         self.models[model_name] = model_data["model"]
         self.scalers = model_data["scalers"]
-        
+
         print(f"Model '{model_name}' loaded from {filepath}")
 
 
@@ -569,11 +547,11 @@ def main():
 
     # Train models
     print("\n🤖 Training models...")
-    
+
     # Gaussian Process Regression
     gpr = toolkit.create_model("gpr", kernel_type="combined")
     toolkit.train_model(gpr, "GPR")
-    
+
     # Random Forest
     rf = toolkit.create_model("rf", n_estimators=50)
     toolkit.train_model(rf, "RandomForest")
@@ -583,7 +561,9 @@ def main():
     gpr_results = toolkit.evaluate_model("GPR")
     rf_results = toolkit.evaluate_model("RandomForest")
 
-    print(f"\n🏆 Best model: {'GPR' if gpr_results.r2 > rf_results.r2 else 'RandomForest'}")
+    print(
+        f"\n🏆 Best model: {'GPR' if gpr_results.r2 > rf_results.r2 else 'RandomForest'}"
+    )
 
 
 if __name__ == "__main__":

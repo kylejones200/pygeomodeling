@@ -113,10 +113,10 @@ def load_spe9_data(
     data_path: Optional[str] = None,
 ):
     """Convenience function to load SPE9 dataset
-    
+
     Args:
         data_path: Path to SPE9 GRDECL file. If None, uses the bundled data file.
-        
+
     Returns:
         Dictionary containing parsed SPE9 data
     """
@@ -124,7 +124,7 @@ def load_spe9_data(
         # Use the bundled data file in the project
         module_dir = Path(__file__).parent.parent
         data_path = module_dir / "data" / "SPE9.GRDECL"
-        
+
     parser = GRDECLParser(str(data_path))
     return parser.load_data()
 

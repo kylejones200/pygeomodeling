@@ -26,7 +26,9 @@ def main():
         print(f"✅ Loaded SPE9 data: {data['grid_shape']} grid")
         print(f"   Properties: {list(data['properties'].keys())}")
     except FileNotFoundError:
-        print("❌ SPE9.GRDECL file not found. Please ensure the data file is available.")
+        print(
+            "❌ SPE9.GRDECL file not found. Please ensure the data file is available."
+        )
         print("   The bundled data file should be automatically detected.")
         return
 
