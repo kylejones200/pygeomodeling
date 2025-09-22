@@ -4,9 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pygeomodeling"
-version = "0.1.0"
+ version = "0.1.1"
 description = "Advanced Gaussian Process Regression and Kriging toolkit for SPE9 reservoir modeling"
-readme = "README.MD"
+readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "MIT"}
 authors = [
@@ -110,14 +110,14 @@ docs = [
 
 # Complete installation (all optional dependencies)
 all = [
-  "spe9-geomodeling[advanced,geospatial,performance,visualization,dev,docs]"
+  "pygeomodeling[advanced,geospatial,performance,visualization,dev,docs]"
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/spe9-geomodeling"
-Repository = "https://github.com/yourusername/spe9-geomodeling"
-Documentation = "https://github.com/yourusername/spe9-geomodeling#readme"
-"Bug Tracker" = "https://github.com/yourusername/spe9-geomodeling/issues"
+Homepage = "https://github.com/kylejones200/pygeomodeling"
+Repository = "https://github.com/kylejones200/pygeomodeling"
+Documentation = "https://github.com/kylejones200/pygeomodeling#readme"
+"Bug Tracker" = "https://github.com/kylejones200/pygeomodeling/issues"
 
 [project.scripts]
 spe9-experiment = "spe9_geomodeling.experiments.deep_gp_experiment:main"
