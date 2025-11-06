@@ -1,5 +1,5 @@
 """
-PyGeomodeling Toolkit
+PyGeomodeling Toolkit.
 
 Advanced Gaussian Process Regression and Kriging toolkit for reservoir modeling.
 Supports both traditional GP models and Deep GP models for spatial pattern analysis.

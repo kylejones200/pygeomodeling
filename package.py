@@ -113,7 +113,7 @@ def show_installation_instructions():
 
 
 def main():
-    """Main packaging workflow."""
+    """Run the main packaging workflow."""
     print("🚀 SPE9 Geomodeling Toolkit - Package Preparation")
     print("=" * 60)
 
