@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pygeomodeling"
-version = "0.2.1"
+version = "0.3.0"
 description = "Advanced Gaussian Process Regression and Kriging toolkit for SPE9 reservoir modeling"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -49,6 +49,9 @@ dependencies = [
   "pykrige>=1.6.0,<2.0.0",
   "gstools>=1.4.0,<2.0.0",
   
+  # Performance optimization (core computations)
+  "numba>=0.58.0,<1.0.0",
+  
   # Progress bars
   "tqdm>=4.65.0,<5.0.0"
 ]
@@ -89,9 +92,9 @@ geospatial = [
   "h5py>=3.8.0,<4.0.0"
 ]
 
-# Performance optimization
+# Performance optimization (additional accelerators)
 performance = [
-  "numba>=0.57.0,<1.0.0"
+  "cupy>=12.0.0,<13.0.0"  # GPU acceleration (optional)
 ]
 
 # Interactive visualization
