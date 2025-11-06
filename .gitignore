@@ -102,3 +102,14 @@ docs/_build/
 !docs/**/*.jpg
 !docs/**/*.jpeg
 !docs/**/*.svg
+
+# Generated GRDECL output files
+*_GPR.GRDECL
+PERMX_*.GRDECL
+SIGMA_*.GRDECL
+
+# Saved models directory
+saved_models/
+
+# Jupyter notebook outputs
+*.ipynb_checkpoints

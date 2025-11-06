@@ -1,10 +1,10 @@
-site_name: SPE9 Geomodeling
+site_name: pygeomodeling
 site_description: Advanced Gaussian Process Regression and Kriging toolkit for SPE9 reservoir modeling
-site_author: K. Jones
-site_url: https://spe9-geomodeling.readthedocs.io/
+site_author: Kyle T. Jones
+site_url: https://pygeomodeling.readthedocs.io/
 
-repo_name: spe9-geomodeling
-repo_url: https://github.com/yourusername/spe9-geomodeling
+repo_name: kylejones200/pygeomodeling
+repo_url: https://github.com/kylejones200/pygeomodeling
 edit_uri: edit/main/docs/
 
 # Navigation
@@ -89,4 +89,4 @@ extra_css:
   - stylesheets/extra.css
 
 # Copyright
-copyright: Copyright &copy; 2024 K. Jones
+copyright: Copyright &copy; 2025 Kyle T. Jones
