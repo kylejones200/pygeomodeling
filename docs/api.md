@@ -408,4 +408,175 @@ def create_train_test_split(
 
 ---
 
-**For more examples and advanced usage, see the [Examples](examples.md) and [Deep GP Guide](deep_gp.md) documentation.**
+## 🔬 Well Log Automation Modules
+
+### `WellLogProcessor`
+Advanced data preparation pipeline for well log interpretation.
+
+```python
+from spe9_geomodeling import WellLogProcessor
+
+processor = WellLogProcessor(null_value=-999.25, min_coverage=0.5)
+processed = processor.process_well_logs(
+    data, 
+    normalize_names=True,
+    align_depth_grid=True,
+    impute_missing=True
+)
+```
+
+**Key Methods:**
+- `identify_curve_type()` - Auto-detect curve types from name/unit/statistics
+- `normalize_curve_names()` - Standardize to common mnemonics
+- `align_depth()` - Uniform depth spacing with interpolation
+- `impute_missing_values()` - Fill gaps (linear, polynomial, median)
+- `detect_outliers()` - Z-score, IQR, MAD methods
+- `assess_quality()` - Per-curve quality assessment
+- `process_well_logs()` - Complete processing pipeline
+
+### `LogFeatureEngineer`
+Multi-well feature engineering for machine learning.
+
+```python
+from spe9_geomodeling import LogFeatureEngineer
+
+engineer = LogFeatureEngineer()
+features = engineer.create_feature_set(
+    data,
+    include_derivatives=True,
+    include_ratios=True,
+    include_rolling_stats=True,
+    include_spatial=True
+)
+```
+
+**Key Methods:**
+- `compute_derivatives()` - Gradient or Savitzky-Golay rate of change
+- `compute_ratios()` - Cross-curve petrophysical indicators
+- `compute_rolling_statistics()` - Local context (5/10/20 windows)
+- `compute_spatial_features()` - Offset well influence
+- `select_features()` - Correlation/mutual info/variance selection
+- `create_feature_set()` - Complete feature engineering pipeline
+
+### `FormationTopDetector`
+Automated formation boundary detection.
+
+```python
+from spe9_geomodeling import FormationTopDetector
+
+detector = FormationTopDetector(min_formation_thickness=5.0)
+result = detector.detect_and_classify(
+    data,
+    reference_sequence=['FormationA', 'FormationB'],
+    regional_tops={'FormationA': 1500}
+)
+```
+
+**Key Methods:**
+- `compute_boundary_score()` - Composite scoring (gradient + variance)
+- `detect_boundaries()` - Peak detection with constraints
+- `train_boundary_classifier()` - ML classification of true boundaries
+- `classify_boundaries()` - Validate with trained model
+- `correlate_with_stratigraphy()` - Match to regional sequence
+
+### `FaciesClassifier` (Enhanced)
+ML-based facies classification with semi-supervised learning.
+
+```python
+from spe9_geomodeling import FaciesClassifier
+
+classifier = FaciesClassifier(algorithm='random_forest')
+
+# Semi-supervised learning
+classifier.semi_supervised_fit(X_labeled, y_labeled, X_unlabeled)
+
+# Active learning
+query_indices = classifier.active_learning_query(X_unlabeled, n_samples=10)
+
+# Transfer learning
+classifier.transfer_learning_fit(X_source, y_source, X_target, y_target)
+```
+
+**New Methods:**
+- `cluster_unlabeled_data()` - KMeans/DBSCAN exploration
+- `active_learning_query()` - Identify informative samples (3 strategies)
+- `semi_supervised_fit()` - Label propagation with unlabeled data
+- `transfer_learning_fit()` - Basin-to-basin knowledge transfer
+
+### `ConfidenceScorer`
+Uncertainty quantification and prediction triage.
+
+```python
+from spe9_geomodeling import ConfidenceScorer
+
+scorer = ConfidenceScorer(high_confidence_threshold=0.8)
+report = scorer.create_well_report(
+    well_name='WELL_001',
+    depths=depths,
+    predictions=predictions,
+    probabilities=probabilities
+)
+```
+
+**Key Methods:**
+- `compute_confidence_score()` - 4 metrics (max_prob, margin, entropy, composite)
+- `score_predictions()` - Per-prediction confidence assessment
+- `create_well_report()` - Complete well analysis
+- `triage_predictions()` - Prioritize for expert review
+- `confidence_by_depth_interval()` - Identify problematic zones
+- `confidence_by_facies()` - Per-lithology analysis
+
+### `LASExporter` / `PetrelProjectExporter`
+Export interpreted logs for industry software.
+
+```python
+from spe9_geomodeling import (
+    LASExporter, PetrelProjectExporter,
+    create_correction_template, import_expert_corrections
+)
+
+# Export to LAS with interpreted curves
+exporter = LASExporter()
+exporter.export_with_interpretation(
+    'well_001.las',
+    depth, original_curves, interpreted_curves
+)
+
+# Export complete Petrel package
+PetrelProjectExporter.export_interpretation_package(
+    'output_dir', well_name, depth, original_curves,
+    facies=predictions, formation_tops=tops
+)
+
+# Create template for expert corrections
+create_correction_template(well_name, depths, predictions, confidence, 'template.csv')
+
+# Re-import corrections
+corrected_data, _ = import_expert_corrections('reviewed.csv')
+```
+
+### `WorkflowManager`
+Human-in-the-loop iterative refinement orchestration.
+
+```python
+from spe9_geomodeling import WorkflowManager
+
+workflow = WorkflowManager('project_dir')
+workflow.start_new_iteration(['WELL_001', 'WELL_002'])
+workflow.record_well_interpreted('WELL_001', 'predictions.csv')
+workflow.import_corrections('corrections.csv', expert_id='JDoe')
+workflow.complete_iteration({'accuracy': 0.65, 'f1': 0.62})
+workflow.generate_progress_report()
+```
+
+**Key Methods:**
+- `start_new_iteration()` - Initialize new workflow cycle
+- `record_well_interpreted()` - Track processing progress
+- `import_corrections()` - Load expert edits
+- `complete_iteration()` - Record results and performance
+- `generate_progress_report()` - Iteration history analysis
+- `export_workflow_summary()` - Complete audit trail
+
+---
+
+**For more examples and advanced usage, see the [Examples](examples.md), [Advanced Features](advanced_features.md), and [Technical Guide](technical_guide.md) documentation.**

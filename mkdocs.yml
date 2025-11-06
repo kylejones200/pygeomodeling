@@ -12,10 +12,15 @@ nav:
   - Home: index.md
   - Installation: installation.md
   - Quick Start: quickstart.md
-  - Examples: examples.md
-  - API Reference: api.md
-  - Deep GP: deep_gp.md
-  - Model Comparison: model_comparison.md
+  - User Guide:
+    - Examples: examples.md
+    - Advanced Features: advanced_features.md
+  - Technical:
+    - API Reference: api.md
+    - Technical Guide: technical_guide.md
+    - Deep GP: deep_gp.md
+    - Model Comparison: model_comparison.md
+  - Business Case: business_case.md
 
 # Theme
 theme:

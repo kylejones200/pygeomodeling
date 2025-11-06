@@ -1,42 +1,55 @@
-# SPE9 Geomodeling Toolkit
+# PyGeomodeling
 
-[![PyPI version](https://badge.fury.io/py/spe9-geomodeling.svg)](https://badge.fury.io/py/spe9-geomodeling)
+[![PyPI version](https://badge.fury.io/py/pygeomodeling.svg)](https://badge.fury.io/py/pygeomodeling)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Tests](https://github.com/kylejones200/pygeomodeling/workflows/Tests/badge.svg)](https://github.com/kylejones200/pygeomodeling/actions)
+[![Documentation](https://readthedocs.org/projects/pygeomodeling/badge/?version=latest)](https://pygeomodeling.readthedocs.io/)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 Advanced Gaussian Process Regression and Kriging toolkit for SPE9 reservoir modeling. This toolkit provides a comprehensive framework for spatial modeling of reservoir properties using both traditional Gaussian Process models and cutting-edge Deep Gaussian Process architectures.
 
 ## 🚀 Key Features
 
+### Core Capabilities
 - **🔧 GRDECL Parser**: Load and parse Eclipse GRDECL files with automatic property extraction
 - **🤖 Unified Toolkit**: Single interface supporting both scikit-learn and GPyTorch workflows
 - **🧠 Advanced Models**: Traditional GP (RBF, Matérn, Combined kernels) and Deep GP with neural network features
 - **📊 Rich Visualization**: Comprehensive plotting utilities for model comparison and spatial analysis
-- **⚡ Flexible Installation**: Modular dependencies - install only what you need
-- **🔬 Research-Ready**: Built for reproducible scientific research with proper experiment tracking
+
+### Production-Ready Features (v0.2.1)
+- **🛡️ Error Handling**: Comprehensive validation with helpful error messages
+- **💾 Model Serialization**: Save/load models with versioning and metadata
+- **🗺️ Spatial Cross-Validation**: Proper validation for geostatistical data
+- **⚡ Parallel Processing**: 3-4x speedup with multi-core training
+- **🎯 Hyperparameter Tuning**: Optuna integration for optimization
+- **📈 Variogram Analysis**: Semi-variogram modeling for spatial correlation (NEW!)
+- **📚 Tutorial Notebooks**: Interactive learning with Jupyter
+- **🔬 Research-Ready**: Built for reproducible scientific research
 
 ## 📦 Installation
 
 ### Basic Installation (Traditional GP Models)
 ```bash
-pip install spe9-geomodeling
+pip install pygeomodeling
 ```
 
 ### With Advanced Deep GP Features
 ```bash
-pip install spe9-geomodeling[advanced]
+pip install pygeomodeling[advanced]
 ```
 
 ### Complete Installation (All Features)
 ```bash
-pip install spe9-geomodeling[all]
+pip install pygeomodeling[all]
 ```
 
 ### Development Installation
 ```bash
-git clone https://github.com/yourusername/spe9-geomodeling.git
-cd spe9-geomodeling
-pip install -e ".[dev]"
+git clone https://github.com/kylejones200/pygeomodeling.git
+cd pygeomodeling
+./setup_dev.sh  # Automated setup
+# or manually: pip install -e ".[dev,docs,all]"
 ```
 
 ## 🎯 Quick Start

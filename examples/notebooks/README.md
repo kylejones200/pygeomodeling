@@ -29,17 +29,31 @@ Advanced features:
 
 **Prerequisites**: Complete notebook 01
 
-### 3. Spatial Cross-Validation (Coming Soon)
+### 3. Variogram Analysis (`03_variogram_analysis.ipynb`)
 **Level**: Intermediate  
 **Time**: 25-35 minutes
 
-Deep dive into spatial CV:
-- Why spatial CV matters
-- Different CV strategies
-- Avoiding spatial leakage
-- Best practices
+Spatial correlation analysis:
+- Experimental variogram computation
+- Model fitting (spherical, exponential, Gaussian)
+- Anisotropy detection
+- Interpretation and validation
 
-### 4. Hyperparameter Tuning (Coming Soon)
+**Prerequisites**: Complete notebook 01
+
+### 4. Ore Grade Forecasting (`04_ore_grade_forecasting.ipynb`)
+**Level**: Advanced  
+**Time**: 35-45 minutes
+
+Real-world mining application:
+- Geochemical data integration
+- Pathfinder element analysis
+- Uncertainty quantification for drilling
+- Model comparison (GPR vs XGBoost)
+
+**Prerequisites**: Complete notebooks 01-03
+
+### 5. Hyperparameter Tuning (Coming Soon)
 **Level**: Advanced  
 **Time**: 30-40 minutes
 
@@ -49,7 +63,7 @@ Optimize your models:
 - Search space design
 - Parallel tuning
 
-### 5. Production Deployment (Coming Soon)
+### 6. Production Deployment (Coming Soon)
 **Level**: Advanced  
 **Time**: 40-50 minutes
 

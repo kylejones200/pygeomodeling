@@ -54,6 +54,90 @@ try:
         ParallelCrossValidator,
         parallel_grid_search,
     )
+    from .variogram import (
+        VariogramModel,
+        compute_experimental_variogram,
+        fit_variogram_model,
+        predict_variogram,
+        directional_variogram,
+        cross_validation_variogram,
+    )
+    from .variogram_plot import (
+        plot_variogram,
+        plot_variogram_comparison,
+        plot_directional_variograms,
+        plot_variogram_cloud,
+    )
+    from .kriging import (
+        OrdinaryKriging,
+        UniversalKriging,
+        CoKriging,
+        simple_kriging,
+        KrigingResult,
+    )
+    from .well_data import (
+        LASParser,
+        WellHeader,
+        CurveInfo,
+        WellLogUpscaler,
+        load_las_file,
+        upscale_well_logs,
+    )
+    from .reservoir_engineering import (
+        VolumetricsCalculator,
+        PetrophysicsCalculator,
+        VolumetricResult,
+        ReservoirType,
+        calculate_reserves_uncertainty,
+        decline_curve_analysis,
+    )
+    from .facies import (
+        FaciesClassifier,
+        FaciesClassificationResult,
+        FACIES_LABELS,
+        load_facies_data,
+        prepare_facies_features,
+    )
+    from .well_log_processor import (
+        WellLogProcessor,
+        ProcessedWellLogs,
+        CurveQuality,
+        CURVE_SIGNATURES,
+        process_multiple_wells,
+    )
+    from .log_features import (
+        LogFeatureEngineer,
+        FeatureSet,
+        prepare_ml_dataset,
+    )
+    from .formation_tops import (
+        FormationTopDetector,
+        FormationTop,
+        BoundaryDetectionResult,
+        compare_tops_with_reference,
+    )
+    from .confidence_scoring import (
+        ConfidenceScorer,
+        ConfidenceScore,
+        WellConfidenceReport,
+        compare_confidence_across_wells,
+        export_review_list,
+    )
+    from .integration_exports import (
+        LASExporter,
+        FormationTopExporter,
+        FaciesLogExporter,
+        PetrelProjectExporter,
+        create_correction_template,
+        import_expert_corrections,
+    )
+    from .workflow_manager import (
+        WorkflowManager,
+        WorkflowIteration,
+        CorrectionRecord,
+        WorkflowState,
+        create_workflow_dashboard,
+    )
 except ImportError:
     # Advanced features not available
     pass
@@ -86,6 +170,77 @@ __all__ = [
     "BatchPredictor",
     "ParallelCrossValidator",
     "parallel_grid_search",
+    # Variogram analysis
+    "VariogramModel",
+    "compute_experimental_variogram",
+    "fit_variogram_model",
+    "predict_variogram",
+    "directional_variogram",
+    "cross_validation_variogram",
+    "plot_variogram",
+    "plot_variogram_comparison",
+    "plot_directional_variograms",
+    "plot_variogram_cloud",
+    # Kriging
+    "OrdinaryKriging",
+    "UniversalKriging",
+    "CoKriging",
+    "simple_kriging",
+    "KrigingResult",
+    # Well data
+    "LASParser",
+    "WellHeader",
+    "CurveInfo",
+    "WellLogUpscaler",
+    "load_las_file",
+    "upscale_well_logs",
+    # Reservoir engineering
+    "VolumetricsCalculator",
+    "PetrophysicsCalculator",
+    "VolumetricResult",
+    "ReservoirType",
+    "calculate_reserves_uncertainty",
+    "decline_curve_analysis",
+    # Facies classification
+    "FaciesClassifier",
+    "FaciesClassificationResult",
+    "FACIES_LABELS",
+    "load_facies_data",
+    "prepare_facies_features",
+    # Well log processing
+    "WellLogProcessor",
+    "ProcessedWellLogs",
+    "CurveQuality",
+    "CURVE_SIGNATURES",
+    "process_multiple_wells",
+    # Log feature engineering
+    "LogFeatureEngineer",
+    "FeatureSet",
+    "prepare_ml_dataset",
+    # Formation tops
+    "FormationTopDetector",
+    "FormationTop",
+    "BoundaryDetectionResult",
+    "compare_tops_with_reference",
+    # Confidence scoring
+    "ConfidenceScorer",
+    "ConfidenceScore",
+    "WellConfidenceReport",
+    "compare_confidence_across_wells",
+    "export_review_list",
+    # Integration & exports
+    "LASExporter",
+    "FormationTopExporter",
+    "FaciesLogExporter",
+    "PetrelProjectExporter",
+    "create_correction_template",
+    "import_expert_corrections",
+    # Workflow management
+    "WorkflowManager",
+    "WorkflowIteration",
+    "CorrectionRecord",
+    "WorkflowState",
+    "create_workflow_dashboard",
     # Exceptions
     "exceptions",
 ]
