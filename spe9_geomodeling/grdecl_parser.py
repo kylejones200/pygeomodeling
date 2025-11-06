@@ -5,7 +5,7 @@ Parses Eclipse-format GRDECL files to extract grid properties
 
 import re
 from pathlib import Path
-from typing import Dict, Optional, Tuple
+from typing import Optional
 
 import numpy as np
 

@@ -5,7 +5,6 @@ Defines Gaussian Process models optimized for reservoir property prediction.
 
 from __future__ import annotations
 
-from typing import Optional
 
 import gpytorch
 import torch

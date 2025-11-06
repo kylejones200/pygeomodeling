@@ -5,11 +5,7 @@ from unittest.mock import patch
 import numpy as np
 import pytest
 
-from spe9_geomodeling import (
-    SPE9Plotter,
-    SPE9Toolkit,
-    UnifiedSPE9Toolkit,
-)
+from spe9_geomodeling import SPE9Plotter, SPE9Toolkit, UnifiedSPE9Toolkit
 
 
 class TestPackageImports:

@@ -9,7 +9,7 @@ Performance: Numba-accelerated for 10-50x speedup on large datasets.
 
 import warnings
 from dataclasses import dataclass
-from typing import Callable, Dict, Optional, Tuple
+from typing import Callable, Optional
 
 import numpy as np
 from scipy.optimize import curve_fit

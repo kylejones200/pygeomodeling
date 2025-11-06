@@ -1,3 +1,4 @@
+---
 site_name: pygeomodeling
 site_description: Advanced Gaussian Process Regression and Kriging toolkit for SPE9 reservoir modeling
 site_author: Kyle T. Jones
@@ -13,13 +14,13 @@ nav:
   - Installation: installation.md
   - Quick Start: quickstart.md
   - User Guide:
-    - Examples: examples.md
-    - Advanced Features: advanced_features.md
+      - Examples: examples.md
+      - Advanced Features: advanced_features.md
   - Technical:
-    - API Reference: api.md
-    - Technical Guide: technical_guide.md
-    - Deep GP: deep_gp.md
-    - Model Comparison: model_comparison.md
+      - API Reference: api.md
+      - Technical Guide: technical_guide.md
+      - Deep GP: deep_gp.md
+      - Model Comparison: model_comparison.md
   - Business Case: business_case.md
 
 # Theme
@@ -89,9 +90,9 @@ extra_javascript:
   - https://polyfill.io/v3/polyfill.min.js?features=es6
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
-# Extra CSS
-extra_css:
-  - stylesheets/extra.css
+# Extra CSS (if needed, add custom stylesheets here)
+# extra_css:
+#   - stylesheets/extra.css
 
 # Copyright
 copyright: Copyright &copy; 2025 Kyle T. Jones

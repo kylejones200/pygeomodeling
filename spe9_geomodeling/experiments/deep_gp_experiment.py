@@ -12,7 +12,7 @@ warnings.filterwarnings("ignore")
 
 import time
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
+from typing import Any
 
 import gpytorch
 import matplotlib.pyplot as plt

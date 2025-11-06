@@ -11,7 +11,7 @@ Panoma gas fields dataset from University of Kansas.
 
 import warnings
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Optional, Union
 
 import numpy as np
 import pandas as pd

@@ -8,7 +8,7 @@ Implements confidence assessment strategies for automated well log interpretatio
 """
 
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple
+from typing import Optional
 
 import numpy as np
 import pandas as pd

@@ -11,7 +11,7 @@ Performance: Numba-accelerated for 10-30x speedup on spatial features.
 """
 
 from dataclasses import dataclass
-from typing import Callable, Dict, List, Optional, Tuple
+from typing import Callable, Optional
 
 import numpy as np
 import pandas as pd

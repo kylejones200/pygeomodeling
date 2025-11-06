@@ -4,7 +4,7 @@ Cross-validation utilities with spatial awareness.
 Provides spatial cross-validation methods specifically designed for geostatistical data.
 """
 
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Optional, Union
 
 import numpy as np
 from sklearn.base import BaseEstimator, clone

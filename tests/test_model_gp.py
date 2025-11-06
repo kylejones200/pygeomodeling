@@ -1,6 +1,5 @@
 """Tests for GP model functionality."""
 
-
 import pytest
 
 # Skip all tests if GPyTorch is not available

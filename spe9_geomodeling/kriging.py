@@ -15,7 +15,7 @@ Performance: Numba-accelerated distance calculations for 5-20x speedup.
 
 import warnings
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple
+from typing import Optional
 
 import numpy as np
 from scipy.spatial.distance import cdist

@@ -1,6 +1,5 @@
 """Test configuration and fixtures for SPE9 geomodeling tests."""
 
-
 import numpy as np
 import pytest
 

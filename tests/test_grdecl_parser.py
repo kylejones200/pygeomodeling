@@ -1,6 +1,5 @@
 """Tests for GRDECL parser functionality."""
 
-
 import numpy as np
 import pytest
 

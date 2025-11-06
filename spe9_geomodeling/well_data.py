@@ -8,7 +8,7 @@ Supports standard LAS 2.0 format used in the oil & gas industry.
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import Optional
 
 import numpy as np
 import pandas as pd

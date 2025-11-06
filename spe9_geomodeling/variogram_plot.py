@@ -4,7 +4,7 @@ Variogram Visualization Utilities
 Use plots to check the fit. Clear models produce better spatial estimates.
 """
 
-from typing import List, Optional, Tuple
+from typing import Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
