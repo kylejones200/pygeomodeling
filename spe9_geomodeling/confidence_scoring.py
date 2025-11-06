@@ -43,11 +43,11 @@ class WellConfidenceReport:
     well_name: str
     depths: np.ndarray
     predictions: np.ndarray
-    confidence_scores: List[ConfidenceScore]
+    confidence_scores: list[ConfidenceScore]
     overall_confidence: float
     high_confidence_fraction: float
-    low_confidence_depths: List[float]  # Depths needing review
-    summary: Dict[str, float]
+    low_confidence_depths: list[float]  # Depths needing review
+    summary: dict[str, float]
 
     def __str__(self) -> str:
         return (
@@ -144,7 +144,7 @@ class ConfidenceScorer:
         self,
         predictions: np.ndarray,
         probabilities: np.ndarray,
-    ) -> List[ConfidenceScore]:
+    ) -> list[ConfidenceScore]:
         """
         Score confidence for each prediction.
 
@@ -270,9 +270,9 @@ class ConfidenceScorer:
 
     def triage_predictions(
         self,
-        reports: List[WellConfidenceReport],
+        reports: list[WellConfidenceReport],
         review_budget: int,
-    ) -> List[Tuple[str, float]]:
+    ) -> list[tuple[str, float]]:
         """
         Triage predictions across multiple wells for expert review.
 
@@ -363,7 +363,7 @@ class ConfidenceScorer:
     def confidence_by_facies(
         self,
         report: WellConfidenceReport,
-        facies_names: Optional[Dict[int, str]] = None,
+        facies_names: Optional[dict[int, str]] = None,
     ) -> pd.DataFrame:
         """
         Analyze confidence by predicted facies type.
@@ -421,7 +421,7 @@ class ConfidenceScorer:
 
 
 def compare_confidence_across_wells(
-    reports: List[WellConfidenceReport],
+    reports: list[WellConfidenceReport],
 ) -> pd.DataFrame:
     """
     Compare confidence metrics across multiple wells.
@@ -455,7 +455,7 @@ def compare_confidence_across_wells(
 
 
 def export_review_list(
-    reports: List[WellConfidenceReport],
+    reports: list[WellConfidenceReport],
     output_file: str,
     max_items: Optional[int] = None,
 ):

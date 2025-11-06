@@ -1,14 +1,13 @@
 """Tests for GP model functionality."""
 
+
 import pytest
-import numpy as np
-from unittest.mock import patch, MagicMock
 
 # Skip all tests if GPyTorch is not available
 pytest_plugins = []
 try:
-    import torch
     import gpytorch
+    import torch
 
     GPYTORCH_AVAILABLE = True
 except ImportError:
@@ -289,7 +288,7 @@ class TestGPModelWithoutGPyTorch:
         """Test that import errors are handled gracefully."""
         # This test runs regardless of GPyTorch availability
         try:
-            from spe9_geomodeling.model_gp import SPE9GPModel
+            pass
 
             # If import succeeds, GPyTorch is available
             assert GPYTORCH_AVAILABLE

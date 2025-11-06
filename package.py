@@ -5,7 +5,6 @@ Package preparation script for SPE9 Geomodeling Toolkit.
 This script helps prepare your project for distribution.
 """
 
-import os
 import shutil
 import subprocess
 import sys

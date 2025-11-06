@@ -82,7 +82,7 @@ class LASParser:
         Returns:
             DataFrame with depth index and log curves as columns
         """
-        with open(self.filepath, "r", encoding="utf-8", errors="ignore") as f:
+        with open(self.filepath, encoding="utf-8", errors="ignore") as f:
             content = f.read()
 
         # Parse sections
@@ -237,7 +237,7 @@ class LASParser:
         match = re.search(pattern, text)
         return match.group(1) if match else None
 
-    def get_curve_names(self) -> List[str]:
+    def get_curve_names(self) -> list[str]:
         """Get list of available curve names."""
         return list(self.curves.keys())
 
@@ -327,7 +327,7 @@ class WellLogUpscaler:
         return upscaled
 
 
-def load_las_file(filepath: str) -> Tuple[WellHeader, pd.DataFrame]:
+def load_las_file(filepath: str) -> tuple[WellHeader, pd.DataFrame]:
     """
     Convenience function to load LAS file.
 
@@ -346,7 +346,7 @@ def upscale_well_logs(
     log_data: pd.DataFrame,
     grid_tops: np.ndarray,
     grid_bottoms: np.ndarray,
-    curves: List[str],
+    curves: list[str],
     method: str = "arithmetic",
 ) -> pd.DataFrame:
     """

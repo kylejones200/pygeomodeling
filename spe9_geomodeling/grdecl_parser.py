@@ -38,7 +38,7 @@ class GRDECLParser:
         self.grid_dimensions = None
         self.properties = {}
 
-    def parse_specgrid(self, content: str) -> Tuple[int, int, int]:
+    def parse_specgrid(self, content: str) -> tuple[int, int, int]:
         """Parse SPECGRID keyword to get grid dimensions
 
         Args:
@@ -95,7 +95,7 @@ class GRDECLParser:
 
         return np.array(numbers)
 
-    def load_data(self) -> Dict:
+    def load_data(self) -> dict:
         """Load and parse the GRDECL file
 
         Returns:
@@ -109,7 +109,7 @@ class GRDECLParser:
             raise_file_not_found(str(self.filepath), "GRDECL")
 
         try:
-            with open(self.filepath, "r") as f:
+            with open(self.filepath) as f:
                 content = f.read()
         except PermissionError:
             raise DataValidationError(
@@ -159,7 +159,7 @@ class GRDECLParser:
 
         return {"dimensions": self.grid_dimensions, "properties": self.properties}
 
-    def parse(self) -> Dict:
+    def parse(self) -> dict:
         """Alias for load_data() for backward compatibility"""
         return self.load_data()
 

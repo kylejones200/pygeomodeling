@@ -57,6 +57,7 @@ flake8 spe9_geomodeling tests
 ```
 
 Key conventions:
+
 - Line length: 88 characters (Black default)
 - Use type hints where possible
 - Follow PEP 8 naming conventions
@@ -75,6 +76,7 @@ pytest tests/ --cov=spe9_geomodeling --cov-report=html
 ```
 
 Test guidelines:
+
 - Place tests in tests/ directory
 - Name test files test_*.py
 - Name test functions test_*
@@ -106,6 +108,7 @@ Closes #123
 ```
 
 Commit message format:
+
 - feat: New feature
 - fix: Bug fix
 - docs: Documentation changes
@@ -157,7 +160,7 @@ pygeomodeling/
 ## Questions?
 
 - Open an issue for questions
-- Email: kyletjones@gmail.com
+- Email: <kyletjones@gmail.com>
 - Check existing issues and PRs first
 
 Thank you for contributing!

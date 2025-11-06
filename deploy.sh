@@ -166,7 +166,7 @@ echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     git push origin main
     git push origin "v${VERSION}"
-    
+
     echo -e "\n${GREEN}=================================================="
     echo "✓ Deployment Complete!"
     echo "==================================================${NC}"

@@ -30,7 +30,7 @@ class FormationTop:
     formation_name: str
     confidence: float  # 0-1
     method: str  # 'manual', 'signal_processing', 'ml'
-    log_character: Dict[str, float]  # Average log values in formation
+    log_character: dict[str, float]  # Average log values in formation
 
     def __str__(self) -> str:
         return (
@@ -43,10 +43,10 @@ class FormationTop:
 class BoundaryDetectionResult:
     """Results from boundary detection analysis."""
 
-    detected_boundaries: List[float]  # Depths of detected boundaries
+    detected_boundaries: list[float]  # Depths of detected boundaries
     boundary_scores: np.ndarray  # Strength scores for each depth
-    recommended_tops: List[FormationTop]
-    processing_log: List[str]
+    recommended_tops: list[FormationTop]
+    processing_log: list[str]
 
     def __str__(self) -> str:
         return (
@@ -89,7 +89,7 @@ class FormationTopDetector:
     def compute_boundary_score(
         self,
         data: pd.DataFrame,
-        curves: Optional[List[str]] = None,
+        curves: Optional[list[str]] = None,
         method: str = "composite",
     ) -> np.ndarray:
         """
@@ -173,9 +173,9 @@ class FormationTopDetector:
     def detect_boundaries(
         self,
         data: pd.DataFrame,
-        curves: Optional[List[str]] = None,
+        curves: Optional[list[str]] = None,
         use_peak_detection: bool = True,
-    ) -> List[float]:
+    ) -> list[float]:
         """
         Detect formation boundaries from log data.
 
@@ -227,8 +227,8 @@ class FormationTopDetector:
 
     def train_boundary_classifier(
         self,
-        training_data: List[Tuple[pd.DataFrame, List[FormationTop]]],
-        curves: Optional[List[str]] = None,
+        training_data: list[tuple[pd.DataFrame, list[FormationTop]]],
+        curves: Optional[list[str]] = None,
     ):
         """
         Train ML classifier to distinguish true boundaries from noise.
@@ -318,9 +318,9 @@ class FormationTopDetector:
     def classify_boundaries(
         self,
         data: pd.DataFrame,
-        detected_boundaries: List[float],
-        curves: Optional[List[str]] = None,
-    ) -> List[Tuple[float, float]]:
+        detected_boundaries: list[float],
+        curves: Optional[list[str]] = None,
+    ) -> list[tuple[float, float]]:
         """
         Classify detected boundaries using trained ML model.
 
@@ -393,10 +393,10 @@ class FormationTopDetector:
 
     def correlate_with_stratigraphy(
         self,
-        boundaries: List[float],
-        reference_sequence: List[str],
-        regional_tops: Optional[Dict[str, float]] = None,
-    ) -> List[FormationTop]:
+        boundaries: list[float],
+        reference_sequence: list[str],
+        regional_tops: Optional[dict[str, float]] = None,
+    ) -> list[FormationTop]:
         """
         Correlate detected boundaries with known stratigraphic sequence.
 
@@ -458,9 +458,9 @@ class FormationTopDetector:
     def detect_and_classify(
         self,
         data: pd.DataFrame,
-        curves: Optional[List[str]] = None,
-        reference_sequence: Optional[List[str]] = None,
-        regional_tops: Optional[Dict[str, float]] = None,
+        curves: Optional[list[str]] = None,
+        reference_sequence: Optional[list[str]] = None,
+        regional_tops: Optional[dict[str, float]] = None,
     ) -> BoundaryDetectionResult:
         """
         Complete workflow: detect boundaries and classify formations.
@@ -523,10 +523,10 @@ class FormationTopDetector:
 
 
 def compare_tops_with_reference(
-    predicted_tops: List[FormationTop],
-    reference_tops: List[FormationTop],
+    predicted_tops: list[FormationTop],
+    reference_tops: list[FormationTop],
     tolerance: float = 5.0,
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """
     Compare predicted formation tops with reference picks.
 

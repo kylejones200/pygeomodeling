@@ -55,7 +55,7 @@ class UnifiedSPE9Toolkit:
     """
 
     def __init__(
-        self, data_path: Optional[Union[str, Path]] = None, backend: str = "sklearn"
+        self, data_path: str | Path | None = None, backend: str = "sklearn"
     ) -> None:
         """Initialize the unified toolkit.
 
@@ -84,28 +84,28 @@ class UnifiedSPE9Toolkit:
         self.data_path = default_path
         self.backend = backend
 
-        self.data: Optional[Dict[str, Any]] = None
-        self.X_grid: Optional[np.ndarray] = None
-        self.y_grid: Optional[np.ndarray] = None
-        self.feature_names: Optional[List[str]] = None
-        self.permx_3d: Optional[np.ndarray] = None
-        self.dimensions: Optional[Tuple[int, int, int]] = None
+        self.data: dict[str, Any] | None = None
+        self.X_grid: np.ndarray | None = None
+        self.y_grid: np.ndarray | None = None
+        self.feature_names: list[str] | None = None
+        self.permx_3d: np.ndarray | None = None
+        self.dimensions: tuple[int, int, int] | None = None
 
         # Training data
-        self.X_train: Optional[np.ndarray] = None
-        self.X_test: Optional[np.ndarray] = None
-        self.y_train: Optional[np.ndarray] = None
-        self.y_test: Optional[np.ndarray] = None
-        self.valid_mask: Optional[np.ndarray] = None
+        self.X_train: np.ndarray | None = None
+        self.X_test: np.ndarray | None = None
+        self.y_train: np.ndarray | None = None
+        self.y_test: np.ndarray | None = None
+        self.valid_mask: np.ndarray | None = None
 
         # Models and results
-        self.models: Dict[str, Any] = {}
-        self.scalers: Dict[str, StandardScaler] = {}
-        self.results: Dict[str, Dict[str, Any]] = {}
+        self.models: dict[str, Any] = {}
+        self.scalers: dict[str, StandardScaler] = {}
+        self.results: dict[str, dict[str, Any]] = {}
 
         print(f"Unified SPE9 Toolkit initialized with {backend} backend")
 
-    def load_data(self) -> Dict[str, Any]:
+    def load_data(self) -> dict[str, Any]:
         """Load SPE9 dataset."""
         if not self.data_path.exists():
             raise FileNotFoundError(f"SPE9 data file not found: {self.data_path}")
@@ -125,7 +125,7 @@ class UnifiedSPE9Toolkit:
 
     def prepare_features(
         self, *, add_geological_features: bool = False
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    ) -> tuple[np.ndarray, np.ndarray]:
         """Prepare coordinate and geological features."""
         if self.data is None:
             raise ValueError("Load data first using load_data()")
@@ -179,11 +179,11 @@ class UnifiedSPE9Toolkit:
         self,
         *,
         test_size: float = 0.2,
-        train_size: Optional[int] = None,
+        train_size: int | None = None,
         min_perm: float = 1.0,
         random_state: int = 42,
         log_transform: bool = False,
-    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """Create training and test sets."""
         if self.X_grid is None:
             raise ValueError("Prepare features first using prepare_features()")
@@ -221,7 +221,7 @@ class UnifiedSPE9Toolkit:
 
     def setup_scalers(
         self, *, scaler_type: str = "standard"
-    ) -> Tuple[StandardScaler, StandardScaler]:
+    ) -> tuple[StandardScaler, StandardScaler]:
         """Setup and fit data scalers."""
         if self.X_train is None:
             raise ValueError("Create train/test split first")
@@ -291,7 +291,7 @@ class UnifiedSPE9Toolkit:
 
         return model
 
-    def create_gpytorch_model(self, **kwargs) -> Tuple[Any, Any]:
+    def create_gpytorch_model(self, **kwargs) -> tuple[Any, Any]:
         """Create GPyTorch model and likelihood."""
         if self.backend != "gpytorch":
             raise ValueError("GPyTorch models require 'gpytorch' backend")
@@ -337,7 +337,7 @@ class UnifiedSPE9Toolkit:
         *,
         n_iter: int = 100,
         lr: float = 0.1,
-    ) -> Tuple[Any, Any]:
+    ) -> tuple[Any, Any]:
         """Train GPyTorch model."""
         if not GPYTORCH_AVAILABLE:
             raise ValueError("GPyTorch is not available")
@@ -369,7 +369,7 @@ class UnifiedSPE9Toolkit:
 
         return model, likelihood
 
-    def evaluate_model(self, model_name: str) -> Dict[str, Any]:
+    def evaluate_model(self, model_name: str) -> dict[str, Any]:
         """Evaluate a trained model."""
         if model_name not in self.models:
             raise ValueError(f"Model {model_name} not found. Train it first.")
@@ -427,7 +427,7 @@ class UnifiedSPE9Toolkit:
 
         return results
 
-    def save_model(self, model_name: str, output_dir: Optional[Path] = None) -> None:
+    def save_model(self, model_name: str, output_dir: Path | None = None) -> None:
         """Save trained model and scalers."""
         if output_dir is None:
             output_dir = Path.cwd()
@@ -462,8 +462,8 @@ class UnifiedSPE9Toolkit:
         self,
         model_name: str,
         *,
-        z_slice: Optional[int] = None,
-        figsize: Tuple[int, int] = (12, 10),
+        z_slice: int | None = None,
+        figsize: tuple[int, int] = (12, 10),
     ) -> None:
         """Create visualizations for a model."""
         if model_name not in self.results:

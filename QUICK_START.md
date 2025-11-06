@@ -125,7 +125,7 @@ print(f"CV Score: {results['test_score'].mean():.4f}")
 - **Tutorials**: [examples/notebooks/](examples/notebooks/)
 - **Examples**: [examples/](examples/)
 - **Issues**: [GitHub Issues](https://github.com/kylejones200/pygeomodeling/issues)
-- **Email**: kyletjones@gmail.com
+- **Email**: <kyletjones@gmail.com>
 
 ## What's Next?
 

@@ -10,9 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 #### Well Log Automation Suite (~3,500 lines)
+
 Complete implementation of automated well log interpretation workflow with human-in-the-loop refinement
 
 **well_log_processor.py** - Advanced data preparation pipeline
+
 - **Automatic curve type detection**: Pattern matching on statistics and metadata for 8+ log types
 - **Multi-vendor standardization**: 50+ curve name variations mapped to standard mnemonics
 - **Depth alignment**: Uniform spacing with auto-detection or manual specification
@@ -24,6 +26,7 @@ Complete implementation of automated well log interpretation workflow with human
 - `process_multiple_wells()`: Batch processing across wells
 
 **log_features.py** - Multi-well feature engineering for ML
+
 - **Curve derivatives**: Gradient or Savitzky-Golay filtered rate of change for boundary detection
 - **Cross-curve ratios**: Vsh from GR, porosity from density, resistivity ratios
 - **Rolling statistics**: Mean/std/min/max/median at 5, 10, 20-sample windows
@@ -33,6 +36,7 @@ Complete implementation of automated well log interpretation workflow with human
 - `prepare_ml_dataset()`: Multi-well dataset preparation with train/test split
 
 **formation_tops.py** - Boundary detection and formation identification
+
 - **Signal processing**: Composite boundary scores from gradient + variance changes
 - **Peak detection**: scipy-based with minimum formation thickness constraints
 - **ML classification**: Random Forest to distinguish true boundaries from noise
@@ -43,6 +47,7 @@ Complete implementation of automated well log interpretation workflow with human
 - Training on labeled wells for supervised boundary classification
 
 **Enhanced facies.py** - Semi-supervised learning capabilities
+
 - **`cluster_unlabeled_data()`**: KMeans/DBSCAN for exploration (unlabeled wells)
 - **`active_learning_query()`**: Identify most informative samples for labeling
   - Uncertainty sampling (lowest max probability)
@@ -56,6 +61,7 @@ Complete implementation of automated well log interpretation workflow with human
   - Fine-tune with sample weighting (target 1.0, source 0.3)
 
 **confidence_scoring.py** - Uncertainty quantification and review triage
+
 - **Multiple confidence metrics**: Max probability, margin, entropy, composite
 - **Per-prediction scoring**: `ConfidenceScore` with metadata
 - **Well-level reports**: `WellConfidenceReport` with aggregate statistics
@@ -67,6 +73,7 @@ Complete implementation of automated well log interpretation workflow with human
 - `export_review_list()`: CSV export for expert QC
 
 **integration_exports.py** - Industry software compatibility
+
 - **LASExporter**: Add interpreted curves to original LAS files
 - **FormationTopExporter**: CSV, Petrel, ASCII formats
 - **FaciesLogExporter**: Facies logs with confidence scores
@@ -76,6 +83,7 @@ Complete implementation of automated well log interpretation workflow with human
 - Bidirectional sync workflow support for Petrel, Techlog, IP
 
 **workflow_manager.py** - Human-in-the-loop iterative refinement
+
 - **Iteration tracking**: Version control for models and predictions
 - **Correction database**: All expert edits with metadata (expert ID, date, notes)
 - **Performance monitoring**: Track accuracy improvement over iterations
@@ -86,6 +94,7 @@ Complete implementation of automated well log interpretation workflow with human
 - Complete workflow: Start → Predict → Review → Retrain → Iterate
 
 #### Documentation
+
 - `WELL_LOG_AUTOMATION_IMPLEMENTATION.md` - Complete implementation guide
   - 7 modules overview with ~3,500 lines
   - End-to-end workflow examples
@@ -95,11 +104,13 @@ Complete implementation of automated well log interpretation workflow with human
 - Updated `__init__.py` to export 35+ new classes and functions
 
 ### Changed
+
 - Enhanced `__init__.py`: Added imports for all well log automation modules
 - Updated `__all__` list with 35 new exports
 - Facies module: Added 4 new methods for semi-supervised/transfer learning
 
 ### Key Metrics
+
 - **Processing speed**: <10 seconds per well (full pipeline)
 - **Automation level**: 80-85% with confidence thresholds
 - **Accuracy improvement**: +5-15% with semi-supervised learning
@@ -107,6 +118,7 @@ Complete implementation of automated well log interpretation workflow with human
 - **Time savings**: 3 days → 6 hours per well (5x faster)
 
 ### Integration
+
 - Compatible with Schlumberger Petrel, Halliburton DecisionSpace
 - Emerson Geolog/IP, Baker Hughes JewelSuite
 - Bidirectional sync: Export → Review in software → Import corrections → Retrain
@@ -116,6 +128,7 @@ Complete implementation of automated well log interpretation workflow with human
 ### Added
 
 #### Variogram Analysis Module
+
 - **Experimental variogram computation** with automatic lag binning and pair counting
 - **Model fitting** for Spherical, Exponential, Gaussian, and Linear variogram models
 - **Directional variograms** for anisotropy detection with angular tolerance
@@ -127,6 +140,7 @@ Complete implementation of automated well log interpretation workflow with human
 - **Compass rose** for directional variogram plots
 
 #### Documentation
+
 - `docs/business_case.md` - Comprehensive ROI analysis and industry context
 - `docs/technical_guide.md` - Deep dive into GPs, Kriging, and implementation
 - `ROADMAP.md` - Phased development plan for future features
@@ -134,16 +148,18 @@ Complete implementation of automated well log interpretation workflow with human
 - `RELEASE_NOTES_v0.2.1.md` - Detailed release documentation
 
 ### Changed
+
 - Repository cleanup - removed temporary deployment files
 - Added proper CHANGELOG.md for version tracking
 - Updated README.md with variogram analysis feature
-- Enhanced __init__.py to export variogram functions
+- Enhanced **init**.py to export variogram functions
 
 ## [0.2.0] - 2025-11-05
 
 ### Added
 
 #### Core Features
+
 - **Error Handling**: Custom exception classes with descriptive messages and suggestions
   - `PyGeoModelingError` base class and 10+ specific exception types
   - Input validation throughout codebase
@@ -166,12 +182,14 @@ Complete implementation of automated well log interpretation workflow with human
   - 3-4x speedup on multi-core systems
 
 #### CI/CD & Tooling
+
 - GitHub Actions workflow for multi-OS/Python testing
 - Pre-commit hooks for code quality enforcement
 - Automated development setup script (`setup_dev.sh`)
 - Build and publish automation scripts
 
 #### Documentation
+
 - `CONTRIBUTING.md` - Comprehensive contribution guidelines
 - `QUICK_START.md` - 5-minute quick start guide
 - `ADVANCED_FEATURES.md` - Complete feature documentation
@@ -181,14 +199,17 @@ Complete implementation of automated well log interpretation workflow with human
 - API documentation for all new modules
 
 #### Sample Data
+
 - `data/sample_small.grdecl` - Small 5×5×3 sample grid for testing
 - Data documentation and usage examples
 
 #### Examples
+
 - `examples/advanced_workflow.py` - Complete workflow demonstration
 - Interactive notebooks with visualizations
 
 ### Changed
+
 - Updated `grdecl_parser.py` with comprehensive input validation
 - Enhanced `__init__.py` to export new modules
 - Improved error messages throughout codebase
@@ -196,26 +217,32 @@ Complete implementation of automated well log interpretation workflow with human
 - Version bump from 0.1.2 to 0.2.0
 
 ### Performance
+
 - 3.75x speedup for parallel model training (8 cores)
 - 3.6x speedup for parallel cross-validation (8 cores)
 - 3.1x speedup for batch predictions (8 cores)
 
 ### Deprecated
+
 - None
 
 ### Removed
+
 - None
 
 ### Fixed
+
 - None
 
 ### Security
+
 - Added bandit security scanning in pre-commit hooks
 - Added security checks in CI/CD workflow
 
 ## [0.1.2] - Previous Release
 
 ### Added
+
 - Initial public release
 - GRDECL parser for Eclipse files
 - Unified toolkit for sklearn and GPyTorch

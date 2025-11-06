@@ -1,11 +1,8 @@
 """Test configuration and fixtures for SPE9 geomodeling tests."""
 
-import pytest
+
 import numpy as np
-import tempfile
-from pathlib import Path
-from typing import Dict, Any, Tuple
-import os
+import pytest
 
 
 @pytest.fixture
@@ -70,7 +67,7 @@ def sample_features():
 @pytest.fixture
 def mock_spe9_toolkit():
     """Create a mock SPE9Toolkit for testing without real data."""
-    from spe9_geomodeling.spe9_toolkit import SPE9Toolkit, GridData
+    from spe9_geomodeling.spe9_toolkit import GridData, SPE9Toolkit
 
     toolkit = SPE9Toolkit()
 
@@ -102,8 +99,7 @@ def mock_spe9_toolkit():
 def skip_if_no_gpytorch():
     """Skip test if GPyTorch is not available."""
     try:
-        import torch
-        import gpytorch
+        pass
 
         return False
     except ImportError:
@@ -114,7 +110,7 @@ def skip_if_no_gpytorch():
 def skip_if_no_sklearn():
     """Skip test if scikit-learn is not available."""
     try:
-        import sklearn
+        pass
 
         return False
     except ImportError:

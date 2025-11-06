@@ -174,7 +174,7 @@ GPModel = SPE9GPModel
 def create_gp_model(
     train_x: torch.Tensor,
     train_y: torch.Tensor,
-    likelihood: Optional[gpytorch.likelihoods.Likelihood] = None,
+    likelihood: gpytorch.likelihoods.Likelihood | None = None,
     *,
     model_type: str = "standard",
     **kwargs,

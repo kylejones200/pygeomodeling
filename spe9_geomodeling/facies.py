@@ -91,7 +91,7 @@ class FaciesClassifier:
     def __init__(
         self,
         algorithm: str = "svm",
-        feature_names: Optional[List[str]] = None,
+        feature_names: Optional[list[str]] = None,
         random_state: int = 42,
     ):
         """
@@ -197,7 +197,7 @@ class FaciesClassifier:
         self,
         X: Union[pd.DataFrame, np.ndarray],
         return_proba: bool = False,
-    ) -> Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]:
+    ) -> Union[np.ndarray, tuple[np.ndarray, np.ndarray]]:
         """
         Predict facies labels.
 
@@ -307,7 +307,7 @@ class FaciesClassifier:
         X: Union[pd.DataFrame, np.ndarray],
         y: Union[pd.Series, np.ndarray],
         cv: int = 5,
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         """
         Perform cross-validation.
 
@@ -333,9 +333,9 @@ class FaciesClassifier:
         self,
         X: Union[pd.DataFrame, np.ndarray],
         y: Union[pd.Series, np.ndarray],
-        param_grid: Optional[Dict] = None,
+        param_grid: Optional[dict] = None,
         cv: int = 5,
-    ) -> Dict:
+    ) -> dict:
         """
         Grid search for optimal hyperparameters.
 
@@ -389,7 +389,7 @@ class FaciesClassifier:
         X_unlabeled: Union[pd.DataFrame, np.ndarray],
         n_clusters: int = 9,
         method: str = "kmeans",
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    ) -> tuple[np.ndarray, np.ndarray]:
         """
         Cluster unlabeled well data to find natural groupings.
 
@@ -666,9 +666,9 @@ def load_facies_data(filepath: str) -> pd.DataFrame:
 
 def prepare_facies_features(
     data: pd.DataFrame,
-    feature_names: Optional[List[str]] = None,
+    feature_names: Optional[list[str]] = None,
     test_well: Optional[str] = None,
-) -> Tuple[pd.DataFrame, pd.Series, Optional[pd.DataFrame], Optional[pd.Series]]:
+) -> tuple[pd.DataFrame, pd.Series, Optional[pd.DataFrame], Optional[pd.Series]]:
     """
     Prepare features for facies classification.
 

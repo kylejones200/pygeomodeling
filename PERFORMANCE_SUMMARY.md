@@ -2,15 +2,16 @@
 
 ## ✅ Branch Created: `feature/numba-optimization`
 
-**Status**: Ready for testing and merge  
-**Commit**: `8f30e4a`  
-**PR**: https://github.com/kylejones200/pygeomodeling/pull/new/feature/numba-optimization
+**Status**: Ready for testing and merge
+**Commit**: `8f30e4a`
+**PR**: <https://github.com/kylejones200/pygeomodeling/pull/new/feature/numba-optimization>
 
 ---
 
 ## 🎯 Optimizations Implemented
 
 ### **1. Variogram Computation** (`variogram.py`)
+
 ```python
 @njit(parallel=True, cache=True, fastmath=True)
 def _compute_variogram_fast(coordinates, values, lag_bins, tolerance):
@@ -18,6 +19,7 @@ def _compute_variogram_fast(coordinates, values, lag_bins, tolerance):
 ```
 
 **What Changed:**
+
 - Replaced `scipy.pdist` with Numba parallel loops
 - Eliminated temporary distance matrices
 - Automatic activation for datasets >100 points
@@ -33,6 +35,7 @@ def _compute_variogram_fast(coordinates, values, lag_bins, tolerance):
 ---
 
 ### **2. Kriging Predictions** (`kriging.py`)
+
 ```python
 @njit(cache=True, fastmath=True)
 def _compute_distances_fast(point, coordinates):
@@ -40,6 +43,7 @@ def _compute_distances_fast(point, coordinates):
 ```
 
 **What Changed:**
+
 - Replaced `scipy.spatial.distance.cdist` for single-point queries
 - Optimized for repeated distance calculations
 - Zero overhead for point-by-point kriging
@@ -54,6 +58,7 @@ def _compute_distances_fast(point, coordinates):
 ---
 
 ### **3. Spatial Features** (`log_features.py`)
+
 ```python
 @njit(cache=True, fastmath=True)
 def _compute_weighted_average_fast(offset_array, weights, null_value):
@@ -61,6 +66,7 @@ def _compute_weighted_average_fast(offset_array, weights, null_value):
 ```
 
 **What Changed:**
+
 - Replaced Python loops with Numba-compiled loops
 - Single-pass computation (mean + std together)
 - Critical for multi-well feature engineering
@@ -76,7 +82,8 @@ def _compute_weighted_average_fast(offset_array, weights, null_value):
 
 ## 📦 Changes Made
 
-### Files Modified:
+### Files Modified
+
 1. **pyproject.toml**
    - Moved `numba>=0.58.0` from optional to core dependency
    - Updated version to `0.3.0`
@@ -106,14 +113,16 @@ def _compute_weighted_average_fast(offset_array, weights, null_value):
 
 ## 🚀 How to Test
 
-### 1. Switch to Branch:
+### 1. Switch to Branch
+
 ```bash
 git fetch origin
 git checkout feature/numba-optimization
 pip install -e .
 ```
 
-### 2. Verify Numba is Active:
+### 2. Verify Numba is Active
+
 ```python
 from spe9_geomodeling import variogram, kriging, log_features
 
@@ -122,13 +131,15 @@ print(f"Kriging Numba: {kriging.NUMBA_AVAILABLE}")      # Should be True
 print(f"Features Numba: {log_features.NUMBA_AVAILABLE}") # Should be True
 ```
 
-### 3. Run Existing Tests:
+### 3. Run Existing Tests
+
 ```bash
 pytest tests/ -v
 # All tests should pass with identical results, just faster
 ```
 
-### 4. Benchmark (optional):
+### 4. Benchmark (optional)
+
 ```python
 import time
 import numpy as np
@@ -151,6 +162,7 @@ print(f"Variogram computed in {time.time() - start:.3f}s")
 ## ✨ Key Features
 
 ### **Zero Breaking Changes**
+
 ```python
 # Existing code works identically - no changes needed!
 from spe9_geomodeling import OrdinaryKriging, compute_experimental_variogram
@@ -161,16 +173,19 @@ preds, var = kriging.predict(targets)  # Now 10x faster
 ```
 
 ### **Graceful Fallback**
+
 - If Numba unavailable → falls back to NumPy/SciPy
 - Small datasets → uses scipy (already optimized)
 - Large datasets → uses Numba (massive speedup)
 
 ### **Compilation Caching**
+
 - First run: ~2 seconds compilation (one-time cost)
 - Subsequent runs: Instant (uses cached compilation)
 - Cache persists across Python sessions
 
 ### **Memory Efficiency**
+
 - Reduced memory usage (2-5x less)
 - No temporary arrays
 - Better cache locality
@@ -182,12 +197,14 @@ preds, var = kriging.predict(targets)  # Now 10x faster
 ### **Time Savings per Workflow:**
 
 **Before Optimization:**
+
 - Variogram analysis (1000 points): 3.2 seconds
 - Kriging interpolation (500×500): 28 seconds
 - Multi-well features (10 wells): 45 seconds
 - **Total**: ~76 seconds per workflow
 
 **After Optimization:**
+
 - Variogram analysis (1000 points): 0.15 seconds
 - Kriging interpolation (500×500): 3.1 seconds
 - Multi-well features (10 wells): 1.8 seconds
@@ -198,11 +215,13 @@ preds, var = kriging.predict(targets)  # Now 10x faster
 ### **Large-Scale Projects:**
 
 **100-well field study:**
+
 - Before: 2 hours per iteration
 - After: 8 minutes per iteration
 - **Saves**: 1 hour 52 minutes per iteration
 
 **1000-well basin analysis:**
+
 - Before: 21 hours per run
 - After: 1.4 hours per run
 - **Saves**: 19.6 hours per run
@@ -225,6 +244,7 @@ preds, var = kriging.predict(targets)  # Now 10x faster
 ## 🎬 Next Steps
 
 ### **Option 1: Merge to Main** (Recommended)
+
 ```bash
 git checkout main
 git merge feature/numba-optimization
@@ -232,11 +252,13 @@ git push origin main
 ```
 
 ### **Option 2: Create Pull Request**
+
 - Review benchmarks in CI/CD
 - Test on multiple platforms
 - Merge after approval
 
 ### **Option 3: Extended Testing**
+
 ```bash
 # Test on your actual data
 python your_workflow.py --profile
@@ -263,12 +285,14 @@ python your_workflow.py --profile
 
 ## 🔮 Future Enhancements
 
-### **Phase 2** (if needed):
+### **Phase 2** (if needed)
+
 1. **Rust bindings** (PyO3) for 2-5x additional speedup
 2. **GPU acceleration** (CuPy) for massive datasets
 3. **Sparse matrix ops** for large-scale kriging
 
 ### **Why not now?**
+
 - Current speedup (10-50x) sufficient for 95% of use cases
 - Adds complexity without proportional benefit
 - Can revisit if profiling shows bottlenecks
@@ -284,7 +308,7 @@ python your_workflow.py --profile
 
 ---
 
-**Status**: ✅ **Production-Ready**  
-**Recommendation**: Test on real data, then merge to main  
-**Risk**: Low (graceful fallback, zero breaking changes)  
+**Status**: ✅ **Production-Ready**
+**Recommendation**: Test on real data, then merge to main
+**Risk**: Low (graceful fallback, zero breaking changes)
 **Benefit**: High (10-50x speedup on critical paths)

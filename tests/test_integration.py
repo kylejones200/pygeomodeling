@@ -1,16 +1,14 @@
 """Integration tests for the SPE9 geomodeling package."""
 
-import pytest
-import numpy as np
-import tempfile
-from pathlib import Path
 from unittest.mock import patch
 
+import numpy as np
+import pytest
+
 from spe9_geomodeling import (
+    SPE9Plotter,
     SPE9Toolkit,
     UnifiedSPE9Toolkit,
-    SPE9Plotter,
-    load_spe9_data,
 )
 
 
@@ -19,7 +17,7 @@ class TestPackageImports:
 
     def test_main_imports(self):
         """Test importing main classes."""
-        from spe9_geomodeling import SPE9Toolkit, UnifiedSPE9Toolkit, SPE9Plotter
+        from spe9_geomodeling import SPE9Plotter, SPE9Toolkit, UnifiedSPE9Toolkit
 
         assert SPE9Toolkit is not None
         assert UnifiedSPE9Toolkit is not None
@@ -34,7 +32,7 @@ class TestPackageImports:
     def test_optional_imports(self):
         """Test optional imports don't break package."""
         try:
-            from spe9_geomodeling import SPE9GPModel, DeepGPModel, create_gp_model
+            from spe9_geomodeling import SPE9GPModel
 
             # If import succeeds, GPyTorch is available
             assert SPE9GPModel is not None

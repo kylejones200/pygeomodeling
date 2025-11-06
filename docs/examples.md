@@ -5,6 +5,7 @@ This guide provides practical examples and step-by-step tutorials for using the 
 ## 🚀 Basic Examples
 
 ### Example 1: Simple GP Modeling
+
 ```python
 from spe9_geomodeling import UnifiedSPE9Toolkit, load_spe9_data
 
@@ -26,6 +27,7 @@ print(f"RBF GP R² Score: {results.r2:.4f}")
 ```
 
 ### Example 2: Model Comparison
+
 ```python
 from spe9_geomodeling import UnifiedSPE9Toolkit
 import matplotlib.pyplot as plt
@@ -63,6 +65,7 @@ plt.show()
 ```
 
 ### Example 3: Deep GP Experiment
+
 ```python
 from spe9_geomodeling import DeepGPExperiment
 
@@ -91,29 +94,30 @@ print(f"\nBest performing model: {best_model}")
 ## 📊 Advanced Examples
 
 ### Example 4: Custom Kernel Development
+
 ```python
 from sklearn.gaussian_process.kernels import Kernel
 import numpy as np
 
 class CustomSpatialKernel(Kernel):
     """Custom kernel for geological data with anisotropy."""
-    
+
     def __init__(self, length_scale_x=1.0, length_scale_y=1.0, length_scale_z=1.0):
         self.length_scale_x = length_scale_x
         self.length_scale_y = length_scale_y
         self.length_scale_z = length_scale_z
-    
+
     def __call__(self, X, Y=None, eval_gradient=False):
         if Y is None:
             Y = X
-        
+
         # Anisotropic distance calculation
         X_scaled = X / np.array([self.length_scale_x, self.length_scale_y, self.length_scale_z])
         Y_scaled = Y / np.array([self.length_scale_x, self.length_scale_y, self.length_scale_z])
-        
+
         dists = np.sum((X_scaled[:, None] - Y_scaled[None, :]) ** 2, axis=2)
         K = np.exp(-0.5 * dists)
-        
+
         if eval_gradient:
             # Gradient computation...
             return K, np.zeros((X.shape[0], Y.shape[0], 3))
@@ -128,6 +132,7 @@ model.fit(X_train, y_train)
 ```
 
 ### Example 5: Uncertainty Quantification
+
 ```python
 from spe9_geomodeling import UnifiedSPE9Toolkit
 import numpy as np
@@ -171,6 +176,7 @@ plt.show()
 ```
 
 ### Example 6: Hyperparameter Optimization
+
 ```python
 from spe9_geomodeling import UnifiedSPE9Toolkit
 from sklearn.model_selection import GridSearchCV
@@ -195,9 +201,9 @@ base_model = toolkit.create_sklearn_model('gpr', kernel_type='combined')
 
 # Grid search
 grid_search = GridSearchCV(
-    base_model, 
-    param_grid, 
-    cv=5, 
+    base_model,
+    param_grid,
+    cv=5,
     scoring='r2',
     n_jobs=-1,
     verbose=1
@@ -217,6 +223,7 @@ print(f"Test set R² score: {test_score:.4f}")
 ## 🔬 Research Examples
 
 ### Example 7: Spatial Cross-Validation
+
 ```python
 from sklearn.model_selection import GroupKFold
 import numpy as np
@@ -245,7 +252,7 @@ spatial_scores = []
 for train_idx, val_idx in group_kfold.split(X_train, y_train, groups=spatial_groups):
     X_fold_train, X_fold_val = X_train[train_idx], X_train[val_idx]
     y_fold_train, y_fold_val = y_train[train_idx], y_train[val_idx]
-    
+
     model.fit(X_fold_train, y_fold_train)
     score = model.score(X_fold_val, y_fold_val)
     spatial_scores.append(score)
@@ -255,23 +262,24 @@ print(f"Mean spatial CV score: {np.mean(spatial_scores):.4f} ± {np.std(spatial_
 ```
 
 ### Example 8: Multi-Property Modeling
+
 ```python
 # Simulate multi-property data
 def create_multi_property_data(X):
     """Create correlated properties (PERMX, PORO, NTG)."""
     np.random.seed(42)
-    
+
     # Base permeability
     permx = np.exp(np.random.normal(5, 2, len(X)))
-    
+
     # Correlated porosity
     poro = 0.3 * np.log(permx) + np.random.normal(0, 0.05, len(X))
     poro = np.clip(poro, 0.05, 0.35)
-    
+
     # Net-to-gross ratio
     ntg = 0.8 + 0.1 * np.log(permx) / np.max(np.log(permx)) + np.random.normal(0, 0.1, len(X))
     ntg = np.clip(ntg, 0.3, 1.0)
-    
+
     return {'PERMX': permx, 'PORO': poro, 'NTG': ntg}
 
 # Multi-property modeling
@@ -288,16 +296,16 @@ results = {}
 
 for prop_name, prop_values in properties.items():
     print(f"\nTraining model for {prop_name}...")
-    
+
     model = toolkit.create_sklearn_model('gpr', kernel_type='combined')
     model.fit(X_train, prop_values)
     models[prop_name] = model
-    
+
     # Evaluate on test set
     test_properties = create_multi_property_data(X_test)
     test_score = model.score(X_test, test_properties[prop_name])
     results[prop_name] = test_score
-    
+
     print(f"{prop_name} R² score: {test_score:.4f}")
 
 # Cross-property correlation analysis
@@ -310,7 +318,7 @@ for i, (prop1, prop2) in enumerate([(0,1), (0,2), (1,2)]):
     axes[i].scatter(properties[prop_names[prop1]], properties[prop_names[prop2]], alpha=0.6)
     axes[i].set_xlabel(prop_names[prop1])
     axes[i].set_ylabel(prop_names[prop2])
-    
+
     # Calculate correlation
     corr = np.corrcoef(properties[prop_names[prop1]], properties[prop_names[prop2]])[0,1]
     axes[i].set_title(f'Correlation: {corr:.3f}')
@@ -322,6 +330,7 @@ plt.show()
 ## 🎨 Visualization Examples
 
 ### Example 9: Advanced Plotting
+
 ```python
 from spe9_geomodeling import SPE9Plotter
 import matplotlib.pyplot as plt
@@ -355,7 +364,7 @@ for i, z_idx in enumerate(slice_indices):
     im1 = axes[0, i].imshow(original_data[:, :, z_idx], cmap='viridis', origin='lower')
     axes[0, i].set_title(f'Original PERMX - Z={z_idx}')
     plt.colorbar(im1, ax=axes[0, i])
-    
+
     # Predicted
     pred_data = predictions.reshape(data['grid_shape'])
     im2 = axes[1, i].imshow(pred_data[:, :, z_idx], cmap='viridis', origin='lower')
@@ -367,6 +376,7 @@ plt.show()
 ```
 
 ### Example 10: Interactive Visualization
+
 ```python
 # Requires: pip install plotly
 import plotly.graph_objects as go
@@ -375,14 +385,14 @@ from plotly.subplots import make_subplots
 
 def create_interactive_3d_plot(data, predictions):
     """Create interactive 3D visualization."""
-    
+
     # Sample points for visualization (full grid would be too dense)
     n_points = 1000
     indices = np.random.choice(len(data), n_points, replace=False)
-    
+
     x, y, z = data[indices, 0], data[indices, 1], data[indices, 2]
     values = predictions[indices]
-    
+
     fig = go.Figure(data=go.Scatter3d(
         x=x, y=y, z=z,
         mode='markers',
@@ -396,7 +406,7 @@ def create_interactive_3d_plot(data, predictions):
         text=[f'PERMX: {v:.2f}' for v in values],
         hovertemplate='X: %{x}<br>Y: %{y}<br>Z: %{z}<br>%{text}<extra></extra>'
     ))
-    
+
     fig.update_layout(
         title='3D Permeability Distribution',
         scene=dict(
@@ -407,7 +417,7 @@ def create_interactive_3d_plot(data, predictions):
         width=800,
         height=600
     )
-    
+
     return fig
 
 # Create interactive plot
@@ -419,6 +429,7 @@ if 'predictions' in locals():
 ## 🔧 Integration Examples
 
 ### Example 11: Custom Pipeline
+
 ```python
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
@@ -427,13 +438,13 @@ from sklearn.decomposition import PCA
 # Create custom preprocessing pipeline
 def create_geomodeling_pipeline():
     """Create a complete geomodeling pipeline."""
-    
+
     pipeline = Pipeline([
         ('scaler', StandardScaler()),
         ('pca', PCA(n_components=0.95)),  # Keep 95% of variance
         ('gpr', toolkit.create_sklearn_model('gpr', kernel_type='combined'))
     ])
-    
+
     return pipeline
 
 # Use pipeline
@@ -454,41 +465,42 @@ print(f"Explained variance ratio: {pipeline.named_steps['pca'].explained_varianc
 ```
 
 ### Example 12: Export and Visualization
+
 ```python
 from spe9_geomodeling import GRDECLParser
 
 # Complete workflow with export
 def complete_geomodeling_workflow(input_file, output_prefix):
     """Complete workflow from GRDECL input to results export."""
-    
+
     # Load data
     parser = GRDECLParser(input_file)
     data = parser.load_data()
-    
+
     # Set up toolkit
     toolkit = UnifiedSPE9Toolkit()
     toolkit.load_spe9_data(data)
-    
+
     # Train model
     X_train, X_test, y_train, y_test = toolkit.create_train_test_split()
     model = toolkit.create_sklearn_model('gpr', kernel_type='combined')
     toolkit.train_sklearn_model(model, 'final_model')
-    
+
     # Evaluate
     results = toolkit.evaluate_model('final_model', X_test, y_test)
     print(f"Model Performance: R² = {results.r2:.4f}, RMSE = {results.rmse:.2f}")
-    
+
     # Full grid prediction
     predictions = toolkit.predict_full_grid('final_model')
     uncertainties = toolkit.predict_uncertainty('final_model')
-    
+
     # Export results
     toolkit.export_to_grdecl(predictions, f"{output_prefix}_predictions.grdecl")
     toolkit.export_to_grdecl(uncertainties, f"{output_prefix}_uncertainty.grdecl")
-    
+
     # Create visualizations
     toolkit.plot_results('final_model', save_path=f"{output_prefix}_results.png")
-    
+
     return results, predictions, uncertainties
 
 # Run complete workflow
@@ -498,6 +510,7 @@ def complete_geomodeling_workflow(input_file, output_prefix):
 ## 💡 Tips and Best Practices
 
 ### Performance Tips
+
 ```python
 # For large datasets
 toolkit = UnifiedSPE9Toolkit()
@@ -517,6 +530,7 @@ else:
 ```
 
 ### Memory Management
+
 ```python
 import gc
 import torch
@@ -534,6 +548,7 @@ print(f"Memory usage: {psutil.virtual_memory().percent:.1f}%")
 ```
 
 ### Error Handling
+
 ```python
 from spe9_geomodeling import SPE9DataError, ModelTrainingError
 
@@ -541,21 +556,21 @@ try:
     toolkit = UnifiedSPE9Toolkit()
     data = load_spe9_data()
     toolkit.load_spe9_data(data)
-    
+
     # Training...
     model = toolkit.create_sklearn_model('gpr', kernel_type='combined')
     toolkit.train_sklearn_model(model, 'test_model')
-    
+
 except SPE9DataError as e:
     print(f"Data loading error: {e}")
     # Fallback to synthetic data
     toolkit.load_synthetic_data()
-    
+
 except ModelTrainingError as e:
     print(f"Training error: {e}")
     # Try simpler model
     model = toolkit.create_sklearn_model('gpr', kernel_type='rbf')
-    
+
 except Exception as e:
     print(f"Unexpected error: {e}")
     # Log error and continue with default settings
@@ -564,6 +579,7 @@ except Exception as e:
 ---
 
 **Next Steps:**
+
 - Explore [Deep GP Guide](deep_gp.md) for advanced modeling techniques
 - Check [API Reference](api.md) for complete function documentation
 - See [Model Comparison Guide](model_comparison.md) for choosing the right approach

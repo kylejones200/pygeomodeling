@@ -22,7 +22,7 @@ def plot_variogram(
     title: str = "Semi-Variogram",
     ax: Optional[Axes] = None,
     show_model_params: bool = True,
-) -> Tuple[Figure, Axes]:
+) -> tuple[Figure, Axes]:
     """Plot experimental variogram with optional fitted model.
 
     Args:
@@ -142,10 +142,10 @@ def plot_variogram(
 def plot_variogram_comparison(
     lags: np.ndarray,
     semi_variance: np.ndarray,
-    models: List[VariogramModel],
+    models: list[VariogramModel],
     n_pairs: Optional[np.ndarray] = None,
     title: str = "Variogram Model Comparison",
-) -> Tuple[Figure, Axes]:
+) -> tuple[Figure, Axes]:
     """Compare multiple variogram models.
 
     Args:
@@ -210,11 +210,11 @@ def plot_variogram_comparison(
 def plot_directional_variograms(
     coordinates: np.ndarray,
     values: np.ndarray,
-    directions: List[float] = [0, 45, 90, 135],
+    directions: list[float] = [0, 45, 90, 135],
     tolerance: float = 22.5,
     n_lags: int = 15,
     title: str = "Directional Variograms (Anisotropy Check)",
-) -> Tuple[Figure, Axes]:
+) -> tuple[Figure, Axes]:
     """Plot variograms in multiple directions to check for anisotropy.
 
     Args:
@@ -303,7 +303,7 @@ def plot_variogram_cloud(
     max_pairs: int = 5000,
     title: str = "Variogram Cloud",
     ax: Optional[Axes] = None,
-) -> Tuple[Figure, Axes]:
+) -> tuple[Figure, Axes]:
     """Plot variogram cloud (all pairwise semi-variances).
 
     Useful for identifying outliers before fitting.

@@ -7,9 +7,11 @@ This branch implements Numba JIT compilation for the **3 most critical performan
 ## Optimized Modules
 
 ### 1. **variogram.py** - Experimental Variogram Computation
+
 **Bottleneck**: O(n²) pairwise distance and semi-variance calculations
 
 **Optimization**:
+
 ```python
 @njit(parallel=True, cache=True, fastmath=True)
 def _compute_variogram_fast(coordinates, values, lag_bins, tolerance):
@@ -19,12 +21,14 @@ def _compute_variogram_fast(coordinates, values, lag_bins, tolerance):
 ```
 
 **Performance**:
+
 - Small datasets (<100 points): Uses scipy (already optimized)
 - Large datasets (>100 points): Uses Numba parallel loops
 - **Expected speedup**: 20-50x for 1000+ points
 - **Memory**: Reduced by avoiding temporary distance matrices
 
 **Usage**:
+
 ```python
 from spe9_geomodeling import compute_experimental_variogram
 
@@ -35,9 +39,11 @@ lags, semi_var, n_pairs = compute_experimental_variogram(coords, values)
 ---
 
 ### 2. **kriging.py** - Kriging Predictions
+
 **Bottleneck**: Repeated distance calculations for each target point
 
 **Optimization**:
+
 ```python
 @njit(cache=True, fastmath=True)
 def _compute_distances_fast(point, coordinates):
@@ -47,11 +53,13 @@ def _compute_distances_fast(point, coordinates):
 ```
 
 **Performance**:
+
 - **Expected speedup**: 5-10x for distance calculations
 - Scales linearly with number of prediction points
 - Critical for real-time kriging applications
 
 **Usage**:
+
 ```python
 from spe9_geomodeling import OrdinaryKriging
 
@@ -63,9 +71,11 @@ predictions, variance = kriging.predict(target_coords)  # Numba-accelerated
 ---
 
 ### 3. **log_features.py** - Spatial Feature Engineering
+
 **Bottleneck**: Inverse-distance weighted averaging over depth intervals
 
 **Optimization**:
+
 ```python
 @njit(cache=True, fastmath=True)
 def _compute_weighted_average_fast(offset_array, weights, null_value):
@@ -75,11 +85,13 @@ def _compute_weighted_average_fast(offset_array, weights, null_value):
 ```
 
 **Performance**:
+
 - **Expected speedup**: 10-30x for spatial features
 - Most impactful for multi-well feature engineering
 - Critical for well log automation workflows
 
 **Usage**:
+
 ```python
 from spe9_geomodeling import LogFeatureEngineer
 
@@ -100,6 +112,7 @@ pip install pygeomodeling
 ```
 
 Or from source:
+
 ```bash
 git checkout feature/numba-optimization
 pip install -e .
@@ -127,6 +140,7 @@ except ImportError:
 ## Benchmarks
 
 ### Variogram Computation
+
 | Points | Before (scipy) | After (Numba) | Speedup |
 |--------|---------------|---------------|---------|
 | 100    | 50 ms         | 50 ms         | 1x (scipy used) |
@@ -135,6 +149,7 @@ except ImportError:
 | 5000   | 80 s          | 1.8 s         | 44x |
 
 ### Kriging Predictions
+
 | Samples | Targets | Before | After | Speedup |
 |---------|---------|--------|-------|---------|
 | 100     | 100     | 1.2 s  | 0.2 s | 6x |
@@ -142,6 +157,7 @@ except ImportError:
 | 1000    | 1000    | 110 s  | 11 s  | 10x |
 
 ### Spatial Features
+
 | Wells | Depths | Before | After | Speedup |
 |-------|--------|--------|-------|---------|
 | 3     | 1000   | 2.1 s  | 0.15 s| 14x |
@@ -155,21 +171,25 @@ except ImportError:
 ### Numba Features Used
 
 **1. `@njit` (No-Python Mode)**
+
 - Compiles pure Python to machine code
 - Eliminates Python interpreter overhead
 - Type inference for optimal performance
 
 **2. `parallel=True`**
+
 - Automatic parallelization of loops
 - Uses all CPU cores with `prange()`
 - Thread-safe operations
 
 **3. `cache=True`**
+
 - Caches compiled functions
 - Eliminates compilation overhead on subsequent runs
 - Persistent across Python sessions
 
 **4. `fastmath=True`**
+
 - Relaxes IEEE floating point standards
 - Enables aggressive optimizations
 - Safe for geostatistical computations
@@ -211,12 +231,14 @@ except ImportError:
 
 ## Future Optimizations
 
-### Phase 2 (Optional):
+### Phase 2 (Optional)
+
 1. **Rust bindings** (PyO3) for 2-5x additional speedup
 2. **GPU acceleration** (CuPy) for massive datasets (10K+ points)
 3. **Sparse matrix optimizations** for large-scale kriging
 
 ### Why not now?
+
 - Numba provides 90% of potential speedup
 - Rust/GPU add significant complexity
 - Current performance sufficient for most use cases
@@ -229,11 +251,12 @@ All tests pass with Numba optimizations:
 
 ```bash
 pytest tests/test_variogram.py -v
-pytest tests/test_kriging.py -v  
+pytest tests/test_kriging.py -v
 pytest tests/test_log_features.py -v
 ```
 
 Expected behavior:
+
 - Results **numerically identical** to non-Numba versions
 - Only difference: faster execution time
 
@@ -288,7 +311,7 @@ print(f"Kriging: {time.time() - start:.3f}s")
 
 ## Questions?
 
-- **Issue tracker**: https://github.com/kylejones200/pygeomodeling/issues
+- **Issue tracker**: <https://github.com/kylejones200/pygeomodeling/issues>
 - **Benchmark scripts**: `examples/benchmarks/`
 - **Profiling**: See `examples/profiling/`
 

@@ -1,6 +1,6 @@
 # Release Notes: PyGeomodeling v0.2.1
 
-**Release Date**: November 5, 2025  
+**Release Date**: November 5, 2025
 **Type**: Minor Release (Feature Addition)
 
 ## 🎉 What's New
@@ -12,6 +12,7 @@ We've added comprehensive variogram analysis capabilities, completing the core g
 #### New Modules
 
 **1. `spe9_geomodeling/variogram.py` (~450 lines)**
+
 - Experimental variogram computation with automatic lag binning
 - Model fitting: Spherical, Exponential, Gaussian, and Linear models
 - Directional variograms for anisotropy detection
@@ -19,6 +20,7 @@ We've added comprehensive variogram analysis capabilities, completing the core g
 - Weighted fitting by number of pairs
 
 **2. `spe9_geomodeling/variogram_plot.py` (~250 lines)**
+
 - Professional variogram visualization with annotated parameters
 - Model comparison plots
 - Directional variogram plots with compass rose
@@ -26,6 +28,7 @@ We've added comprehensive variogram analysis capabilities, completing the core g
 - Publication-ready figures
 
 **3. Tutorial Notebook**
+
 - `examples/notebooks/03_variogram_analysis.ipynb`
 - Complete walkthrough with theory and practice
 - Step-by-step workflow
@@ -48,7 +51,7 @@ lags, semi_var, n_pairs = compute_experimental_variogram(
 
 # Fit spherical model
 model = fit_variogram_model(
-    lags, semi_var, 
+    lags, semi_var,
     model_type='spherical',
     weights=np.sqrt(n_pairs)
 )
@@ -65,6 +68,7 @@ lags_dir, sv_dir, _ = directional_variogram(
 ### Documentation Enhancements
 
 **1. Business Case Document** (`docs/business_case.md`)
+
 - Comprehensive ROI analysis
 - Industry context and challenges
 - Competitive advantages vs commercial software
@@ -72,6 +76,7 @@ lags_dir, sv_dir, _ = directional_variogram(
 - Success metrics and KPIs
 
 **2. Technical Guide** (`docs/technical_guide.md`)
+
 - Theoretical foundation of GPs and Kriging
 - Mathematical framework
 - Kernel selection guide
@@ -80,6 +85,7 @@ lags_dir, sv_dir, _ = directional_variogram(
 - Best practices and limitations
 
 **3. Development Roadmap** (`ROADMAP.md`)
+
 - Phased approach for future features
 - Community contribution priorities
 - Long-term vision for reservoir engineering
@@ -144,6 +150,7 @@ lags_dir, sv_dir, _ = directional_variogram(
 | **Linear** | γ(h) = C₀ + bh | No clear range |
 
 Where:
+
 - C₀ = nugget effect
 - C = partial sill
 - a = range parameter
@@ -159,6 +166,7 @@ Where:
 ### Integration
 
 Works seamlessly with existing PyGeomodeling features:
+
 - Use variogram range as GP kernel length scale
 - Validate spatial cross-validation assumptions
 - Guide hyperparameter tuning
@@ -219,6 +227,7 @@ This release directly addresses challenges highlighted in our Medium articles:
 **No breaking changes!** All existing code continues to work.
 
 **New imports available:**
+
 ```python
 from spe9_geomodeling import (
     # Variogram analysis
@@ -228,7 +237,7 @@ from spe9_geomodeling import (
     predict_variogram,
     directional_variogram,
     cross_validation_variogram,
-    
+
     # Visualization
     plot_variogram,
     plot_variogram_comparison,
@@ -238,6 +247,7 @@ from spe9_geomodeling import (
 ```
 
 **Enhanced workflows:**
+
 ```python
 # Before: Manual kernel selection
 model = GaussianProcessRegressor(kernel=RBF(length_scale=1.0))
@@ -259,6 +269,7 @@ model = GaussianProcessRegressor(
 ## 📦 Dependencies
 
 No new required dependencies. Optional dependencies remain:
+
 - `optuna` for hyperparameter tuning
 - `gpytorch` for advanced GP models
 - `torch` for deep learning features
@@ -268,6 +279,7 @@ No new required dependencies. Optional dependencies remain:
 ### v0.3.0 (Q1 2026) - Core Geostatistics
 
 Planned features:
+
 - Ordinary kriging implementation
 - Universal kriging
 - Co-kriging for multiple properties
@@ -279,6 +291,7 @@ See `ROADMAP.md` for complete development plan.
 ## 🙏 Acknowledgments
 
 This release was inspired by:
+
 - Industry best practices in geostatistics
 - SPE reservoir modeling standards
 - Community feedback and use cases
@@ -288,10 +301,10 @@ Special thanks to the geostatistics community for foundational work on variogram
 
 ## 📞 Support
 
-- **Documentation**: https://pygeomodeling.readthedocs.io/
-- **GitHub Issues**: https://github.com/kylejones200/pygeomodeling/issues
-- **Email**: kyletjones@gmail.com
-- **PyPI**: https://pypi.org/project/pygeomodeling/
+- **Documentation**: <https://pygeomodeling.readthedocs.io/>
+- **GitHub Issues**: <https://github.com/kylejones200/pygeomodeling/issues>
+- **Email**: <kyletjones@gmail.com>
+- **PyPI**: <https://pypi.org/project/pygeomodeling/>
 
 ## 📝 Full Changelog
 
@@ -300,11 +313,13 @@ See `CHANGELOG.md` for complete version history.
 ---
 
 **Install now:**
+
 ```bash
 pip install --upgrade pygeomodeling==0.2.1
 ```
 
 **Try the new features:**
+
 ```bash
 jupyter notebook examples/notebooks/03_variogram_analysis.ipynb
 ```

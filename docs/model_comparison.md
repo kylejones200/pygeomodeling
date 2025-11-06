@@ -27,6 +27,7 @@ Based on SPE9 reservoir dataset analysis (24×25×15 grid, 9000 cells):
 | Random Forest | 100 trees | 0.156 | 3.12 | 2.44 | 0.6s | Medium |
 
 **Key Findings:**
+
 - ✅ **Traditional GP with combined kernels performs best** for SPE9 spatial patterns
 - ⚡ **Kriging is fastest** but less accurate than GP methods
 - 🧠 **Deep GP shows promise** but requires more tuning for this dataset
@@ -37,49 +38,58 @@ Based on SPE9 reservoir dataset analysis (24×25×15 grid, 9000 cells):
 ### Traditional Gaussian Processes
 
 #### RBF Kernel
+
 ```python
 model = toolkit.create_sklearn_model('gpr', kernel_type='rbf')
 ```
 
 **Characteristics:**
+
 - **Smoothness**: Infinitely differentiable, very smooth interpolations
 - **Best for**: Continuous, smooth spatial phenomena
 - **Limitations**: May over-smooth sharp boundaries
 - **Hyperparameters**: Length scale, variance
 
 **When to use:**
+
 - Permeability fields with gradual transitions
 - Temperature or pressure distributions
 - Smooth geological properties
 
 #### Matérn Kernel
+
 ```python
 model = toolkit.create_sklearn_model('gpr', kernel_type='matern')
 ```
 
 **Characteristics:**
+
 - **Smoothness**: Controlled by ν parameter (1.5, 2.5, ∞)
 - **Best for**: Moderately rough spatial patterns
 - **Flexibility**: More flexible than RBF for irregular patterns
 - **Hyperparameters**: Length scale, variance, smoothness (ν)
 
 **When to use:**
+
 - Geological formations with moderate roughness
 - Porosity distributions
 - Natural phenomena with some irregularity
 
 #### Combined Kernel (RBF + Matérn)
+
 ```python
 model = toolkit.create_sklearn_model('gpr', kernel_type='combined')
 ```
 
 **Characteristics:**
+
 - **Multi-scale**: Captures both smooth and rough patterns
 - **Best performance**: Highest R² on SPE9 dataset
 - **Complexity**: More parameters to optimize
 - **Robustness**: Handles diverse spatial patterns
 
 **When to use:**
+
 - Complex reservoir properties
 - Multi-scale spatial phenomena
 - When unsure about spatial structure
@@ -87,38 +97,45 @@ model = toolkit.create_sklearn_model('gpr', kernel_type='combined')
 ### Deep Gaussian Processes
 
 #### Small Architecture (32-16)
+
 ```python
 model = toolkit.create_gpytorch_model('deep', hidden_dims=[32, 16])
 ```
 
 **Characteristics:**
+
 - **Feature learning**: Learns non-linear spatial features
 - **Moderate complexity**: Good balance of capacity and speed
 - **Uncertainty**: Maintains GP uncertainty quantification
 - **Training**: Requires more iterations than traditional GP
 
 **When to use:**
+
 - Non-linear spatial relationships
 - Complex geological structures
 - When traditional kernels are insufficient
 
 #### Medium Architecture (64-32)
+
 ```python
 model = toolkit.create_gpytorch_model('deep', hidden_dims=[64, 32])
 ```
 
 **Characteristics:**
+
 - **Higher capacity**: Can model more complex patterns
 - **Slower training**: Requires more computational resources
 - **Risk of overfitting**: May overfit on small datasets
 - **Better for large datasets**: Shines with more training data
 
 #### Large Architecture (128-64-32)
+
 ```python
 model = toolkit.create_gpytorch_model('deep', hidden_dims=[128, 64, 32])
 ```
 
 **Characteristics:**
+
 - **Maximum flexibility**: Highest model capacity
 - **Computational cost**: Significant memory and time requirements
 - **Data hungry**: Needs large datasets to perform well
@@ -127,18 +144,21 @@ model = toolkit.create_gpytorch_model('deep', hidden_dims=[128, 64, 32])
 ### Kriging Methods
 
 #### Ordinary Kriging
+
 ```python
 from pykrige.ok import OrdinaryKriging
 # Integrated through toolkit
 ```
 
 **Characteristics:**
+
 - **Classical approach**: Well-established geostatistical method
 - **Fast training**: Analytical solution, no iterative optimization
 - **Interpretable**: Clear statistical interpretation
 - **Limited flexibility**: Fixed covariance models
 
 **When to use:**
+
 - Quick baseline models
 - Well-understood spatial processes
 - When interpretability is crucial
@@ -173,9 +193,9 @@ def objective(trial):
     hidden_dim1 = trial.suggest_int('hidden_dim1', 16, 128)
     hidden_dim2 = trial.suggest_int('hidden_dim2', 8, 64)
     lr = trial.suggest_float('lr', 0.01, 0.3)
-    
+
     model = toolkit.create_gpytorch_model(
-        'deep', 
+        'deep',
         hidden_dims=[hidden_dim1, hidden_dim2]
     )
     # Training and evaluation code...
@@ -190,6 +210,7 @@ study.optimize(objective, n_trials=50)
 ### For Large Datasets (>10,000 points)
 
 #### Sparse GP Approximations
+
 ```python
 # Use inducing points for scalability
 model = toolkit.create_gpytorch_model(
@@ -200,6 +221,7 @@ model = toolkit.create_gpytorch_model(
 ```
 
 #### Batch Processing
+
 ```python
 # Process data in batches
 batch_size = 1000
@@ -212,6 +234,7 @@ for i in range(0, len(X_train), batch_size):
 ### For Small Datasets (<1,000 points)
 
 #### Data Augmentation
+
 ```python
 # Add synthetic training points
 from sklearn.gaussian_process import GaussianProcessRegressor
@@ -230,6 +253,7 @@ y_augmented = np.hstack([y_train, y_synthetic])
 ```
 
 #### Regularization
+
 ```python
 # Increase regularization for small datasets
 model = toolkit.create_sklearn_model(
@@ -241,28 +265,32 @@ model = toolkit.create_sklearn_model(
 
 ## 🎯 Model Selection Guidelines
 
-### Choose Traditional GP When:
+### Choose Traditional GP When
+
 - ✅ Dataset size: 100-10,000 points
 - ✅ Smooth spatial patterns expected
 - ✅ Fast training required
 - ✅ Interpretability important
 - ✅ Uncertainty quantification critical
 
-### Choose Deep GP When:
+### Choose Deep GP When
+
 - ✅ Complex, non-linear spatial relationships
 - ✅ Large datasets (>5,000 points)
 - ✅ Traditional kernels insufficient
 - ✅ Research/experimental applications
 - ✅ Computational resources available
 
-### Choose Kriging When:
+### Choose Kriging When
+
 - ✅ Quick baseline needed
 - ✅ Classical geostatistical workflow
 - ✅ Limited computational resources
 - ✅ Well-understood spatial process
 - ✅ Interpretability paramount
 
-### Choose Random Forest When:
+### Choose Random Forest When
+
 - ✅ Non-spatial features important
 - ✅ Categorical variables present
 - ✅ Fast predictions needed
@@ -305,8 +333,8 @@ spatial_groups = create_spatial_groups(X_train, n_groups=5)
 
 group_kfold = GroupKFold(n_splits=5)
 spatial_cv_scores = cross_val_score(
-    model, X_train, y_train, 
-    cv=group_kfold, 
+    model, X_train, y_train,
+    cv=group_kfold,
     groups=spatial_groups,
     scoring='r2'
 )
@@ -315,6 +343,7 @@ spatial_cv_scores = cross_val_score(
 ## 📊 Visualization Comparison
 
 ### Prediction Comparison
+
 ```python
 # Compare predictions from different models
 fig, axes = plt.subplots(2, 3, figsize=(15, 10))
@@ -326,6 +355,7 @@ for i, model_name in enumerate(models):
 ```
 
 ### Uncertainty Comparison
+
 ```python
 # Compare uncertainty estimates
 gp_models = ['GP_RBF', 'GP_Matern', 'GP_Combined', 'Deep_GP']
@@ -339,6 +369,7 @@ for i, model_name in enumerate(gp_models):
 ## 💡 Best Practices
 
 ### Model Development Workflow
+
 1. **Start Simple**: Begin with RBF kernel GP
 2. **Establish Baseline**: Use Ordinary Kriging for comparison
 3. **Try Combined Kernels**: Test RBF+Matérn combination
@@ -347,6 +378,7 @@ for i, model_name in enumerate(gp_models):
 6. **Optimize Hyperparameters**: Use grid search or Bayesian optimization
 
 ### Performance Monitoring
+
 ```python
 # Track model performance over time
 performance_log = {
@@ -368,7 +400,8 @@ def log_performance(model_name, results, training_time):
 
 ---
 
-**Next Steps**: 
+**Next Steps**:
+
 - Explore [Deep GP Experiments](deep_gp.md) for advanced modeling
 - Use the built-in `SPE9Plotter` class for advanced plotting techniques
 - For performance optimization, consider using GPU acceleration and batch processing

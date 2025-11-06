@@ -5,17 +5,20 @@ This directory contains sample GRDECL files for testing and tutorials.
 ## Files
 
 ### `sample_small.grdecl`
+
 - **Size**: 5×5×3 grid (75 cells)
 - **Purpose**: Quick testing and tutorials
 - **Properties**: PERMX, PERMY, PERMZ, PORO, NTG
 - **Description**: Simplified reservoir model with 3 layers of varying permeability
 
 **Characteristics:**
+
 - Layer 1: High permeability (~500 mD), good porosity (0.25)
 - Layer 2: Medium permeability (~250 mD), moderate porosity (0.20)
 - Layer 3: Low permeability (~100 mD), lower porosity (0.15)
 
 ### `SPE9.GRDECL` (if available)
+
 - **Size**: 24×25×15 grid (9,000 cells)
 - **Purpose**: Full-scale testing and benchmarking
 - **Source**: SPE Comparative Solution Project
@@ -56,6 +59,7 @@ To create custom sample GRDECL files:
 4. Use Fortran column-major ordering
 
 Example structure:
+
 ```
 SPECGRID
 nx ny nz 1 F
@@ -73,6 +77,7 @@ value1 value2 ... valueN
 ## Data Format
 
 GRDECL (Grid Eclipse) format specifications:
+
 - Keywords in UPPERCASE
 - Data sections end with `/`
 - Comments start with `--`

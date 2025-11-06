@@ -1,12 +1,13 @@
 """Tests for SPE9Toolkit functionality."""
 
-import pytest
-import numpy as np
-from unittest.mock import patch, MagicMock
-from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.ensemble import RandomForestRegressor
+from unittest.mock import patch
 
-from spe9_geomodeling.spe9_toolkit import SPE9Toolkit, GridData, ModelResults
+import numpy as np
+import pytest
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.gaussian_process import GaussianProcessRegressor
+
+from spe9_geomodeling.spe9_toolkit import GridData, ModelResults, SPE9Toolkit
 
 
 class TestSPE9Toolkit:

@@ -459,7 +459,7 @@ def calculate_reserves_uncertainty(
     recovery_factor_p10: float,
     recovery_factor_p50: float,
     recovery_factor_p90: float,
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """
     Calculate P10/P50/P90 reserves from STOIIP and recovery factor distributions.
 
@@ -494,7 +494,7 @@ def decline_curve_analysis(
     time: np.ndarray,
     production_rate: np.ndarray,
     decline_type: str = "exponential",
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """
     Fit decline curve to production data.
 

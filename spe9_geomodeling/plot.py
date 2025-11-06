@@ -22,7 +22,7 @@ sns.set_palette("husl")
 class SPE9Plotter:
     """Clean plotting utilities for SPE9 geomodeling results."""
 
-    def __init__(self, figsize: Tuple[int, int] = (12, 8), dpi: int = 150):
+    def __init__(self, figsize: tuple[int, int] = (12, 8), dpi: int = 150):
         """Initialize plotter with default settings.
 
         Args:
@@ -38,11 +38,11 @@ class SPE9Plotter:
         data: np.ndarray,
         title: str,
         *,
-        filename: Optional[Union[str, Path]] = None,
+        filename: str | Path | None = None,
         cmap: str = "viridis",
         log_scale: bool = False,
         colorbar_label: str = "Value",
-        figsize: Optional[Tuple[int, int]] = None,
+        figsize: tuple[int, int] | None = None,
     ) -> None:
         """Plot a 2D slice of 3D data.
 
@@ -81,11 +81,11 @@ class SPE9Plotter:
         permx_3d: np.ndarray,
         z_slice: int = 0,
         *,
-        filename: Optional[Union[str, Path]] = None,
-        figsize: Optional[Tuple[int, int]] = None,
+        filename: str | Path | None = None,
+        figsize: tuple[int, int] | None = None,
         cmap: str = "viridis",
-        title: Optional[str] = None,
-    ) -> Tuple[plt.Figure, plt.Axes]:
+        title: str | None = None,
+    ) -> tuple[plt.Figure, plt.Axes]:
         """Plot a permeability slice from 3D permeability data.
 
         Args:
@@ -139,10 +139,10 @@ class SPE9Plotter:
         pred_3d: np.ndarray,
         z_slice: int = 0,
         *,
-        sigma_3d: Optional[np.ndarray] = None,
-        filename: Optional[Union[str, Path]] = None,
-        figsize: Optional[Tuple[int, int]] = None,
-    ) -> Tuple[plt.Figure, np.ndarray]:
+        sigma_3d: np.ndarray | None = None,
+        filename: str | Path | None = None,
+        figsize: tuple[int, int] | None = None,
+    ) -> tuple[plt.Figure, np.ndarray]:
         """Plot comparison between true and predicted values.
 
         Args:
@@ -208,9 +208,9 @@ class SPE9Plotter:
         y_true: np.ndarray,
         y_pred: np.ndarray,
         *,
-        filename: Optional[Union[str, Path]] = None,
-        figsize: Optional[Tuple[int, int]] = None,
-    ) -> Tuple[plt.Figure, np.ndarray]:
+        filename: str | Path | None = None,
+        figsize: tuple[int, int] | None = None,
+    ) -> tuple[plt.Figure, np.ndarray]:
         """Plot residuals analysis.
 
         Args:
@@ -263,9 +263,9 @@ class SPE9Plotter:
         iterations: np.ndarray,
         loss_values: np.ndarray,
         *,
-        filename: Optional[Union[str, Path]] = None,
-        figsize: Optional[Tuple[int, int]] = None,
-    ) -> Tuple[plt.Figure, plt.Axes]:
+        filename: str | Path | None = None,
+        figsize: tuple[int, int] | None = None,
+    ) -> tuple[plt.Figure, plt.Axes]:
         """Plot training curve.
 
         Args:
@@ -299,12 +299,12 @@ class SPE9Plotter:
 
     def plot_feature_importance(
         self,
-        feature_names: List[str],
+        feature_names: list[str],
         importance_values: np.ndarray,
         *,
-        filename: Optional[Union[str, Path]] = None,
-        figsize: Optional[Tuple[int, int]] = None,
-    ) -> Tuple[plt.Figure, plt.Axes]:
+        filename: str | Path | None = None,
+        figsize: tuple[int, int] | None = None,
+    ) -> tuple[plt.Figure, plt.Axes]:
         """Plot feature importance.
 
         Args:
@@ -347,11 +347,11 @@ class SPE9Plotter:
         self,
         original: np.ndarray,
         predicted: np.ndarray,
-        uncertainty: Optional[np.ndarray] = None,
+        uncertainty: np.ndarray | None = None,
         *,
         slice_idx: int = 0,
-        titles: Optional[List[str]] = None,
-        filename: Optional[Union[str, Path]] = None,
+        titles: list[str] | None = None,
+        filename: str | Path | None = None,
     ) -> None:
         """Plot comparison between original and predicted data.
 
@@ -411,7 +411,7 @@ class SPE9Plotter:
         y_pred: np.ndarray,
         *,
         model_name: str = "Model",
-        filename: Optional[Union[str, Path]] = None,
+        filename: str | Path | None = None,
     ) -> None:
         """Plot model performance metrics.
 
@@ -476,10 +476,10 @@ class SPE9Plotter:
 
     def plot_training_history(
         self,
-        losses: List[float],
+        losses: list[float],
         *,
         model_name: str = "Model",
-        filename: Optional[Union[str, Path]] = None,
+        filename: str | Path | None = None,
     ) -> None:
         """Plot training loss history.
 
@@ -529,11 +529,11 @@ class SPE9Plotter:
 
     def plot_model_comparison(
         self,
-        results: Dict[str, Dict[str, float]],
+        results: dict[str, dict[str, float]],
         *,
-        metrics: List[str] = ["r2", "rmse", "mae"],
-        filename: Optional[Union[str, Path]] = None,
-    ) -> Tuple[plt.Figure, Union[plt.Axes, np.ndarray]]:
+        metrics: list[str] = ["r2", "rmse", "mae"],
+        filename: str | Path | None = None,
+    ) -> tuple[plt.Figure, plt.Axes | np.ndarray]:
         """Plot comparison between multiple models.
 
         Args:
@@ -585,7 +585,7 @@ class SPE9Plotter:
 
 # Convenience functions for quick plotting
 def quick_slice_plot(
-    data: np.ndarray, title: str, filename: Optional[str] = None, **kwargs
+    data: np.ndarray, title: str, filename: str | None = None, **kwargs
 ) -> None:
     """Quick function to plot a 2D slice."""
     plotter = SPE9Plotter()
@@ -595,8 +595,8 @@ def quick_slice_plot(
 def quick_comparison_plot(
     original: np.ndarray,
     predicted: np.ndarray,
-    uncertainty: Optional[np.ndarray] = None,
-    filename: Optional[str] = None,
+    uncertainty: np.ndarray | None = None,
+    filename: str | None = None,
     **kwargs,
 ) -> None:
     """Quick function to plot comparison."""

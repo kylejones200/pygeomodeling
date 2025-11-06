@@ -63,8 +63,8 @@ class DeepGPExperiment:
         self,
         property_name: str = "PERMX",
         train_size: float = 0.7,
-        max_samples: Optional[int] = 2000,
-    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+        max_samples: int | None = 2000,
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
         """Load SPE9 data and prepare for GP modeling.
 
         Args:
@@ -163,7 +163,7 @@ class DeepGPExperiment:
         model_type: str = "standard",
         training_iter: int = 100,
         **model_kwargs,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Train a GP model.
 
         Args:
@@ -195,7 +195,7 @@ class DeepGPExperiment:
         likelihood_params = list(likelihood.parameters())
 
         # Filter out any parameters that might be shared
-        all_param_ids = set(id(p) for p in model_params)
+        all_param_ids = {id(p) for p in model_params}
         unique_likelihood_params = [
             p for p in likelihood_params if id(p) not in all_param_ids
         ]
@@ -238,7 +238,7 @@ class DeepGPExperiment:
 
         return self.models[model_name]
 
-    def evaluate_model(self, model_name: str) -> Dict[str, float]:
+    def evaluate_model(self, model_name: str) -> dict[str, float]:
         """Evaluate a trained model.
 
         Args:
@@ -291,7 +291,7 @@ class DeepGPExperiment:
 
         return metrics
 
-    def run_comparison_experiment(self) -> Dict[str, Any]:
+    def run_comparison_experiment(self) -> dict[str, Any]:
         """Run comprehensive comparison between different GP models."""
         print("\n🔬 Starting Deep GP Comparison Experiment")
         print("=" * 60)

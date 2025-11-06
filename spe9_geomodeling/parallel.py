@@ -27,10 +27,10 @@ class ParallelModelTrainer:
 
     def train_models(
         self,
-        models: Dict[str, BaseEstimator],
+        models: dict[str, BaseEstimator],
         X_train: np.ndarray,
         y_train: np.ndarray,
-    ) -> Dict[str, BaseEstimator]:
+    ) -> dict[str, BaseEstimator]:
         """Train multiple models in parallel.
 
         Args:
@@ -48,7 +48,7 @@ class ParallelModelTrainer:
 
         def train_single_model(
             name: str, model: BaseEstimator
-        ) -> Tuple[str, BaseEstimator]:
+        ) -> tuple[str, BaseEstimator]:
             """Train a single model."""
             model_clone = clone(model)
             model_clone.fit(X_train, y_train)
@@ -69,13 +69,13 @@ class ParallelModelTrainer:
 
     def train_and_evaluate(
         self,
-        models: Dict[str, BaseEstimator],
+        models: dict[str, BaseEstimator],
         X_train: np.ndarray,
         y_train: np.ndarray,
         X_test: np.ndarray,
         y_test: np.ndarray,
-        metrics: Dict[str, Callable] = None,
-    ) -> Dict[str, Dict[str, Any]]:
+        metrics: dict[str, Callable] = None,
+    ) -> dict[str, dict[str, Any]]:
         """Train and evaluate multiple models in parallel.
 
         Args:
@@ -105,7 +105,7 @@ class ParallelModelTrainer:
 
         def train_and_eval_single(
             name: str, model: BaseEstimator
-        ) -> Tuple[str, Dict[str, Any]]:
+        ) -> tuple[str, dict[str, Any]]:
             """Train and evaluate a single model."""
             import time
 
@@ -168,7 +168,7 @@ class BatchPredictor:
 
     def predict(
         self, model: BaseEstimator, X: np.ndarray, return_std: bool = False
-    ) -> Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]:
+    ) -> Union[np.ndarray, tuple[np.ndarray, np.ndarray]]:
         """Make predictions in parallel batches.
 
         Args:
@@ -189,7 +189,7 @@ class BatchPredictor:
 
         def predict_batch(
             batch_idx: int,
-        ) -> Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]:
+        ) -> Union[np.ndarray, tuple[np.ndarray, np.ndarray]]:
             """Predict a single batch."""
             start_idx = batch_idx * self.batch_size
             end_idx = min((batch_idx + 1) * self.batch_size, n_samples)
@@ -224,8 +224,8 @@ class BatchPredictor:
             return predictions
 
     def predict_multiple_models(
-        self, models: Dict[str, BaseEstimator], X: np.ndarray
-    ) -> Dict[str, np.ndarray]:
+        self, models: dict[str, BaseEstimator], X: np.ndarray
+    ) -> dict[str, np.ndarray]:
         """Make predictions with multiple models in parallel.
 
         Args:
@@ -240,7 +240,7 @@ class BatchPredictor:
 
         def predict_single_model(
             name: str, model: BaseEstimator
-        ) -> Tuple[str, np.ndarray]:
+        ) -> tuple[str, np.ndarray]:
             """Predict with a single model."""
             predictions = self.predict(model, X, return_std=False)
             return name, predictions
@@ -273,7 +273,7 @@ class ParallelCrossValidator:
         y: np.ndarray,
         cv_splitter: Any,
         scoring: Callable = None,
-    ) -> Dict[str, np.ndarray]:
+    ) -> dict[str, np.ndarray]:
         """Perform cross-validation with parallel fold evaluation.
 
         Args:
@@ -339,7 +339,7 @@ class ParallelCrossValidator:
 
 def parallel_grid_search(
     model_class: type,
-    param_grid: Dict[str, List[Any]],
+    param_grid: dict[str, list[Any]],
     X_train: np.ndarray,
     y_train: np.ndarray,
     X_test: np.ndarray,
@@ -347,7 +347,7 @@ def parallel_grid_search(
     scoring: Callable = None,
     n_jobs: int = -1,
     verbose: bool = True,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Perform parallel grid search over hyperparameters.
 
     Args:
@@ -379,7 +379,7 @@ def parallel_grid_search(
     if verbose:
         print(f"Testing {len(param_combinations)} parameter combinations...")
 
-    def evaluate_params(params_tuple: Tuple) -> Tuple[Dict[str, Any], float]:
+    def evaluate_params(params_tuple: tuple) -> tuple[dict[str, Any], float]:
         """Evaluate a single parameter combination."""
         params = dict(zip(param_names, params_tuple))
 

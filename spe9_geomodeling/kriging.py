@@ -179,7 +179,7 @@ class OrdinaryKriging:
         self,
         coordinates_target: np.ndarray,
         return_variance: bool = True,
-    ) -> Tuple[np.ndarray, Optional[np.ndarray]]:
+    ) -> tuple[np.ndarray, Optional[np.ndarray]]:
         """
         Predict at target locations.
 
@@ -241,7 +241,7 @@ class OrdinaryKriging:
             return predictions, variances
         return predictions, None
 
-    def cross_validate(self, n_folds: int = 5) -> Dict[str, float]:
+    def cross_validate(self, n_folds: int = 5) -> dict[str, float]:
         """
         Leave-one-out cross-validation.
 
@@ -295,7 +295,7 @@ class UniversalKriging:
     def __init__(
         self,
         variogram_model: VariogramModel,
-        drift_terms: List[str] = ["linear"],
+        drift_terms: list[str] = ["linear"],
         regularization: float = 1e-10,
     ):
         """
@@ -393,7 +393,7 @@ class UniversalKriging:
         self,
         coordinates_target: np.ndarray,
         return_variance: bool = True,
-    ) -> Tuple[np.ndarray, Optional[np.ndarray]]:
+    ) -> tuple[np.ndarray, Optional[np.ndarray]]:
         """Predict at target locations with trend."""
         if self.K_inv is None:
             raise DataValidationError(
@@ -548,7 +548,7 @@ class CoKriging:
         self,
         coordinates_target: np.ndarray,
         return_variance: bool = True,
-    ) -> Tuple[np.ndarray, Optional[np.ndarray]]:
+    ) -> tuple[np.ndarray, Optional[np.ndarray]]:
         """Predict primary variable at target locations using both variables."""
         if self.K_inv is None:
             raise DataValidationError(
@@ -610,7 +610,7 @@ def simple_kriging(
     coordinates_target: np.ndarray,
     variogram_model: VariogramModel,
     mean: float,
-) -> Tuple[np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray]:
     """
     Simple Kriging with known mean.
 

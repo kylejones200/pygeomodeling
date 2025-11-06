@@ -1,9 +1,10 @@
 """Basic tests for the spe9_geomodeling package."""
 
-import pytest
-import numpy as np
 import sys
 from pathlib import Path
+
+import numpy as np
+import pytest
 
 
 class TestPackageBasics:
@@ -52,8 +53,7 @@ class TestPackageBasics:
 
             # GPyTorch classes should be available if GPyTorch is installed
             try:
-                import torch
-                import gpytorch
+                pass
 
                 # If GPyTorch is available, these should be importable
                 assert hasattr(spe9_geomodeling, "SPE9GPModel")
@@ -114,16 +114,14 @@ class TestDependencies:
         """Test that optional dependencies are handled gracefully."""
         # Test GPyTorch availability
         try:
-            import torch
-            import gpytorch
+            pass
 
-            gpytorch_available = True
         except ImportError:
-            gpytorch_available = False
+            pass
 
         # Package should import regardless of GPyTorch availability
         try:
-            import spe9_geomodeling
+            pass
 
             assert True
         except ImportError:

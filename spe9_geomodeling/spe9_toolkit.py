@@ -40,7 +40,7 @@ class ModelResults:
     rmse: float
     mae: float
     y_pred: np.ndarray
-    y_std: Optional[np.ndarray] = None
+    y_std: np.ndarray | None = None
 
 
 @dataclass
@@ -49,16 +49,16 @@ class GridData:
 
     X_grid: np.ndarray
     y_grid: np.ndarray
-    feature_names: List[str]
+    feature_names: list[str]
     permx_3d: np.ndarray
-    dimensions: Tuple[int, int, int]
-    X_train: Optional[np.ndarray] = None
-    X_test: Optional[np.ndarray] = None
-    y_train: Optional[np.ndarray] = None
-    y_test: Optional[np.ndarray] = None
-    X_train_scaled: Optional[np.ndarray] = None
-    y_train_scaled: Optional[np.ndarray] = None
-    valid_mask: Optional[np.ndarray] = None
+    dimensions: tuple[int, int, int]
+    X_train: np.ndarray | None = None
+    X_test: np.ndarray | None = None
+    y_train: np.ndarray | None = None
+    y_test: np.ndarray | None = None
+    X_train_scaled: np.ndarray | None = None
+    y_train_scaled: np.ndarray | None = None
+    valid_mask: np.ndarray | None = None
 
 
 class SPE9Toolkit:
@@ -77,7 +77,7 @@ class SPE9Toolkit:
         results: Dictionary of model evaluation results
     """
 
-    def __init__(self, data_path: Optional[Union[str, Path]] = None) -> None:
+    def __init__(self, data_path: str | Path | None = None) -> None:
         """Initialize the toolkit.
 
         Args:
@@ -91,13 +91,13 @@ class SPE9Toolkit:
             default_path = Path(data_path)
         self.data_path = default_path
 
-        self.data: Optional[Dict[str, Any]] = None
-        self.grid_data: Optional[GridData] = None
-        self.models: Dict[str, BaseEstimator] = {}
-        self.scalers: Dict[str, StandardScaler] = {}
-        self.results: Dict[str, ModelResults] = {}
+        self.data: dict[str, Any] | None = None
+        self.grid_data: GridData | None = None
+        self.models: dict[str, BaseEstimator] = {}
+        self.scalers: dict[str, StandardScaler] = {}
+        self.results: dict[str, ModelResults] = {}
 
-    def load_data(self) -> Dict[str, Any]:
+    def load_data(self) -> dict[str, Any]:
         """Load SPE9 dataset.
 
         Returns:
@@ -191,7 +191,7 @@ class SPE9Toolkit:
 
     def create_train_test_split(
         self, *, test_size: float = 0.2, min_perm: float = 1.0, random_state: int = 42
-    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """Create training and test sets.
 
         Args:
@@ -233,7 +233,7 @@ class SPE9Toolkit:
 
     def setup_scalers(
         self, *, scaler_type: str = "standard"
-    ) -> Tuple[StandardScaler, StandardScaler]:
+    ) -> tuple[StandardScaler, StandardScaler]:
         """Setup and fit data scalers.
 
         Args:
@@ -419,8 +419,8 @@ class SPE9Toolkit:
         self,
         model_name: str,
         *,
-        z_slice: Optional[int] = None,
-        figsize: Tuple[int, int] = (12, 10),
+        z_slice: int | None = None,
+        figsize: tuple[int, int] = (12, 10),
     ) -> None:
         """Create visualizations for a model.
 
@@ -490,7 +490,7 @@ class SPE9Toolkit:
         print(f"Visualization saved: {filename}")
         plt.show()
 
-    def _predict_full_grid(self, model_name: str) -> Tuple[np.ndarray, np.ndarray]:
+    def _predict_full_grid(self, model_name: str) -> tuple[np.ndarray, np.ndarray]:
         """Generate predictions for the full grid (internal method)."""
         model = self.models[model_name]
         X_grid_scaled = self.scalers["x_scaler"].transform(self.grid_data.X_grid)
@@ -524,8 +524,8 @@ class SPE9Toolkit:
         return pred_3d_flat.reshape((nx, ny, nz)), sigma_3d_flat.reshape((nx, ny, nz))
 
     def export_to_grdecl(
-        self, model_name: str, output_dir: Optional[Path] = None
-    ) -> Tuple[Path, Path]:
+        self, model_name: str, output_dir: Path | None = None
+    ) -> tuple[Path, Path]:
         """Export predictions to GRDECL format.
 
         Args:

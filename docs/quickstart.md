@@ -5,11 +5,13 @@ Get up and running with the SPE9 Geomodeling Toolkit in just 5 minutes!
 ## 🚀 5-Minute Quick Start
 
 ### Step 1: Installation
+
 ```bash
 pip install pygeomodeling[advanced]
 ```
 
 ### Step 2: Basic Usage
+
 ```python
 from pygeomodeling import UnifiedSPE9Toolkit, load_spe9_data
 
@@ -42,6 +44,7 @@ print(f"Model R² Score: {results.r2:.4f}")
 ```
 
 ### Step 3: Run Deep GP Experiment
+
 ```python
 from pygeomodeling import DeepGPExperiment
 
@@ -70,7 +73,7 @@ toolkit.load_spe9_data(data)
 
 # 3. Prepare data
 X_train, X_test, y_train, y_test = toolkit.create_train_test_split(
-    test_size=0.2, 
+    test_size=0.2,
     random_state=42
 )
 
@@ -161,19 +164,25 @@ optimizer = torch.optim.Adam([
 ## 🎯 Key Concepts
 
 ### Data Loading
+
 The toolkit supports multiple data sources:
+
 - **SPE9 GRDECL files**: Real reservoir data
 - **Synthetic data**: Generated for testing and development
 - **Custom arrays**: Your own spatial data
 
 ### Model Types
+
 Choose from various modeling approaches:
+
 - **Traditional GP**: RBF, Matérn, Combined kernels
 - **Deep GP**: Neural network feature extraction
 - **Kriging**: Classical geostatistical methods
 
 ### Evaluation Metrics
+
 Standard metrics for model assessment:
+
 - **R² Score**: Coefficient of determination
 - **RMSE**: Root Mean Square Error
 - **MAE**: Mean Absolute Error
@@ -182,6 +191,7 @@ Standard metrics for model assessment:
 ## 🔧 Configuration Options
 
 ### Toolkit Configuration
+
 ```python
 toolkit = UnifiedSPE9Toolkit(
     backend='sklearn',  # or 'gpytorch'
@@ -191,6 +201,7 @@ toolkit = UnifiedSPE9Toolkit(
 ```
 
 ### Model Configuration
+
 ```python
 # Scikit-learn models
 model = toolkit.create_sklearn_model(
@@ -212,6 +223,7 @@ model = toolkit.create_gpytorch_model(
 ## 📈 Performance Tips
 
 ### For Large Datasets
+
 ```python
 # Use sparse GP approximations
 model = toolkit.create_gpytorch_model(
@@ -228,6 +240,7 @@ X_train, X_test, y_train, y_test = toolkit.create_train_test_split(
 ```
 
 ### For Better Accuracy
+
 ```python
 # Use combined kernels
 model = toolkit.create_sklearn_model(
@@ -246,6 +259,7 @@ X_train, X_test, y_train, y_test = toolkit.create_train_test_split(
 ## 🐛 Common Issues
 
 ### Issue: Poor Model Performance
+
 ```python
 # Check data distribution
 import matplotlib.pyplot as plt
@@ -258,6 +272,7 @@ toolkit.apply_log_transform = True
 ```
 
 ### Issue: Slow Training
+
 ```python
 # Reduce training set size
 X_train_small = X_train[:500]  # Use first 500 samples
@@ -268,6 +283,7 @@ model = toolkit.create_sklearn_model('gpr', kernel_type='rbf')  # Faster than co
 ```
 
 ### Issue: Memory Errors
+
 ```python
 # Use sparse approximations
 model = toolkit.create_gpytorch_model(

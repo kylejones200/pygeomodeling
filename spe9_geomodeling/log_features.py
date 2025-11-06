@@ -40,7 +40,7 @@ def _compute_weighted_average_fast(
     offset_array: np.ndarray,
     weights: np.ndarray,
     null_value: float,
-) -> Tuple[np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray]:
     """
     Numba-accelerated inverse-distance weighted averaging.
 
@@ -84,8 +84,8 @@ class FeatureSet:
     """Container for engineered features with metadata."""
 
     features: pd.DataFrame
-    feature_names: List[str]
-    feature_groups: Dict[str, List[str]]  # Group name -> feature list
+    feature_names: list[str]
+    feature_groups: dict[str, list[str]]  # Group name -> feature list
     description: str
 
     def __str__(self) -> str:
@@ -121,7 +121,7 @@ class LogFeatureEngineer:
     def compute_derivatives(
         self,
         data: pd.DataFrame,
-        curves: Optional[List[str]] = None,
+        curves: Optional[list[str]] = None,
         method: str = "gradient",
         smooth_sigma: float = 2.0,
     ) -> pd.DataFrame:
@@ -202,7 +202,7 @@ class LogFeatureEngineer:
     def compute_ratios(
         self,
         data: pd.DataFrame,
-        ratio_definitions: Optional[Dict[str, Tuple[str, str, Callable]]] = None,
+        ratio_definitions: Optional[dict[str, tuple[str, str, Callable]]] = None,
     ) -> pd.DataFrame:
         """
         Compute cross-curve ratios (petrophysical indicators).
@@ -247,7 +247,7 @@ class LogFeatureEngineer:
         self.feature_groups["ratios"] = list(ratios.columns)
         return ratios
 
-    def _get_standard_ratios(self) -> Dict[str, Tuple[str, str, Callable]]:
+    def _get_standard_ratios(self) -> dict[str, tuple[str, str, Callable]]:
         """Standard petrophysical ratio definitions."""
         return {
             "VSH_GR": ("GR", "GR", lambda gr, _: self._gamma_ray_to_vshale(gr)),
@@ -281,9 +281,9 @@ class LogFeatureEngineer:
     def compute_rolling_statistics(
         self,
         data: pd.DataFrame,
-        curves: Optional[List[str]] = None,
-        window_sizes: List[int] = [5, 10, 20],
-        statistics: List[str] = ["mean", "std", "min", "max"],
+        curves: Optional[list[str]] = None,
+        window_sizes: list[int] = [5, 10, 20],
+        statistics: list[str] = ["mean", "std", "min", "max"],
     ) -> pd.DataFrame:
         """
         Compute rolling window statistics.
@@ -341,11 +341,11 @@ class LogFeatureEngineer:
     def compute_spatial_features(
         self,
         target_well: pd.DataFrame,
-        offset_wells: Dict[str, pd.DataFrame],
-        well_locations: Dict[str, Tuple[float, float]],
-        target_location: Tuple[float, float],
+        offset_wells: dict[str, pd.DataFrame],
+        well_locations: dict[str, tuple[float, float]],
+        target_location: tuple[float, float],
         max_distance: float = 5000,  # meters
-        curves: Optional[List[str]] = None,
+        curves: Optional[list[str]] = None,
     ) -> pd.DataFrame:
         """
         Compute spatial features from offset wells.
@@ -465,9 +465,9 @@ class LogFeatureEngineer:
         include_ratios: bool = True,
         include_rolling_stats: bool = True,
         include_spatial: bool = False,
-        offset_wells: Optional[Dict[str, pd.DataFrame]] = None,
-        well_locations: Optional[Dict[str, Tuple[float, float]]] = None,
-        target_location: Optional[Tuple[float, float]] = None,
+        offset_wells: Optional[dict[str, pd.DataFrame]] = None,
+        well_locations: Optional[dict[str, tuple[float, float]]] = None,
+        target_location: Optional[tuple[float, float]] = None,
         **kwargs,
     ) -> FeatureSet:
         """
@@ -539,7 +539,7 @@ class LogFeatureEngineer:
         target: pd.Series,
         method: str = "correlation",
         n_features: int = 20,
-    ) -> List[str]:
+    ) -> list[str]:
         """
         Select most informative features for modeling.
 
@@ -595,12 +595,12 @@ class LogFeatureEngineer:
 
 
 def prepare_ml_dataset(
-    wells: Dict[str, pd.DataFrame],
+    wells: dict[str, pd.DataFrame],
     target_column: str,
     feature_engineer: Optional[LogFeatureEngineer] = None,
     test_well: Optional[str] = None,
     **feature_kwargs,
-) -> Tuple[pd.DataFrame, pd.Series, Optional[pd.DataFrame], Optional[pd.Series]]:
+) -> tuple[pd.DataFrame, pd.Series, Optional[pd.DataFrame], Optional[pd.Series]]:
     """
     Prepare complete ML dataset from multiple wells.
 

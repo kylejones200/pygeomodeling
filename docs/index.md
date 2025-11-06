@@ -5,16 +5,19 @@ Welcome to the comprehensive documentation for the SPE9 Geomodeling Toolkit - an
 ## 🚀 Quick Navigation
 
 ### Getting Started
+
 - [Installation Guide](installation.md) - Install the toolkit and dependencies
 - [Quick Start Tutorial](quickstart.md) - Get up and running in 5 minutes
 - [Basic Usage Examples](examples.md) - Common use cases and workflows
 
 ### Core Documentation
+
 - [API Reference](api.md) - Complete API documentation
 - [Model Comparison Guide](model_comparison.md) - Traditional GP vs Deep GP analysis
 - [Deep GP Experiments](deep_gp.md) - Advanced modeling techniques
 
 ### Development
+
 - Development setup instructions are available in the project README
 - Testing can be run with `pytest` in the project root
 - Contributions are welcome via GitHub pull requests
@@ -34,12 +37,14 @@ The SPE9 Geomodeling Toolkit is a comprehensive Python package designed for spat
 This toolkit implements state-of-the-art Gaussian Process methods for geostatistical modeling:
 
 ### Traditional Gaussian Processes
+
 - **RBF Kernels**: Smooth spatial interpolation
 - **Matérn Kernels**: Flexible smoothness control
 - **Combined Kernels**: Multi-scale spatial patterns
 - **Uncertainty Quantification**: Principled uncertainty estimates
 
 ### Deep Gaussian Processes
+
 - **Neural Network Features**: Non-linear feature extraction
 - **Hierarchical Modeling**: Multi-layer spatial patterns
 - **Scalable Inference**: Variational approximations
@@ -82,7 +87,7 @@ If you use this toolkit in your research, please cite:
 ## 📞 Support
 
 - **GitHub Issues**: [Report bugs and request features](https://github.com/yourusername/spe9-geomodeling/issues)
-- **Email**: kyletjones@gmail.com
+- **Email**: <kyletjones@gmail.com>
 - **Documentation**: This comprehensive guide
 - **Examples**: Check the `examples/` directory in the repository
 

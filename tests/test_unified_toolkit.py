@@ -1,8 +1,9 @@
 """Tests for UnifiedSPE9Toolkit functionality."""
 
-import pytest
+from unittest.mock import patch
+
 import numpy as np
-from unittest.mock import patch, MagicMock
+import pytest
 
 from spe9_geomodeling.unified_toolkit import UnifiedSPE9Toolkit
 
@@ -190,14 +191,12 @@ class TestUnifiedSPE9ToolkitGPyTorch:
         """Test GPyTorch model creation."""
         # This would require setting up training data first
         # Skipped for now due to complexity
-        pass
 
     @pytest.mark.skipif(True, reason="GPyTorch tests require complex setup")
     def test_train_gpytorch_model(self, skip_if_no_gpytorch):
         """Test GPyTorch model training."""
         # This would require setting up training data first
         # Skipped for now due to complexity
-        pass
 
 
 class TestUnifiedSPE9ToolkitEvaluation:

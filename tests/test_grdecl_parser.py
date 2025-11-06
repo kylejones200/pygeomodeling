@@ -1,8 +1,8 @@
 """Tests for GRDECL parser functionality."""
 
-import pytest
+
 import numpy as np
-from pathlib import Path
+import pytest
 
 from spe9_geomodeling.grdecl_parser import GRDECLParser, load_spe9_data
 

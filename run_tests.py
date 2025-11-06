@@ -5,9 +5,9 @@ Test runner script for pygeomodeling package.
 This script provides various options for running tests with different configurations.
 """
 
-import sys
-import subprocess
 import argparse
+import subprocess
+import sys
 from pathlib import Path
 
 

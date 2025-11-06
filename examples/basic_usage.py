@@ -11,7 +11,7 @@ from pathlib import Path
 # Add the parent directory to the path so we can import the package
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from spe9_geomodeling import load_spe9_data, SPE9Toolkit
+from spe9_geomodeling import SPE9Toolkit, load_spe9_data
 
 
 def main():

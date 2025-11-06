@@ -12,23 +12,22 @@ Demonstrates the new advanced features:
 import time
 from pathlib import Path
 
-import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels import RBF, Matern, ConstantKernel, WhiteKernel
+from sklearn.gaussian_process.kernels import RBF, ConstantKernel, Matern, WhiteKernel
 
 from spe9_geomodeling import (
-    load_spe9_data,
-    UnifiedSPE9Toolkit,
-    SpatialKFold,
+    BatchPredictor,
     BlockCV,
     HyperparameterTuner,
     ParallelModelTrainer,
-    BatchPredictor,
-    save_model,
-    load_model,
+    SpatialKFold,
+    UnifiedSPE9Toolkit,
     cross_validate_spatial,
     exceptions,
+    load_model,
+    load_spe9_data,
+    save_model,
 )
 
 
@@ -137,9 +136,7 @@ def main():
     except exceptions.CrossValidationError as e:
         print(f"  Optuna not available: {e.suggestion}")
         print("  Using default Random Forest parameters...")
-        best_rf = RandomForestRegressor(
-            n_estimators=100, max_depth=10, random_state=42
-        )
+        best_rf = RandomForestRegressor(n_estimators=100, max_depth=10, random_state=42)
 
     # =========================================================================
     # 5. Parallel Model Training
@@ -149,7 +146,9 @@ def main():
     # Define models to compare
     models = {
         "random_forest_tuned": best_rf,
-        "random_forest_default": RandomForestRegressor(n_estimators=100, random_state=42),
+        "random_forest_default": RandomForestRegressor(
+            n_estimators=100, random_state=42
+        ),
         "gpr_rbf": GaussianProcessRegressor(
             kernel=ConstantKernel() * RBF() + WhiteKernel(), random_state=42
         ),

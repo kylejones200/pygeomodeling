@@ -7,6 +7,7 @@ This guide covers advanced Deep Gaussian Process modeling techniques available i
 Deep Gaussian Processes (Deep GPs) combine the uncertainty quantification of Gaussian Processes with the representational power of deep neural networks. They use neural networks as feature extractors before applying a final GP layer.
 
 ### Architecture Overview
+
 ```
 Input (x, y, z) → Neural Network → Learned Features → Gaussian Process → Output + Uncertainty
 ```
@@ -14,6 +15,7 @@ Input (x, y, z) → Neural Network → Learned Features → Gaussian Process →
 ## 🚀 Quick Start with Deep GP
 
 ### Basic Deep GP Model
+
 ```python
 from spe9_geomodeling import DeepGPExperiment
 
@@ -31,6 +33,7 @@ for model_name, result in results.items():
 ```
 
 ### Custom Deep GP Architecture
+
 ```python
 from spe9_geomodeling import create_gp_model
 import torch
@@ -54,27 +57,33 @@ likelihood = gpytorch.likelihoods.GaussianLikelihood()
 ### Network Size Guidelines
 
 #### Small Networks (16-32 neurons)
+
 ```python
 model = create_gp_model('deep', hidden_dims=[32, 16])
 ```
+
 - **Best for**: Small datasets (<1000 points)
 - **Training time**: ~1-2 seconds
 - **Memory usage**: Low
 - **Risk**: May underfit complex patterns
 
 #### Medium Networks (32-64 neurons)
+
 ```python
 model = create_gp_model('deep', hidden_dims=[64, 32])
 ```
+
 - **Best for**: Medium datasets (1000-5000 points)
 - **Training time**: ~2-4 seconds
 - **Memory usage**: Medium
 - **Balance**: Good capacity vs. efficiency
 
 #### Large Networks (64-128 neurons)
+
 ```python
 model = create_gp_model('deep', hidden_dims=[128, 64, 32])
 ```
+
 - **Best for**: Large datasets (>5000 points)
 - **Training time**: ~4-8 seconds
 - **Memory usage**: High
@@ -83,25 +92,31 @@ model = create_gp_model('deep', hidden_dims=[128, 64, 32])
 ### Activation Functions
 
 #### ReLU (Default)
+
 ```python
 model = create_gp_model('deep', activation='relu')
 ```
+
 - **Pros**: Fast computation, good gradients
 - **Cons**: Can cause dead neurons
 - **Best for**: General purpose applications
 
 #### Tanh
+
 ```python
 model = create_gp_model('deep', activation='tanh')
 ```
+
 - **Pros**: Smooth, bounded output
 - **Cons**: Vanishing gradient problems
 - **Best for**: Normalized input data
 
 #### GELU
+
 ```python
 model = create_gp_model('deep', activation='gelu')
 ```
+
 - **Pros**: Smooth, probabilistic interpretation
 - **Cons**: Slightly slower computation
 - **Best for**: Modern architectures
@@ -109,6 +124,7 @@ model = create_gp_model('deep', activation='gelu')
 ## 🎯 Training Deep GP Models
 
 ### Basic Training Loop
+
 ```python
 import torch
 import gpytorch
@@ -138,7 +154,7 @@ for i in range(100):
     loss = -mll(output, y_train)
     loss.backward()
     optimizer.step()
-    
+
     if i % 20 == 0:
         print(f'Iter {i}, Loss: {loss.item():.3f}')
 ```
@@ -146,6 +162,7 @@ for i in range(100):
 ### Advanced Training Techniques
 
 #### Learning Rate Scheduling
+
 ```python
 from torch.optim.lr_scheduler import StepLR
 
@@ -158,6 +175,7 @@ for epoch in range(100):
 ```
 
 #### Early Stopping
+
 ```python
 class EarlyStopping:
     def __init__(self, patience=10, min_delta=1e-4):
@@ -165,7 +183,7 @@ class EarlyStopping:
         self.min_delta = min_delta
         self.best_loss = float('inf')
         self.counter = 0
-    
+
     def __call__(self, val_loss):
         if val_loss < self.best_loss - self.min_delta:
             self.best_loss = val_loss
@@ -185,6 +203,7 @@ for epoch in range(200):
 ```
 
 #### Batch Training
+
 ```python
 from torch.utils.data import DataLoader, TensorDataset
 
@@ -208,11 +227,12 @@ for epoch in range(100):
 ## 🔧 Hyperparameter Optimization
 
 ### Manual Grid Search
+
 ```python
 def train_and_evaluate(hidden_dims, lr, num_epochs):
     model = create_gp_model('deep', hidden_dims=hidden_dims)
     likelihood = gpytorch.likelihoods.GaussianLikelihood()
-    
+
     # Training...
     # Evaluation...
     return r2_score
@@ -233,6 +253,7 @@ print(f"Best parameters: {best_params}, Score: {best_score:.4f}")
 ```
 
 ### Optuna Optimization
+
 ```python
 import optuna
 
@@ -242,11 +263,11 @@ def objective(trial):
     hidden_dim2 = trial.suggest_int('hidden_dim2', 8, 64)
     lr = trial.suggest_float('lr', 0.01, 0.3, log=True)
     epochs = trial.suggest_int('epochs', 50, 200)
-    
+
     # Train model
     model = create_gp_model('deep', hidden_dims=[hidden_dim1, hidden_dim2])
     score = train_and_evaluate_model(model, lr, epochs)
-    
+
     return score
 
 # Run optimization
@@ -260,23 +281,24 @@ print(f"Best score: {study.best_value:.4f}")
 ## 📊 Model Interpretation
 
 ### Feature Importance Analysis
+
 ```python
 import torch.nn.functional as F
 
 def analyze_feature_importance(model, X_test):
     model.eval()
-    
+
     # Get feature activations
     with torch.no_grad():
         # Forward pass through network layers
         x = torch.tensor(X_test, dtype=torch.float32)
         activations = []
-        
+
         for layer in model.feature_extractor:
             x = layer(x)
             if isinstance(layer, torch.nn.Linear):
                 activations.append(x.clone())
-    
+
     # Analyze activation patterns
     for i, activation in enumerate(activations):
         importance = torch.mean(torch.abs(activation), dim=0)
@@ -284,21 +306,22 @@ def analyze_feature_importance(model, X_test):
 ```
 
 ### Uncertainty Decomposition
+
 ```python
 def decompose_uncertainty(model, likelihood, X_test):
     model.eval()
     likelihood.eval()
-    
+
     with torch.no_grad():
         # Get predictive distribution
         pred_dist = likelihood(model(X_test))
-        
+
         # Aleatoric uncertainty (data noise)
         aleatoric = likelihood.noise.item()
-        
+
         # Epistemic uncertainty (model uncertainty)
         epistemic = pred_dist.variance.mean().item() - aleatoric
-        
+
         return {
             'total_uncertainty': pred_dist.variance.mean().item(),
             'aleatoric_uncertainty': aleatoric,
@@ -314,6 +337,7 @@ for key, value in uncertainty_breakdown.items():
 ## 🎨 Visualization
 
 ### Training Progress
+
 ```python
 import matplotlib.pyplot as plt
 
@@ -337,22 +361,23 @@ plot_training_progress(training_losses, validation_losses)
 ```
 
 ### Feature Space Visualization
+
 ```python
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 
 def visualize_learned_features(model, X_data, y_data):
     model.eval()
-    
+
     with torch.no_grad():
         # Extract features from the network
         features = model.feature_extractor(torch.tensor(X_data, dtype=torch.float32))
         features_np = features.numpy()
-    
+
     # Reduce dimensionality for visualization
     pca = PCA(n_components=2)
     features_2d = pca.fit_transform(features_np)
-    
+
     # Plot
     plt.figure(figsize=(10, 8))
     scatter = plt.scatter(features_2d[:, 0], features_2d[:, 1], c=y_data, cmap='viridis')
@@ -368,6 +393,7 @@ visualize_learned_features(model, X_test, y_test)
 ## 🔬 Advanced Techniques
 
 ### Variational Sparse GP
+
 ```python
 # For large datasets, use sparse approximations
 model = create_gp_model(
@@ -379,6 +405,7 @@ model = create_gp_model(
 ```
 
 ### Multi-Output Deep GP
+
 ```python
 # For multiple properties simultaneously
 class MultiOutputDeepGP(gpytorch.models.ApproximateGP):
@@ -391,6 +418,7 @@ multi_model = MultiOutputDeepGP(num_outputs=2)
 ```
 
 ### Hierarchical Deep GP
+
 ```python
 # Multiple GP layers
 class HierarchicalDeepGP(gpytorch.models.ApproximateGP):
@@ -405,6 +433,7 @@ class HierarchicalDeepGP(gpytorch.models.ApproximateGP):
 ## 📈 Performance Optimization
 
 ### GPU Acceleration
+
 ```python
 # Enable GPU if available
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -416,6 +445,7 @@ y_train = torch.tensor(y_train, dtype=torch.float32).to(device)
 ```
 
 ### Memory Optimization
+
 ```python
 # Use gradient checkpointing for large models
 import torch.utils.checkpoint as checkpoint
@@ -427,6 +457,7 @@ class MemoryEfficientDeepGP(torch.nn.Module):
 ```
 
 ### Numerical Stability
+
 ```python
 # Add jitter for numerical stability
 model.covar_module.base_kernel.lengthscale_prior = gpytorch.priors.GammaPrior(3.0, 6.0)
@@ -442,6 +473,7 @@ likelihood = likelihood.double()
 ### Common Issues
 
 #### Poor Convergence
+
 ```python
 # Try different learning rates
 optimizer = Adam(model.parameters(), lr=0.01)  # Lower LR
@@ -451,6 +483,7 @@ scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=10)
 ```
 
 #### Overfitting
+
 ```python
 # Add dropout
 class RegularizedDeepGP(torch.nn.Module):
@@ -467,6 +500,7 @@ class RegularizedDeepGP(torch.nn.Module):
 ```
 
 #### Memory Issues
+
 ```python
 # Use smaller batch sizes
 dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
@@ -476,7 +510,7 @@ accumulation_steps = 4
 for i, (batch_x, batch_y) in enumerate(dataloader):
     loss = compute_loss(batch_x, batch_y) / accumulation_steps
     loss.backward()
-    
+
     if (i + 1) % accumulation_steps == 0:
         optimizer.step()
         optimizer.zero_grad()
@@ -495,6 +529,7 @@ for i, (batch_x, batch_y) in enumerate(dataloader):
 ## 🔄 Integration with Toolkit
 
 ### Using with UnifiedSPE9Toolkit
+
 ```python
 from spe9_geomodeling import UnifiedSPE9Toolkit
 
@@ -514,7 +549,8 @@ print(f"Deep GP R² Score: {results.r2:.4f}")
 
 ---
 
-**Next Steps**: 
+**Next Steps**:
+
 - Use the built-in plotting utilities in the `SPE9Plotter` class for visualizing Deep GP results
 - For large datasets, consider using batch processing and GPU acceleration with GPyTorch
 - See [API Reference](api.md) for complete function documentation

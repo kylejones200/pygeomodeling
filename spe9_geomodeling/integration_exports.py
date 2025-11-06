@@ -40,9 +40,9 @@ class LASExporter:
         output_file: str,
         depth: np.ndarray,
         original_curves: pd.DataFrame,
-        interpreted_curves: Dict[str, np.ndarray],
-        well_header: Optional[Dict[str, str]] = None,
-        curve_descriptions: Optional[Dict[str, str]] = None,
+        interpreted_curves: dict[str, np.ndarray],
+        well_header: Optional[dict[str, str]] = None,
+        curve_descriptions: Optional[dict[str, str]] = None,
         null_value: float = -999.25,
     ):
         """
@@ -154,7 +154,7 @@ class FormationTopExporter:
 
     @staticmethod
     def export_to_csv(
-        tops: List[FormationTop],
+        tops: list[FormationTop],
         output_file: str,
         well_name: str,
     ):
@@ -184,7 +184,7 @@ class FormationTopExporter:
 
     @staticmethod
     def export_to_petrel_format(
-        tops_by_well: Dict[str, List[FormationTop]],
+        tops_by_well: dict[str, list[FormationTop]],
         output_file: str,
     ):
         """
@@ -212,7 +212,7 @@ class FormationTopExporter:
 
     @staticmethod
     def export_to_ascii(
-        tops: List[FormationTop],
+        tops: list[FormationTop],
         output_file: str,
         well_name: str,
         uwi: Optional[str] = None,
@@ -255,7 +255,7 @@ class FaciesLogExporter:
         facies: np.ndarray,
         confidence: Optional[np.ndarray] = None,
         output_file: str = "facies_log.csv",
-        facies_names: Optional[Dict[int, str]] = None,
+        facies_names: Optional[dict[int, str]] = None,
     ):
         """
         Export facies log to CSV.
@@ -286,7 +286,7 @@ class FaciesLogExporter:
     def create_facies_curve_for_las(
         facies: np.ndarray,
         depth: np.ndarray,
-    ) -> Dict[str, np.ndarray]:
+    ) -> dict[str, np.ndarray]:
         """
         Create facies curve dictionary for LAS export.
 
@@ -314,9 +314,9 @@ class PetrelProjectExporter:
         depth: np.ndarray,
         original_curves: pd.DataFrame,
         facies: Optional[np.ndarray] = None,
-        formation_tops: Optional[List[FormationTop]] = None,
+        formation_tops: Optional[list[FormationTop]] = None,
         confidence_scores: Optional[np.ndarray] = None,
-        well_header: Optional[Dict[str, str]] = None,
+        well_header: Optional[dict[str, str]] = None,
     ):
         """
         Export complete interpretation package.
@@ -453,7 +453,7 @@ def create_correction_template(
 
 def import_expert_corrections(
     correction_file: str,
-) -> Tuple[pd.DataFrame, pd.DataFrame]:
+) -> tuple[pd.DataFrame, pd.DataFrame]:
     """
     Import expert corrections for model retraining.
 

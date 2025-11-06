@@ -7,6 +7,7 @@
 Reservoir modeling requires accurate spatial estimates of rock properties. Oil and gas production forecasts, recovery strategies, and capital allocation decisions all depend on how well we understand the permeability field. But we rarely observe permeability directly across the entire volume—we measure it at sparse well locations.
 
 **The Challenge**: Construct a gridded model of reservoir properties that:
+
 - Honors observed data at well locations
 - Provides reliable estimates elsewhere
 - Quantifies uncertainty for decision-making
@@ -28,6 +29,7 @@ Traditional interpolation methods have limitations:
 | **Gaussian Processes** | Flexible, probabilistic | Computational cost for large datasets |
 
 **GP Advantages**:
+
 1. **Probabilistic**: Returns mean AND variance
 2. **Flexible**: Custom kernels for different spatial patterns
 3. **Principled**: Bayesian framework
@@ -38,11 +40,13 @@ Traditional interpolation methods have limitations:
 A Gaussian Process is a collection of random variables, any finite number of which have a joint Gaussian distribution.
 
 **Definition**:
+
 ```
 f(x) ~ GP(m(x), k(x, x'))
 ```
 
 Where:
+
 - `m(x)` is the mean function (often constant)
 - `k(x, x')` is the covariance (kernel) function
 
@@ -63,17 +67,21 @@ Where `K` is the kernel matrix and `σ²` is noise variance.
 The kernel encodes assumptions about spatial correlation:
 
 **1. Radial Basis Function (RBF)**
+
 ```python
 k(x, x') = σ² exp(-||x - x'||² / (2ℓ²))
 ```
+
 - Infinitely differentiable
 - Smooth predictions
 - Good for continuous properties
 
 **2. Matérn Kernel**
+
 ```python
 k(x, x') = σ² (2^(1-ν)/Γ(ν)) (√(2ν)||x-x'||/ℓ)^ν K_ν(√(2ν)||x-x'||/ℓ)
 ```
+
 - Controls smoothness via ν parameter
 - ν = 0.5: Exponential (rough)
 - ν = 1.5: Once differentiable
@@ -81,6 +89,7 @@ k(x, x') = σ² (2^(1-ν)/Γ(ν)) (√(2ν)||x-x'||/ℓ)^ν K_ν(√(2ν)||x-x'|
 - ν → ∞: RBF
 
 **3. Composite Kernels**
+
 ```python
 k_total = k_RBF + k_Matern  # Additive
 k_total = k_RBF × k_Matern  # Multiplicative
@@ -107,6 +116,7 @@ print(f"PERMX range: [{permx.min():.2f}, {permx.max():.2f}] mD")
 ```
 
 **Key Steps**:
+
 1. Filter unrealistic values (zeros, negatives)
 2. Log-transform for normality
 3. Create coordinate arrays
@@ -155,7 +165,7 @@ lags, semi_var, n_pairs = compute_experimental_variogram(
 
 # Fit spherical model
 vario_model = fit_variogram_model(
-    lags, semi_var, 
+    lags, semi_var,
     model_type='spherical',
     weights=np.sqrt(n_pairs)
 )
@@ -169,6 +179,7 @@ plot_variogram(lags, semi_var, model=vario_model, n_pairs=n_pairs)
 ```
 
 **Interpretation**:
+
 - **Nugget**: Measurement error or micro-scale variability
 - **Sill**: Total variance (should match sample variance)
 - **Range**: Distance of spatial influence (~correlation length)
@@ -226,10 +237,10 @@ class ExactGPModel(gpytorch.models.ExactGP):
         super().__init__(train_x, train_y, likelihood)
         self.mean_module = gpytorch.means.ConstantMean()
         self.covar_module = gpytorch.kernels.ScaleKernel(
-            gpytorch.kernels.RBFKernel() + 
+            gpytorch.kernels.RBFKernel() +
             gpytorch.kernels.MaternKernel(nu=1.5)
         )
-    
+
     def forward(self, x):
         mean_x = self.mean_module(x)
         covar_x = self.covar_module(x)
@@ -257,7 +268,7 @@ for i in range(50):
     loss = -mll(output, train_y)
     loss.backward()
     optimizer.step()
-    
+
     if (i + 1) % 10 == 0:
         print(f"Iter {i+1}/50 - Loss: {loss.item():.3f}")
 ```
@@ -329,7 +340,7 @@ for i, layer_idx in enumerate([0, nz//2, nz-1]):
     )
     axes[0, i].set_title(f'Predicted - Layer {layer_idx}')
     plt.colorbar(im1, ax=axes[0, i], label='Permeability (mD)')
-    
+
     # Uncertainty
     im2 = axes[1, i].imshow(
         perm_std_3d[:, :, layer_idx].T,
@@ -352,16 +363,16 @@ def export_property_to_grdecl(values_3d, property_name, filename):
     """Export 3D property array to GRDECL format"""
     with open(filename, 'w') as f:
         f.write(f"{property_name}\n")
-        
+
         # Flatten in Fortran order (column-major)
         values_flat = values_3d.ravel(order='F')
-        
+
         # Write values (8 per line)
         for i in range(0, len(values_flat), 8):
             line_values = values_flat[i:i+8]
             line = ' '.join(f'{v:.6f}' for v in line_values)
             f.write(f"  {line}\n")
-        
+
         f.write("/\n")
 
 # Export predicted permeability
@@ -431,7 +442,7 @@ class SparseGPModel(gpytorch.models.ExactGP):
             inducing_points=inducing_points,
             likelihood=likelihood
         )
-    
+
     def forward(self, x):
         mean_x = self.mean_module(x)
         covar_x = self.covar_module(x)
@@ -458,7 +469,7 @@ class MultiOutputGP(gpytorch.models.ExactGP):
         self.covar_module = gpytorch.kernels.MultitaskKernel(
             gpytorch.kernels.RBFKernel(), num_tasks=num_tasks, rank=1
         )
-    
+
     def forward(self, x):
         mean_x = self.mean_module(x)
         covar_x = self.covar_module(x)
@@ -478,7 +489,7 @@ class AnisotropicRBF(gpytorch.kernels.Kernel):
             'lengthscale',
             torch.nn.Parameter(torch.ones(ard_num_dims))
         )
-    
+
     def forward(self, x1, x2):
         # Scale each dimension independently
         x1_scaled = x1 / self.lengthscale
@@ -493,30 +504,35 @@ aniso_kernel = AnisotropicRBF(ard_num_dims=3)
 ## Best Practices
 
 ### 1. Data Preparation
+
 - ✓ Remove outliers and invalid values
 - ✓ Log-transform skewed distributions
 - ✓ Normalize coordinates
 - ✓ Check for trends (detrend if needed)
 
 ### 2. Model Selection
+
 - ✓ Start with variogram analysis
 - ✓ Use composite kernels (RBF + Matérn)
 - ✓ Cross-validate with spatial folds
 - ✓ Compare multiple models
 
 ### 3. Validation
+
 - ✓ Hold-out test set
 - ✓ Spatial cross-validation
 - ✓ Check uncertainty calibration
 - ✓ Visual inspection of predictions
 
 ### 4. Computational Efficiency
+
 - ✓ Use sparse methods for >5,000 points
 - ✓ Batch predictions for memory
 - ✓ Parallel processing where possible
 - ✓ GPU acceleration for GPyTorch
 
 ### 5. Production Deployment
+
 - ✓ Save models with metadata
 - ✓ Version control predictions
 - ✓ Export to standard formats
@@ -525,18 +541,22 @@ aniso_kernel = AnisotropicRBF(ard_num_dims=3)
 ## Limitations and Considerations
 
 ### Computational Complexity
+
 - **Exact GP**: O(n³) for training, O(n²) for prediction
 - **Solution**: Sparse methods, inducing points, or local GP
 
 ### Stationarity Assumptions
+
 - **Issue**: Kernel assumes similar correlation everywhere
 - **Solution**: Detrend data, use local GPs, or non-stationary kernels
 
 ### Kernel Selection
+
 - **Challenge**: Many kernel options
 - **Solution**: Start with variogram, use composite kernels, cross-validate
 
 ### Extrapolation
+
 - **Issue**: GPs revert to prior mean outside data range
 - **Solution**: Ensure good data coverage, use physical constraints
 
@@ -563,6 +583,7 @@ When paired with variogram analysis, spatial cross-validation, and proper visual
 ---
 
 **Next Steps**:
+
 - Try the tutorial notebooks in `examples/notebooks/`
 - Explore the variogram analysis module
 - Experiment with different kernels

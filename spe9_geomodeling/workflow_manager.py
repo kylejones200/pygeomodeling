@@ -24,12 +24,12 @@ class WorkflowIteration:
     iteration_number: int
     date: str
     model_version: str
-    wells_processed: List[str]
+    wells_processed: list[str]
     corrections_received: int
-    model_performance: Dict[str, float]
+    model_performance: dict[str, float]
     notes: str = ""
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         """Convert to dictionary for serialization."""
         return {
             "iteration_number": self.iteration_number,
@@ -55,7 +55,7 @@ class CorrectionRecord:
     expert_id: Optional[str] = None
     notes: Optional[str] = None
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         """Convert to dictionary for serialization."""
         return {
             "well_name": self.well_name,
@@ -79,10 +79,10 @@ class WorkflowState:
     reviewed_wells: int
     total_corrections: int
     current_model_version: str
-    iterations: List[WorkflowIteration] = field(default_factory=list)
-    corrections: List[CorrectionRecord] = field(default_factory=list)
+    iterations: list[WorkflowIteration] = field(default_factory=list)
+    corrections: list[CorrectionRecord] = field(default_factory=list)
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         """Convert to dictionary for serialization."""
         return {
             "current_iteration": self.current_iteration,
@@ -96,7 +96,7 @@ class WorkflowState:
         }
 
     @staticmethod
-    def from_dict(data: Dict) -> "WorkflowState":
+    def from_dict(data: dict) -> "WorkflowState":
         """Load from dictionary."""
         state = WorkflowState(
             current_iteration=data["current_iteration"],
@@ -171,13 +171,13 @@ class WorkflowManager:
 
     def load_state(self) -> WorkflowState:
         """Load workflow state from disk."""
-        with open(self.state_file, "r") as f:
+        with open(self.state_file) as f:
             data = json.load(f)
         return WorkflowState.from_dict(data)
 
     def start_new_iteration(
         self,
-        wells_to_process: List[str],
+        wells_to_process: list[str],
         model_version: Optional[str] = None,
     ):
         """
@@ -277,9 +277,9 @@ class WorkflowManager:
     def get_training_data_with_corrections(
         self,
         original_training_data: pd.DataFrame,
-        feature_columns: List[str],
+        feature_columns: list[str],
         label_column: str = "Facies",
-    ) -> Tuple[pd.DataFrame, pd.Series]:
+    ) -> tuple[pd.DataFrame, pd.Series]:
         """
         Get augmented training data including all corrections.
 
@@ -323,7 +323,7 @@ class WorkflowManager:
 
     def complete_iteration(
         self,
-        model_performance: Dict[str, float],
+        model_performance: dict[str, float],
         notes: str = "",
     ):
         """
@@ -394,7 +394,7 @@ class WorkflowManager:
 
         return df
 
-    def get_correction_statistics(self) -> Dict:
+    def get_correction_statistics(self) -> dict:
         """
         Analyze correction patterns.
 
@@ -418,7 +418,7 @@ class WorkflowManager:
 
     def _get_confusion_pairs(
         self, corrections_df: pd.DataFrame
-    ) -> List[Tuple[int, int, int]]:
+    ) -> list[tuple[int, int, int]]:
         """Get most common prediction-correction pairs."""
         pairs = corrections_df.groupby(
             ["original_prediction", "corrected_label"]
@@ -473,7 +473,7 @@ class WorkflowManager:
         print(f"Workflow summary exported to {output_file}")
 
 
-def create_workflow_dashboard(workflow_manager: WorkflowManager) -> Dict:
+def create_workflow_dashboard(workflow_manager: WorkflowManager) -> dict:
     """
     Create dashboard data for workflow monitoring.
 

@@ -9,17 +9,18 @@ This script performs:
 5. Visualization of GPR prediction, uncertainty, and training coverage
 """
 
-import numpy as np
-import pandas as pd
+import warnings
+
 import matplotlib.pyplot as plt
+import numpy as np
+from pykrige.ok import OrdinaryKriging
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF, Matern
-from sklearn.model_selection import train_test_split, KFold
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.model_selection import KFold, train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import r2_score, mean_squared_error
-from pykrige.ok import OrdinaryKriging
+
 from spe9_geomodeling.grdecl_parser import load_spe9_data
-import warnings
 
 warnings.filterwarnings("ignore")
 

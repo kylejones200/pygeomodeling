@@ -149,7 +149,7 @@ def _linear_model(h: np.ndarray, nugget: float, slope: float) -> np.ndarray:
 
 
 # Model registry
-VARIOGRAM_MODELS: Dict[str, Callable] = {
+VARIOGRAM_MODELS: dict[str, Callable] = {
     "spherical": _spherical_model,
     "exponential": _exponential_model,
     "gaussian": _gaussian_model,
@@ -163,7 +163,7 @@ def _compute_variogram_fast(
     values: np.ndarray,
     lag_bins: np.ndarray,
     tolerance: float,
-) -> Tuple[np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray]:
     """
     Numba-accelerated variogram computation.
 
@@ -211,7 +211,7 @@ def compute_experimental_variogram(
     n_lags: int = 15,
     max_lag: Optional[float] = None,
     lag_tolerance: float = 0.5,
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Compute experimental semi-variogram from sample pairs.
 
     Bins the distances and computes average semi-variance by bin.
@@ -455,7 +455,7 @@ def directional_variogram(
     tolerance: float = 22.5,
     n_lags: int = 15,
     max_lag: Optional[float] = None,
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Compute directional (anisotropic) variogram.
 
     Useful for detecting anisotropy in spatial correlation.
@@ -539,7 +539,7 @@ def cross_validation_variogram(
     values: np.ndarray,
     model: VariogramModel,
     n_folds: int = 5,
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """Cross-validate variogram model.
 
     Simple check to confirm the model with cross-validation.

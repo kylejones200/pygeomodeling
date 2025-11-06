@@ -1,12 +1,12 @@
 """Tests for plotting functionality."""
 
-import pytest
-import numpy as np
 import matplotlib
+import numpy as np
+import pytest
 
 matplotlib.use("Agg")  # Use non-interactive backend for testing
+
 import matplotlib.pyplot as plt
-from unittest.mock import patch, MagicMock
 
 from spe9_geomodeling.plot import SPE9Plotter
 

@@ -46,7 +46,7 @@ class SpatialKFold:
 
     def split(
         self, X: np.ndarray, y: np.ndarray = None, groups: np.ndarray = None
-    ) -> List[Tuple[np.ndarray, np.ndarray]]:
+    ) -> list[tuple[np.ndarray, np.ndarray]]:
         """Generate spatial fold indices.
 
         Args:
@@ -134,7 +134,7 @@ class BlockCV:
 
     def split(
         self, X: np.ndarray, y: np.ndarray = None, groups: np.ndarray = None
-    ) -> List[Tuple[np.ndarray, np.ndarray]]:
+    ) -> list[tuple[np.ndarray, np.ndarray]]:
         """Generate block fold indices.
 
         Args:
@@ -221,7 +221,7 @@ def cross_validate_spatial(
     scoring: Union[str, Callable] = "r2",
     return_train_score: bool = False,
     verbose: bool = True,
-) -> Dict[str, np.ndarray]:
+) -> dict[str, np.ndarray]:
     """Perform spatial cross-validation.
 
     Args:
@@ -300,7 +300,7 @@ class HyperparameterTuner:
     def __init__(
         self,
         model_class: type,
-        param_space: Dict[str, Any],
+        param_space: dict[str, Any],
         cv: Union[int, Any] = 5,
         n_trials: int = 100,
         scoring: str = "r2",
@@ -374,7 +374,7 @@ class HyperparameterTuner:
 
     def tune(
         self, X: np.ndarray, y: np.ndarray, verbose: bool = True
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Run hyperparameter tuning.
 
         Args:

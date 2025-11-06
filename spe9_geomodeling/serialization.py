@@ -73,17 +73,17 @@ class ModelMetadata:
         }
         self.updated_at = datetime.now().isoformat()
 
-    def add_hyperparameters(self, hyperparameters: Dict[str, Any]):
+    def add_hyperparameters(self, hyperparameters: dict[str, Any]):
         """Add hyperparameters to metadata."""
         self.hyperparameters = hyperparameters
         self.updated_at = datetime.now().isoformat()
 
-    def add_performance_metrics(self, metrics: Dict[str, float]):
+    def add_performance_metrics(self, metrics: dict[str, float]):
         """Add performance metrics to metadata."""
         self.performance_metrics = metrics
         self.updated_at = datetime.now().isoformat()
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert metadata to dictionary."""
         return {
             "model_name": self.model_name,
@@ -99,7 +99,7 @@ class ModelMetadata:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "ModelMetadata":
+    def from_dict(cls, data: dict[str, Any]) -> "ModelMetadata":
         """Create metadata from dictionary."""
         metadata = cls(
             model_name=data["model_name"],
@@ -244,7 +244,7 @@ class ModelSerializer:
                     suggestion="The model directory may be corrupted",
                 )
 
-            with open(metadata_path, "r") as f:
+            with open(metadata_path) as f:
                 metadata_dict = json.load(f)
             metadata = ModelMetadata.from_dict(metadata_dict)
 
@@ -303,7 +303,7 @@ class ModelSerializer:
 
         return sorted(models)
 
-    def get_model_info(self, model_name: str) -> Dict[str, Any]:
+    def get_model_info(self, model_name: str) -> dict[str, Any]:
         """Get information about a saved model.
 
         Args:
@@ -321,7 +321,7 @@ class ModelSerializer:
                 suggestion=f"Available models: {self.list_models()}",
             )
 
-        with open(metadata_path, "r") as f:
+        with open(metadata_path) as f:
             return json.load(f)
 
     def delete_model(self, model_name: str) -> None:
@@ -352,7 +352,7 @@ def save_model(
     backend: str = "sklearn",
     save_dir: Union[str, Path] = "saved_models",
     scaler: Any = None,
-    metrics: Dict[str, float] = None,
+    metrics: dict[str, float] = None,
     **kwargs,
 ) -> Path:
     """Convenience function to save a model.

@@ -97,7 +97,7 @@ class CurveQuality:
     min_value: float
     max_value: float
     quality_flag: str  # 'good', 'acceptable', 'poor'
-    issues: List[str]  # Specific quality problems
+    issues: list[str]  # Specific quality problems
 
     def __str__(self) -> str:
         return (
@@ -113,11 +113,11 @@ class ProcessedWellLogs:
     """Container for processed well log data."""
 
     data: pd.DataFrame
-    curve_types: Dict[str, str]  # curve_name -> curve_type
-    quality_report: Dict[str, CurveQuality]
-    processing_log: List[str]
-    original_curves: Set[str]
-    added_curves: Set[str]
+    curve_types: dict[str, str]  # curve_name -> curve_type
+    quality_report: dict[str, CurveQuality]
+    processing_log: list[str]
+    original_curves: set[str]
+    added_curves: set[str]
 
     def __str__(self) -> str:
         good_curves = sum(
@@ -216,7 +216,7 @@ class WellLogProcessor:
     def _verify_curve_statistics(
         self,
         data: pd.Series,
-        expected_range: Tuple[float, float],
+        expected_range: tuple[float, float],
     ) -> bool:
         """Check if curve statistics match expected range."""
         valid_data = data[data != self.null_value].dropna()
@@ -233,8 +233,8 @@ class WellLogProcessor:
 
     def _range_overlap(
         self,
-        range1: Tuple[float, float],
-        range2: Tuple[float, float],
+        range1: tuple[float, float],
+        range2: tuple[float, float],
     ) -> float:
         """Calculate overlap coefficient between two ranges."""
         min1, max1 = range1
@@ -257,7 +257,7 @@ class WellLogProcessor:
     def normalize_curve_names(
         self,
         data: pd.DataFrame,
-        curve_types: Dict[str, str],
+        curve_types: dict[str, str],
     ) -> pd.DataFrame:
         """
         Standardize curve names to common mnemonics.
@@ -415,7 +415,7 @@ class WellLogProcessor:
         data: pd.DataFrame,
         method: str = "zscore",
         threshold: Optional[float] = None,
-    ) -> Dict[str, np.ndarray]:
+    ) -> dict[str, np.ndarray]:
         """
         Detect outliers in log curves.
 
@@ -469,8 +469,8 @@ class WellLogProcessor:
     def assess_quality(
         self,
         data: pd.DataFrame,
-        outliers: Optional[Dict[str, np.ndarray]] = None,
-    ) -> Dict[str, CurveQuality]:
+        outliers: Optional[dict[str, np.ndarray]] = None,
+    ) -> dict[str, CurveQuality]:
         """
         Assess quality of each log curve.
 
@@ -538,7 +538,7 @@ class WellLogProcessor:
     def process_well_logs(
         self,
         data: pd.DataFrame,
-        curve_info: Optional[Dict[str, Dict[str, str]]] = None,
+        curve_info: Optional[dict[str, dict[str, str]]] = None,
         normalize_names: bool = True,
         align_depth_grid: bool = True,
         impute_missing: bool = True,
@@ -631,10 +631,10 @@ class WellLogProcessor:
 
 
 def process_multiple_wells(
-    well_data_dict: Dict[str, pd.DataFrame],
+    well_data_dict: dict[str, pd.DataFrame],
     processor: Optional[WellLogProcessor] = None,
     **processing_kwargs,
-) -> Dict[str, ProcessedWellLogs]:
+) -> dict[str, ProcessedWellLogs]:
     """
     Process multiple wells with consistent parameters.
 

@@ -49,7 +49,7 @@ class ModelResults:
     rmse: float
     mae: float
     y_pred: np.ndarray
-    y_std: Optional[np.ndarray] = None
+    y_std: np.ndarray | None = None
 
 
 @dataclass
@@ -58,16 +58,16 @@ class GridData:
 
     X_grid: np.ndarray
     y_grid: np.ndarray
-    feature_names: List[str]
+    feature_names: list[str]
     permx_3d: np.ndarray
-    dimensions: Tuple[int, int, int]
-    X_train: Optional[np.ndarray] = None
-    X_test: Optional[np.ndarray] = None
-    y_train: Optional[np.ndarray] = None
-    y_test: Optional[np.ndarray] = None
-    X_train_scaled: Optional[np.ndarray] = None
-    y_train_scaled: Optional[np.ndarray] = None
-    valid_mask: Optional[np.ndarray] = None
+    dimensions: tuple[int, int, int]
+    X_train: np.ndarray | None = None
+    X_test: np.ndarray | None = None
+    y_train: np.ndarray | None = None
+    y_test: np.ndarray | None = None
+    X_train_scaled: np.ndarray | None = None
+    y_train_scaled: np.ndarray | None = None
+    valid_mask: np.ndarray | None = None
 
 
 class SPE9Toolkit:
@@ -87,7 +87,7 @@ class SPE9Toolkit:
     """
 
     def __init__(
-        self, data_path: Optional[Union[str, Path]] = None, backend: str = "sklearn"
+        self, data_path: str | Path | None = None, backend: str = "sklearn"
     ) -> None:
         """Initialize the toolkit.
 
@@ -120,17 +120,17 @@ class SPE9Toolkit:
         self.backend = backend
 
         # Initialize data containers
-        self.data: Optional[Dict[str, Any]] = None
-        self.grid_data: Optional[GridData] = None
+        self.data: dict[str, Any] | None = None
+        self.grid_data: GridData | None = None
 
         # Model management
-        self.models: Dict[str, BaseEstimator] = {}
-        self.scalers: Dict[str, StandardScaler] = {}
-        self.results: Dict[str, ModelResults] = {}
+        self.models: dict[str, BaseEstimator] = {}
+        self.scalers: dict[str, StandardScaler] = {}
+        self.results: dict[str, ModelResults] = {}
 
         print(f"SPE9 Toolkit initialized with {backend} backend")
 
-    def load_data(self) -> Dict[str, Any]:
+    def load_data(self) -> dict[str, Any]:
         """Load SPE9 dataset.
 
         Returns:
@@ -226,7 +226,7 @@ class SPE9Toolkit:
 
     def create_train_test_split(
         self, *, test_size: float = 0.2, random_state: int = 42
-    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """Create train/test split.
 
         Args:
@@ -262,7 +262,7 @@ class SPE9Toolkit:
 
     def setup_scalers(
         self, *, scaler_type: str = "standard"
-    ) -> Tuple[StandardScaler, StandardScaler]:
+    ) -> tuple[StandardScaler, StandardScaler]:
         """Set up feature and target scalers.
 
         Args:
@@ -377,7 +377,7 @@ class SPE9Toolkit:
 
         return model
 
-    def _create_gpytorch_model(self, **kwargs) -> Tuple[Any, Any]:
+    def _create_gpytorch_model(self, **kwargs) -> tuple[Any, Any]:
         """Create GPyTorch model and likelihood."""
         if not GPYTORCH_AVAILABLE:
             raise ValueError("GPyTorch is not available")
@@ -485,7 +485,7 @@ class SPE9Toolkit:
 
         return results
 
-    def save_model(self, model_name: str, filepath: Union[str, Path]) -> None:
+    def save_model(self, model_name: str, filepath: str | Path) -> None:
         """Save a trained model to disk.
 
         Args:
@@ -508,7 +508,7 @@ class SPE9Toolkit:
         joblib.dump(model_data, filepath)
         print(f"Model '{model_name}' saved to {filepath}")
 
-    def load_model(self, model_name: str, filepath: Union[str, Path]) -> None:
+    def load_model(self, model_name: str, filepath: str | Path) -> None:
         """Load a trained model from disk.
 
         Args:
