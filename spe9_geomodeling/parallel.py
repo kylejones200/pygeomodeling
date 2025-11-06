@@ -4,14 +4,12 @@ Parallel processing utilities for model training and prediction.
 Leverages joblib for efficient parallel computation.
 """
 
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Tuple, Union
 
 import numpy as np
 from joblib import Parallel, delayed
 from sklearn.base import BaseEstimator, clone
 from tqdm import tqdm
-
-from .exceptions import InvalidParameterError
 
 
 class ParallelModelTrainer:
@@ -44,9 +42,13 @@ class ParallelModelTrainer:
             Dictionary of model_name -> trained model
         """
         if self.verbose > 0:
-            print(f"Training {len(models)} models in parallel (n_jobs={self.n_jobs})...")
+            print(
+                f"Training {len(models)} models in parallel (n_jobs={self.n_jobs})..."
+            )
 
-        def train_single_model(name: str, model: BaseEstimator) -> Tuple[str, BaseEstimator]:
+        def train_single_model(
+            name: str, model: BaseEstimator
+        ) -> Tuple[str, BaseEstimator]:
             """Train a single model."""
             model_clone = clone(model)
             model_clone.fit(X_train, y_train)
@@ -131,7 +133,8 @@ class ParallelModelTrainer:
 
         # Train and evaluate in parallel
         results = Parallel(n_jobs=self.n_jobs, verbose=self.verbose)(
-            delayed(train_and_eval_single)(name, model) for name, model in models.items()
+            delayed(train_and_eval_single)(name, model)
+            for name, model in models.items()
         )
 
         # Convert to dictionary
@@ -184,13 +187,19 @@ class BatchPredictor:
                 f"Making predictions for {n_samples} samples in {n_batches} batches..."
             )
 
-        def predict_batch(batch_idx: int) -> Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]:
+        def predict_batch(
+            batch_idx: int,
+        ) -> Union[np.ndarray, Tuple[np.ndarray, np.ndarray]]:
             """Predict a single batch."""
             start_idx = batch_idx * self.batch_size
             end_idx = min((batch_idx + 1) * self.batch_size, n_samples)
             X_batch = X[start_idx:end_idx]
 
-            if return_std and hasattr(model, "predict") and "return_std" in str(model.predict.__code__.co_varnames):
+            if (
+                return_std
+                and hasattr(model, "predict")
+                and "return_std" in str(model.predict.__code__.co_varnames)
+            ):
                 return model.predict(X_batch, return_std=True)
             else:
                 return model.predict(X_batch)
@@ -229,7 +238,9 @@ class BatchPredictor:
         if self.verbose:
             print(f"Making predictions with {len(models)} models...")
 
-        def predict_single_model(name: str, model: BaseEstimator) -> Tuple[str, np.ndarray]:
+        def predict_single_model(
+            name: str, model: BaseEstimator
+        ) -> Tuple[str, np.ndarray]:
             """Predict with a single model."""
             predictions = self.predict(model, X, return_std=False)
             return name, predictions
@@ -285,7 +296,9 @@ class ParallelCrossValidator:
         if self.verbose:
             print(f"Performing {len(splits)}-fold cross-validation...")
 
-        def evaluate_fold(fold_idx: int, train_idx: np.ndarray, test_idx: np.ndarray) -> float:
+        def evaluate_fold(
+            fold_idx: int, train_idx: np.ndarray, test_idx: np.ndarray
+        ) -> float:
             """Evaluate a single fold."""
             X_train, X_test = X[train_idx], X[test_idx]
             y_train, y_test = y[train_idx], y[test_idx]
@@ -317,7 +330,11 @@ class ParallelCrossValidator:
         if self.verbose:
             print(f"\nCross-validation score: {scores.mean():.4f} ± {scores.std():.4f}")
 
-        return {"test_scores": scores, "mean_score": scores.mean(), "std_score": scores.std()}
+        return {
+            "test_scores": scores,
+            "mean_score": scores.mean(),
+            "std_score": scores.std(),
+        }
 
 
 def parallel_grid_search(
@@ -348,6 +365,7 @@ def parallel_grid_search(
         Dictionary with best parameters and results
     """
     from itertools import product
+
     from sklearn.metrics import r2_score
 
     if scoring is None:

@@ -9,7 +9,6 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 import numpy as np
 from sklearn.base import BaseEstimator, clone
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-from sklearn.model_selection import KFold
 from tqdm import tqdm
 
 from .exceptions import CrossValidationError, raise_invalid_parameter
@@ -58,7 +57,7 @@ class SpatialKFold:
         Returns:
             List of (train_idx, test_idx) tuples
         """
-        n_samples = X.shape[0]
+        X.shape[0]
 
         # Extract spatial coordinates (assuming first 3 columns are x, y, z)
         coords = X[:, :3]
@@ -73,9 +72,7 @@ class SpatialKFold:
         z_blocks = np.floor(coords[:, 2] * blocks_per_dim).astype(int)
 
         # Combine into single block ID
-        block_ids = (
-            x_blocks * blocks_per_dim**2 + y_blocks * blocks_per_dim + z_blocks
-        )
+        block_ids = x_blocks * blocks_per_dim**2 + y_blocks * blocks_per_dim + z_blocks
 
         # Get unique blocks
         unique_blocks = np.unique(block_ids)
@@ -170,9 +167,7 @@ class BlockCV:
             for iy in range(self.n_blocks_y):
                 for iz in range(self.n_blocks_z):
                     # Test set: current block
-                    test_mask = (
-                        (x_blocks == ix) & (y_blocks == iy) & (z_blocks == iz)
-                    )
+                    test_mask = (x_blocks == ix) & (y_blocks == iy) & (z_blocks == iz)
 
                     # Apply buffer if specified
                     if self.buffer_size > 0:

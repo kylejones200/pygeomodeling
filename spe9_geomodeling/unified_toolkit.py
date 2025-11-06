@@ -12,27 +12,19 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import joblib
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
-import seaborn as sns
 from sklearn.base import BaseEstimator
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.svm import SVR
-from sklearn.gaussian_process.kernels import (
-    ConstantKernel,
-    Kernel,
-    Matern,
-    RBF,
-    WhiteKernel,
-)
+from sklearn.gaussian_process.kernels import RBF, ConstantKernel, Matern, WhiteKernel
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-from sklearn.model_selection import KFold, train_test_split
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVR
 
 # Import GPyTorch components (optional)
 try:
-    import torch
     import gpytorch
+    import torch
     from model_gp import GPModel
 
     GPYTORCH_AVAILABLE = True

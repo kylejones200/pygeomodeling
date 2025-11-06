@@ -12,8 +12,8 @@ __email__ = "kyletjones@gmail.com"
 # Import main classes for easy access
 try:
     from .grdecl_parser import GRDECLParser, load_spe9_data
-    from .toolkit import SPE9Toolkit
     from .plot import SPE9Plotter
+    from .toolkit import SPE9Toolkit
     from .unified_toolkit import UnifiedSPE9Toolkit
 except ImportError:
     # Handle case where optional dependencies aren't installed
@@ -21,7 +21,7 @@ except ImportError:
 
 # Import model classes if GPyTorch is available
 try:
-    from .model_gp import SPE9GPModel, DeepGPModel, create_gp_model
+    from .model_gp import DeepGPModel, SPE9GPModel, create_gp_model
 except ImportError:
     # GPyTorch not available
     pass
@@ -36,105 +36,96 @@ except ImportError:
 # Import new advanced features
 try:
     from . import exceptions
-    from .serialization import (
-        ModelMetadata,
-        ModelSerializer,
-        save_model,
-        load_model,
-    )
-    from .cross_validation import (
-        SpatialKFold,
-        BlockCV,
-        cross_validate_spatial,
-        HyperparameterTuner,
-    )
-    from .parallel import (
-        ParallelModelTrainer,
-        BatchPredictor,
-        ParallelCrossValidator,
-        parallel_grid_search,
-    )
-    from .variogram import (
-        VariogramModel,
-        compute_experimental_variogram,
-        fit_variogram_model,
-        predict_variogram,
-        directional_variogram,
-        cross_validation_variogram,
-    )
-    from .variogram_plot import (
-        plot_variogram,
-        plot_variogram_comparison,
-        plot_directional_variograms,
-        plot_variogram_cloud,
-    )
-    from .kriging import (
-        OrdinaryKriging,
-        UniversalKriging,
-        CoKriging,
-        simple_kriging,
-        KrigingResult,
-    )
-    from .well_data import (
-        LASParser,
-        WellHeader,
-        CurveInfo,
-        WellLogUpscaler,
-        load_las_file,
-        upscale_well_logs,
-    )
-    from .reservoir_engineering import (
-        VolumetricsCalculator,
-        PetrophysicsCalculator,
-        VolumetricResult,
-        ReservoirType,
-        calculate_reserves_uncertainty,
-        decline_curve_analysis,
-    )
-    from .facies import (
-        FaciesClassifier,
-        FaciesClassificationResult,
-        FACIES_LABELS,
-        load_facies_data,
-        prepare_facies_features,
-    )
-    from .well_log_processor import (
-        WellLogProcessor,
-        ProcessedWellLogs,
-        CurveQuality,
-        CURVE_SIGNATURES,
-        process_multiple_wells,
-    )
-    from .log_features import (
-        LogFeatureEngineer,
-        FeatureSet,
-        prepare_ml_dataset,
-    )
-    from .formation_tops import (
-        FormationTopDetector,
-        FormationTop,
-        BoundaryDetectionResult,
-        compare_tops_with_reference,
-    )
     from .confidence_scoring import (
-        ConfidenceScorer,
         ConfidenceScore,
+        ConfidenceScorer,
         WellConfidenceReport,
         compare_confidence_across_wells,
         export_review_list,
     )
+    from .cross_validation import (
+        BlockCV,
+        HyperparameterTuner,
+        SpatialKFold,
+        cross_validate_spatial,
+    )
+    from .facies import (
+        FACIES_LABELS,
+        FaciesClassificationResult,
+        FaciesClassifier,
+        load_facies_data,
+        prepare_facies_features,
+    )
+    from .formation_tops import (
+        BoundaryDetectionResult,
+        FormationTop,
+        FormationTopDetector,
+        compare_tops_with_reference,
+    )
     from .integration_exports import (
-        LASExporter,
-        FormationTopExporter,
         FaciesLogExporter,
+        FormationTopExporter,
+        LASExporter,
         PetrelProjectExporter,
         create_correction_template,
         import_expert_corrections,
     )
+    from .kriging import (
+        CoKriging,
+        KrigingResult,
+        OrdinaryKriging,
+        UniversalKriging,
+        simple_kriging,
+    )
+    from .log_features import FeatureSet, LogFeatureEngineer, prepare_ml_dataset
+    from .parallel import (
+        BatchPredictor,
+        ParallelCrossValidator,
+        ParallelModelTrainer,
+        parallel_grid_search,
+    )
+    from .reservoir_engineering import (
+        PetrophysicsCalculator,
+        ReservoirType,
+        VolumetricResult,
+        VolumetricsCalculator,
+        calculate_reserves_uncertainty,
+        decline_curve_analysis,
+    )
+    from .serialization import ModelMetadata, ModelSerializer, load_model, save_model
+    from .variogram import (
+        VariogramModel,
+        compute_experimental_variogram,
+        cross_validation_variogram,
+        directional_variogram,
+        fit_variogram_model,
+        predict_variogram,
+    )
+    from .variogram_plot import (
+        plot_directional_variograms,
+        plot_variogram,
+        plot_variogram_cloud,
+        plot_variogram_comparison,
+    )
+    from .well_data import (
+        CurveInfo,
+        LASParser,
+        WellHeader,
+        WellLogUpscaler,
+        load_las_file,
+        upscale_well_logs,
+    )
+    from .well_log_processor import (
+        CURVE_SIGNATURES,
+        CurveQuality,
+        ProcessedWellLogs,
+        WellLogProcessor,
+        process_multiple_wells,
+    )
     from .workflow_manager import (
-        WorkflowManager,
-        WorkflowIteration,
         CorrectionRecord,
+        WorkflowIteration,
+        WorkflowManager,
         WorkflowState,
         create_workflow_dashboard,
     )

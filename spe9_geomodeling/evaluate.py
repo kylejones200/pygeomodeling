@@ -1,7 +1,6 @@
-import torch
 import gpytorch
 import joblib
-import numpy as np
+import torch
 from model_gp import GPModel
 
 

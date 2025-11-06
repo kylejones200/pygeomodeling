@@ -1,9 +1,9 @@
-import torch
 import gpytorch
 import joblib
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
+import torch
 from model_gp import GPModel
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 
 
 def train_model(X, y, train_size=3000, seed=42, n_iter=100):

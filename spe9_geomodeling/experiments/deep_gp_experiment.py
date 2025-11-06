@@ -10,24 +10,22 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
-from pathlib import Path
-from typing import Dict, Tuple, Any, Optional
 import time
+from pathlib import Path
+from typing import Any, Dict, Optional, Tuple
 
-import numpy as np
-import pandas as pd
+import gpytorch
 import matplotlib.pyplot as plt
-import seaborn as sns
+import numpy as np
+import torch
+from model_gp import create_gp_model
+from plot import SPE9Plotter
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
-import torch
-import gpytorch
 from tqdm import tqdm
 
 from ..grdecl_parser import GRDECLParser
-from model_gp import SPE9GPModel, DeepGPModel, create_gp_model
-from plot import SPE9Plotter
 
 
 class DeepGPExperiment:

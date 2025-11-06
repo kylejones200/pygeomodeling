@@ -24,67 +24,45 @@ class PyGeoModelingError(Exception):
 class DataLoadError(PyGeoModelingError):
     """Raised when data loading fails."""
 
-    pass
-
 
 class DataValidationError(PyGeoModelingError):
     """Raised when data validation fails."""
-
-    pass
 
 
 class FileFormatError(PyGeoModelingError):
     """Raised when file format is invalid or unsupported."""
 
-    pass
-
 
 class GridDimensionError(PyGeoModelingError):
     """Raised when grid dimensions are invalid or inconsistent."""
-
-    pass
 
 
 class PropertyNotFoundError(PyGeoModelingError):
     """Raised when a required property is not found in the dataset."""
 
-    pass
-
 
 class ModelNotTrainedError(PyGeoModelingError):
     """Raised when attempting to use an untrained model."""
-
-    pass
 
 
 class ModelNotFoundError(PyGeoModelingError):
     """Raised when a requested model is not found."""
 
-    pass
-
 
 class BackendNotAvailableError(PyGeoModelingError):
     """Raised when a required backend is not available."""
-
-    pass
 
 
 class InvalidParameterError(PyGeoModelingError):
     """Raised when invalid parameters are provided."""
 
-    pass
-
 
 class SerializationError(PyGeoModelingError):
     """Raised when model serialization/deserialization fails."""
 
-    pass
-
 
 class CrossValidationError(PyGeoModelingError):
     """Raised when cross-validation fails."""
-
-    pass
 
 
 # Convenience functions for common error scenarios

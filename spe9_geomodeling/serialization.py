@@ -11,7 +11,6 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
 import joblib
-import numpy as np
 
 from .exceptions import SerializationError, raise_invalid_parameter
 

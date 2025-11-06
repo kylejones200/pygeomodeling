@@ -3,49 +3,50 @@ GRDECL File Parser for Reservoir Modeling Data
 Parses Eclipse-format GRDECL files to extract grid properties
 """
 
-import numpy as np
 import re
 from pathlib import Path
-from typing import Dict, Tuple, Optional
+from typing import Dict, Optional, Tuple
+
+import numpy as np
 
 from .exceptions import (
+    DataValidationError,
+    raise_dimension_mismatch,
     raise_file_not_found,
     raise_invalid_format,
     raise_property_not_found,
-    raise_dimension_mismatch,
-    DataValidationError,
 )
 
 
 class GRDECLParser:
     def __init__(self, filepath: str):
         """Initialize GRDECL parser.
-        
+
         Args:
             filepath: Path to GRDECL file
-            
+
         Raises:
             DataValidationError: If filepath is invalid
         """
         if not filepath:
             raise DataValidationError(
                 "Filepath cannot be empty",
-                suggestion="Provide a valid path to a GRDECL file"
+                suggestion="Provide a valid path to a GRDECL file",
             )
-        
+
         self.filepath = Path(filepath)
         self.grid_dimensions = None
         self.properties = {}
 
     def parse_specgrid(self, content: str) -> Tuple[int, int, int]:
         """Parse SPECGRID keyword to get grid dimensions
-        
+
         Args:
             content: GRDECL file content
-            
+
         Returns:
             Tuple of (nx, ny, nz) grid dimensions
-            
+
         Raises:
             FileFormatError: If SPECGRID keyword not found
         """
@@ -58,14 +59,14 @@ class GRDECLParser:
                 raise_invalid_format(
                     str(self.filepath),
                     "GRDECL",
-                    f"Invalid grid dimensions: {nx} x {ny} x {nz}. All dimensions must be positive."
+                    f"Invalid grid dimensions: {nx} x {ny} x {nz}. All dimensions must be positive.",
                 )
             return nx, ny, nz
         else:
             raise_invalid_format(
                 str(self.filepath),
                 "GRDECL",
-                "SPECGRID keyword not found in file. This is required to define grid dimensions."
+                "SPECGRID keyword not found in file. This is required to define grid dimensions.",
             )
 
     def parse_property(self, content: str, property_name: str) -> np.ndarray:
@@ -96,29 +97,29 @@ class GRDECLParser:
 
     def load_data(self) -> Dict:
         """Load and parse the GRDECL file
-        
+
         Returns:
             Dictionary with 'dimensions' and 'properties' keys
-            
+
         Raises:
             DataLoadError: If file cannot be loaded
             FileFormatError: If file format is invalid
         """
         if not self.filepath.exists():
             raise_file_not_found(str(self.filepath), "GRDECL")
-        
+
         try:
             with open(self.filepath, "r") as f:
                 content = f.read()
         except PermissionError:
             raise DataValidationError(
                 f"Permission denied reading file: {self.filepath}",
-                suggestion="Check that you have read permissions for this file"
+                suggestion="Check that you have read permissions for this file",
             )
         except Exception as e:
             raise DataValidationError(
                 f"Error reading file: {self.filepath}\n{str(e)}",
-                suggestion="Ensure the file is not corrupted and is a valid text file"
+                suggestion="Ensure the file is not corrupted and is a valid text file",
             )
 
         # Parse grid dimensions
@@ -142,18 +143,18 @@ class GRDECLParser:
                     raise_dimension_mismatch(
                         expected=(total_cells,),
                         actual=(len(prop_data),),
-                        context=f"property {prop}"
+                        context=f"property {prop}",
                     )
             except ValueError as e:
                 print(f"Could not load {prop}: {e}")
-        
+
         if not self.properties:
             raise DataValidationError(
                 "No properties were successfully loaded from the GRDECL file",
                 suggestion=(
                     "Check that the file contains at least one of: "
                     f"{', '.join(properties_to_parse)}"
-                )
+                ),
             )
 
         return {"dimensions": self.grid_dimensions, "properties": self.properties}
@@ -170,15 +171,15 @@ class GRDECLParser:
         self, property_name: str, axis: str = "z", index: int = 0
     ) -> Optional[np.ndarray]:
         """Get a 2D slice of a property
-        
+
         Args:
             property_name: Name of property to slice
             axis: Axis to slice along ('x', 'y', or 'z')
             index: Index along the axis
-            
+
         Returns:
             2D slice of the property, or None if property not found
-            
+
         Raises:
             PropertyNotFoundError: If property doesn't exist
             DataValidationError: If axis is invalid or index out of bounds
@@ -189,17 +190,20 @@ class GRDECLParser:
 
         if axis.lower() not in ["x", "y", "z"]:
             raise DataValidationError(
-                f"Invalid axis: {axis}",
-                suggestion="axis must be 'x', 'y', or 'z'"
+                f"Invalid axis: {axis}", suggestion="axis must be 'x', 'y', or 'z'"
             )
-        
-        axis_sizes = {"x": prop_3d.shape[0], "y": prop_3d.shape[1], "z": prop_3d.shape[2]}
+
+        axis_sizes = {
+            "x": prop_3d.shape[0],
+            "y": prop_3d.shape[1],
+            "z": prop_3d.shape[2],
+        }
         max_index = axis_sizes[axis.lower()]
-        
+
         if index < 0 or index >= max_index:
             raise DataValidationError(
                 f"Index {index} out of bounds for axis '{axis}' (size: {max_index})",
-                suggestion=f"Use an index between 0 and {max_index - 1}"
+                suggestion=f"Use an index between 0 and {max_index - 1}",
             )
 
         if axis.lower() == "z":
