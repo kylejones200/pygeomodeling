@@ -1,26 +1,40 @@
 repos:
   # Black - Code formatting
   - repo: https://github.com/psf/black
-    rev: 23.12.1
+    rev: 24.8.0
     hooks:
       - id: black
-        language_version: python3.11
+        language_version: python3.9
         args: [--line-length=88]
+
+  # isort - Import sorting (run before black)
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        args: [--profile=black, --line-length=88]
+
+  # autoflake - Remove unused imports and variables
+  - repo: https://github.com/PyCQA/autoflake
+    rev: v2.3.1
+    hooks:
+      - id: autoflake
+        args:
+          - --in-place
+          - --remove-all-unused-imports
+          - --remove-unused-variables
+          - --expand-star-imports
+          - --ignore-init-module-imports
 
   # Flake8 - Linting
   - repo: https://github.com/pycqa/flake8
     rev: 7.0.0
     hooks:
       - id: flake8
-        args: [--max-line-length=88, --extend-ignore=E203]
+        args: 
+          - --max-line-length=88
+          - --extend-ignore=E203,W503,E501,F541,E402,E731,E712,E722,F841
         additional_dependencies: [flake8-docstrings]
-
-  # isort - Import sorting
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
-        args: [--profile=black, --line-length=88]
 
   # pyupgrade - Upgrade syntax for newer Python
   - repo: https://github.com/asottile/pyupgrade
@@ -70,7 +84,7 @@ repos:
 
 # Configuration for specific hooks
 default_language_version:
-  python: python3.11
+  python: python3.9
 
 # Files to exclude
 exclude: |
