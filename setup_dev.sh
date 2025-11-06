@@ -57,7 +57,7 @@ pip install -e ".[dev,docs,all]"
 echo -e "${GREEN}✓ Package installed${NC}"
 
 # Run initial tests
-echo -e "\n${YELLOW}[6/7] Running initial tests...${NC}"
+echo -e "\n${YELLOW}[6/6] Running initial tests...${NC}"
 if pytest tests/ -v --tb=short -x; then
     echo -e "${GREEN}✓ Tests passed${NC}"
 else
