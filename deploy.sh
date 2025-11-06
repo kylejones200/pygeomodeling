@@ -3,7 +3,7 @@
 
 set -e
 
-VERSION="0.2.0"
+VERSION="0.2.1"
 
 echo "=================================================="
 echo "PyGeomodeling v${VERSION} Deployment"
@@ -77,8 +77,9 @@ git add deploy.sh
 git add CONTRIBUTING.md
 git add QUICK_START.md
 git add ADVANCED_FEATURES.md
-git add IMPROVEMENTS_SUMMARY.md
+git add CHANGELOG.md
 git add docs/advanced_features.md
+git add README.md
 
 # Examples and tutorials
 git add examples/advanced_workflow.py
