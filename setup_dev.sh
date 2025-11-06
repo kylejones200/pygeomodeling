@@ -52,24 +52,12 @@ pip install --upgrade pip setuptools wheel
 echo -e "${GREEN}✓ pip upgraded${NC}"
 
 # Install package in development mode
-echo -e "\n${YELLOW}[5/7] Installing package in development mode...${NC}"
+echo -e "\n${YELLOW}[5/6] Installing package in development mode...${NC}"
 pip install -e ".[dev,docs,all]"
 echo -e "${GREEN}✓ Package installed${NC}"
 
-# Install pre-commit hooks
-echo -e "\n${YELLOW}[6/7] Installing pre-commit hooks...${NC}"
-if command -v pre-commit &> /dev/null; then
-    pre-commit install
-    echo -e "${GREEN}✓ Pre-commit hooks installed${NC}"
-else
-    echo -e "${YELLOW}  pre-commit not found, installing...${NC}"
-    pip install pre-commit
-    pre-commit install
-    echo -e "${GREEN}✓ Pre-commit hooks installed${NC}"
-fi
-
 # Run initial tests
-echo -e "\n${YELLOW}[7/7] Running initial tests...${NC}"
+echo -e "\n${YELLOW}[6/7] Running initial tests...${NC}"
 if pytest tests/ -v --tb=short -x; then
     echo -e "${GREEN}✓ Tests passed${NC}"
 else
