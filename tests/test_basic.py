@@ -32,8 +32,8 @@ class TestPackageBasics:
             import spe9_geomodeling
 
             # Test that main classes are available
+            # UnifiedSPE9Toolkit is the primary toolkit (SPE9Toolkit is deprecated)
             expected_classes = [
-                "SPE9Toolkit",
                 "UnifiedSPE9Toolkit",
                 "SPE9Plotter",
                 "GRDECLParser",

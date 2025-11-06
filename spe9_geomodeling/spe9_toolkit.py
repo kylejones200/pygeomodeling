@@ -2,11 +2,22 @@
 
 A Pythonic, modular toolkit for reservoir property modeling using the SPE9 dataset.
 Follows PEP 8 conventions and Python best practices.
+
+.. deprecated:: 0.3.0
+    This module is deprecated. Use :class:`UnifiedSPE9Toolkit` from
+    :mod:`spe9_geomodeling.unified_toolkit` instead.
 """
 
 from __future__ import annotations
 
 import warnings
+
+warnings.warn(
+    "spe9_geomodeling.spe9_toolkit.SPE9Toolkit is deprecated. "
+    "Use spe9_geomodeling.UnifiedSPE9Toolkit instead.",
+    DeprecationWarning,
+    stacklevel=2,
+)
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any

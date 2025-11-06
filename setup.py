@@ -1,8 +1,21 @@
+"""
+Legacy setup.py file.
+
+This file is kept for backward compatibility but is deprecated.
+Modern Python projects should use pyproject.toml instead.
+
+For installation, use:
+    pip install .
+
+or for development:
+    pip install -e ".[dev]"
+"""
+
 from setuptools import find_packages, setup
 
 setup(
     name="pygeomodeling",
-    version="0.1.1",
+    version="0.3.0",
     description="Gaussian Process Regression and Kriging for 3D Reservoir Simulation Data",
     author="Kyle T. Jones",
     author_email="kyletjones@gmail.com",

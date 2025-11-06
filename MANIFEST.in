@@ -1,5 +1,5 @@
 # Include important files for PyPI distribution
-include README.MD
+include README.md
 include LICENSE
 include pyproject.toml
 include setup.py

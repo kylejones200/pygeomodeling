@@ -5,7 +5,6 @@ Defines Gaussian Process models optimized for reservoir property prediction.
 
 from __future__ import annotations
 
-
 import gpytorch
 import torch
 
@@ -178,7 +177,7 @@ def create_gp_model(
     model_type: str = "standard",
     **kwargs,
 ) -> tuple[gpytorch.models.ExactGP, gpytorch.likelihoods.Likelihood]:
-    """Factory function to create GP models.
+    """Create GP models.
 
     Args:
         train_x: Training input features

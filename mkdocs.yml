@@ -8,6 +8,10 @@ repo_name: kylejones200/pygeomodeling
 repo_url: https://github.com/kylejones200/pygeomodeling
 edit_uri: edit/main/docs/
 
+# Exclude README.md from docs to avoid conflict with index.md
+exclude_docs: |
+  README.md
+
 # Navigation
 nav:
   - Home: index.md

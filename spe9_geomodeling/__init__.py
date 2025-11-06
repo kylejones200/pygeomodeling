@@ -5,7 +5,7 @@ Advanced Gaussian Process Regression and Kriging toolkit for reservoir modeling.
 Supports both traditional GP models and Deep GP models for spatial pattern analysis.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.3.0"
 __author__ = "K. Jones"
 __email__ = "kyletjones@gmail.com"
 
@@ -13,8 +13,12 @@ __email__ = "kyletjones@gmail.com"
 try:
     from .grdecl_parser import GRDECLParser, load_spe9_data
     from .plot import SPE9Plotter
-    from .toolkit import SPE9Toolkit
+
+    # Deprecated: Import old toolkit for backward compatibility
+    from .toolkit import SPE9Toolkit as _SPE9Toolkit
     from .unified_toolkit import UnifiedSPE9Toolkit
+
+    SPE9Toolkit = _SPE9Toolkit  # Keep for backward compatibility
 except ImportError:
     # Handle case where optional dependencies aren't installed
     pass
@@ -137,8 +141,8 @@ __all__ = [
     # Core modules
     "GRDECLParser",
     "load_spe9_data",
-    "SPE9Toolkit",
     "UnifiedSPE9Toolkit",
+    "SPE9Toolkit",  # Deprecated, use UnifiedSPE9Toolkit
     "SPE9Plotter",
     # Model classes
     "SPE9GPModel",

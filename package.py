@@ -70,7 +70,7 @@ def create_archive():
     files_to_include = [
         "*.py",
         "pyproject.toml",
-        "README.MD",
+        "README.md",
         "requirements.txt",  # if it exists
     ]
 
