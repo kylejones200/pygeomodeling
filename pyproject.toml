@@ -93,7 +93,7 @@ geospatial = [
 
 # Performance optimization (additional accelerators)
 performance = [
-  "cupy>=12.0.0,<13.0.0"  # GPU acceleration (optional)
+  "cupy>=12.0.0,<14.0.0"  # GPU acceleration (optional)
 ]
 
 # Interactive visualization
