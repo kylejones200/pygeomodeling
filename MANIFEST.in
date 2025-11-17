@@ -18,7 +18,6 @@ global-exclude *.so
 global-exclude .git*
 global-exclude .venv*
 global-exclude *.png
-global-exclude *.GRDECL
 global-exclude *.pth
 global-exclude *.save
 global-exclude *.egg-info

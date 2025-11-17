@@ -10,6 +10,11 @@ import subprocess
 import sys
 from pathlib import Path
 
+try:  # Python 3.11+
+    import tomllib  # type: ignore[attr-defined]
+except ModuleNotFoundError:  # pragma: no cover - fallback for 3.9/3.10
+    import tomli as tomllib  # type: ignore[assignment]
+
 
 def check_requirements():
     """Check if required packaging tools are installed."""
@@ -90,23 +95,46 @@ def create_archive():
     print("✅ Archive created: spe9-geomodeling-toolkit.tar.gz")
 
 
+def get_project_metadata() -> dict:
+    """Read project metadata from pyproject.toml."""
+    pyproject_path = Path("pyproject.toml")
+    if not pyproject_path.exists():
+        return {}
+
+    with pyproject_path.open("rb") as f:
+        data = tomllib.load(f)
+    project = data.get("project", {})
+    return {
+        "name": project.get("name", "pygeomodeling"),
+        "version": project.get("version", "0.0.0"),
+    }
+
+
 def show_installation_instructions():
     """Show installation instructions for users."""
+    metadata = get_project_metadata()
+    dist_name = metadata.get("name", "pygeomodeling")
+    version = metadata.get("version", "0.0.0")
+    wheel_name = f"{dist_name.replace('-', '_')}-{version}-py3-none-any.whl"
+
     print("\n" + "=" * 60)
     print("📋 INSTALLATION INSTRUCTIONS FOR USERS")
     print("=" * 60)
 
     print("\n🎯 Option 1: Install from wheel (if built):")
-    print("pip install dist/spe9_geomodeling-0.1.0-py3-none-any.whl")
+    print(f"pip install dist/{wheel_name}")
 
-    print("\n🎯 Option 2: Install from source:")
-    print("pip install -e .")
+    print("\n🎯 Option 2: Install from source (core dependencies):")
+    print("pip install .")
+    print("pip install -e .  # development mode")
 
-    print("\n🎯 Option 3: Install with specific features:")
-    print("pip install -e '.[advanced]'  # For GPyTorch support")
-    print("pip install -e '.[all]'       # For all features")
+    print("\n🎯 Option 3: Install with optional extras:")
+    print("pip install '.[dev]'        # development tooling")
+    print("pip install '.[advanced]'   # GPyTorch/Optuna workflow")
+    print("pip install '.[geospatial]' # Geo file I/O stack")
+    print("pip install '.[all]'        # Everything except GPU-only extras")
 
-    print("\n🎯 Option 4: From archive:")
+    print("\n🎯 Option 4: From source archive:")
     print("tar -xzf spe9-geomodeling-toolkit.tar.gz")
     print("cd spe9-geomodeling-toolkit")
     print("pip install -e .")

@@ -1,7 +1,15 @@
 """Tests for GRDECL parser functionality."""
 
+from pathlib import Path
+
 import numpy as np
 import pytest
+
+from spe9_geomodeling.exceptions import (
+    DataLoadError,
+    DataValidationError,
+    FileFormatError,
+)
 
 from spe9_geomodeling.grdecl_parser import GRDECLParser, load_spe9_data
 
@@ -12,7 +20,7 @@ class TestGRDECLParser:
     def test_parser_initialization(self, sample_grdecl_file):
         """Test parser initialization."""
         parser = GRDECLParser(sample_grdecl_file)
-        assert parser.filepath == sample_grdecl_file
+        assert parser.filepath == Path(sample_grdecl_file)
         assert parser.grid_dimensions is None
         assert parser.properties == {}
 
@@ -35,7 +43,7 @@ class TestGRDECLParser:
     def test_parse_nonexistent_file(self):
         """Test parsing a non-existent file raises appropriate error."""
         parser = GRDECLParser("nonexistent_file.grdecl")
-        with pytest.raises(FileNotFoundError):
+        with pytest.raises(DataLoadError):
             parser.parse()
 
     def test_parse_invalid_file(self, tmp_path):
@@ -45,7 +53,7 @@ class TestGRDECLParser:
 
         parser = GRDECLParser(str(invalid_file))
         # Should handle gracefully or raise appropriate error
-        with pytest.raises((ValueError, KeyError)):
+        with pytest.raises(FileFormatError):
             parser.parse()
 
 
@@ -67,14 +75,15 @@ class TestLoadSPE9Data:
         # This test will skip if the default file doesn't exist
         try:
             data = load_spe9_data()
+        except DataLoadError:
+            pytest.skip("Default SPE9 data file not found")
+        else:
             assert "dimensions" in data
             assert "properties" in data
-        except FileNotFoundError:
-            pytest.skip("Default SPE9 data file not found")
 
     def test_load_spe9_data_invalid_path(self):
         """Test loading SPE9 data with invalid path."""
-        with pytest.raises(FileNotFoundError):
+        with pytest.raises(DataLoadError):
             load_spe9_data("nonexistent_path.grdecl")
 
 
@@ -128,7 +137,7 @@ class TestGRDECLParserEdgeCases:
         empty_file.write_text("")
 
         parser = GRDECLParser(str(empty_file))
-        with pytest.raises((ValueError, KeyError)):
+        with pytest.raises(FileFormatError):
             parser.parse()
 
     def test_malformed_dimensions(self, tmp_path):
@@ -137,7 +146,7 @@ class TestGRDECLParserEdgeCases:
         malformed_file.write_text("SPECGRID\nINVALID DIMENSIONS\n/\n")
 
         parser = GRDECLParser(str(malformed_file))
-        with pytest.raises((ValueError, IndexError)):
+        with pytest.raises(FileFormatError):
             parser.parse()
 
     def test_missing_properties(self, tmp_path):
@@ -146,9 +155,5 @@ class TestGRDECLParserEdgeCases:
         minimal_file.write_text("SPECGRID\n5 5 5 1 F /\n")
 
         parser = GRDECLParser(str(minimal_file))
-        data = parser.parse()
-
-        # Should parse dimensions but have empty properties
-        assert data["dimensions"] == (5, 5, 5)
-        # Properties might be empty or have default values
-        assert isinstance(data["properties"], dict)
+        with pytest.raises(DataValidationError):
+            parser.parse()

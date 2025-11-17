@@ -25,14 +25,18 @@ from sklearn.svm import SVR
 try:
     import gpytorch
     import torch
-    from model_gp import GPModel
+    from .model_gp import GPModel
 
     GPYTORCH_AVAILABLE = True
-except ImportError:
+except ImportError as exc:
     GPYTORCH_AVAILABLE = False
     torch = None
     gpytorch = None
-    GPModel = None
+    GPModel = None  # type: ignore[assignment]
+    warnings.warn(
+        "GPyTorch backend is unavailable. Install the 'advanced' extras to enable it.",
+        RuntimeWarning,
+    )
 
 from .grdecl_parser import load_spe9_data
 
@@ -97,11 +101,16 @@ class UnifiedSPE9Toolkit:
         self.y_train: np.ndarray | None = None
         self.y_test: np.ndarray | None = None
         self.valid_mask: np.ndarray | None = None
+        self.X_train_scaled: np.ndarray | None = None
+        self.y_train_scaled: np.ndarray | None = None
+        self.X_test_scaled: np.ndarray | None = None
 
         # Models and results
         self.models: dict[str, Any] = {}
         self.scalers: dict[str, StandardScaler] = {}
         self.results: dict[str, dict[str, Any]] = {}
+        self.X_train_scaled: np.ndarray | None = None
+        self.y_train_scaled: np.ndarray | None = None
 
         print(f"Unified SPE9 Toolkit initialized with {backend} backend")
 
@@ -214,6 +223,12 @@ class UnifiedSPE9Toolkit:
             X_valid, y_valid, test_size=test_size, random_state=random_state
         )
 
+        # Invalidate previously scaled data and scalers
+        self.scalers.clear()
+        self.X_train_scaled = None
+        self.y_train_scaled = None
+        self.X_test_scaled = None
+
         print(
             f"Training samples: {len(self.X_train):,}, Test samples: {len(self.X_test):,}"
         )
@@ -241,7 +256,18 @@ class UnifiedSPE9Toolkit:
         x_scaler.fit(self.X_train)
         y_scaler.fit(self.y_train.reshape(-1, 1))
 
+        # Transform and store scaled training data for downstream workflows
+        self.X_train_scaled = x_scaler.transform(self.X_train)
+        self.y_train_scaled = y_scaler.transform(self.y_train.reshape(-1, 1)).flatten()
+
         self.scalers = {"x_scaler": x_scaler, "y_scaler": y_scaler}
+        self.X_train_scaled = x_scaler.transform(self.X_train)
+        self.y_train_scaled = (
+            y_scaler.transform(self.y_train.reshape(-1, 1)).ravel()
+        )
+        self.X_test_scaled = (
+            x_scaler.transform(self.X_test) if self.X_test is not None else None
+        )
 
         print(f"Scalers setup: {scaler_type}")
         return x_scaler, y_scaler
@@ -300,8 +326,10 @@ class UnifiedSPE9Toolkit:
             raise ValueError("GPyTorch is not available")
 
         # Scale training data
-        X_scaled = self.scalers["x_scaler"].transform(self.X_train)
-        X_tensor = torch.tensor(X_scaled, dtype=torch.float32)
+        if self.X_train_scaled is None or self.y_train is None:
+            raise ValueError("Call setup_scalers() before creating GPyTorch models.")
+
+        X_tensor = torch.tensor(self.X_train_scaled, dtype=torch.float32)
         y_tensor = torch.tensor(self.y_train, dtype=torch.float32)
 
         likelihood = gpytorch.likelihoods.GaussianLikelihood()
@@ -313,10 +341,11 @@ class UnifiedSPE9Toolkit:
         self, model: BaseEstimator, model_name: str
     ) -> BaseEstimator:
         """Train scikit-learn model."""
-        X_scaled = self.scalers["x_scaler"].transform(self.X_train)
-        y_scaled = (
-            self.scalers["y_scaler"].transform(self.y_train.reshape(-1, 1)).flatten()
-        )
+        if self.X_train_scaled is None or self.y_train_scaled is None:
+            raise ValueError("Call setup_scalers() before training models.")
+
+        X_scaled = self.X_train_scaled
+        y_scaled = self.y_train_scaled
 
         print(f"Training {model_name} (sklearn)...")
         model.fit(X_scaled, y_scaled)
@@ -342,8 +371,10 @@ class UnifiedSPE9Toolkit:
         if not GPYTORCH_AVAILABLE:
             raise ValueError("GPyTorch is not available")
 
-        X_scaled = self.scalers["x_scaler"].transform(self.X_train)
-        X_tensor = torch.tensor(X_scaled, dtype=torch.float32)
+        if self.X_train_scaled is None or self.y_train is None:
+            raise ValueError("Call setup_scalers() before training GPyTorch models.")
+
+        X_tensor = torch.tensor(self.X_train_scaled, dtype=torch.float32)
         y_tensor = torch.tensor(self.y_train, dtype=torch.float32)
 
         model.train()
@@ -375,7 +406,13 @@ class UnifiedSPE9Toolkit:
             raise ValueError(f"Model {model_name} not found. Train it first.")
 
         model = self.models[model_name]
-        X_test_scaled = self.scalers["x_scaler"].transform(self.X_test)
+        if self.X_test is None:
+            raise ValueError("Test split not created. Call create_train_test_split().")
+
+        if self.X_test_scaled is None:
+            X_test_scaled = self.scalers["x_scaler"].transform(self.X_test)
+        else:
+            X_test_scaled = self.X_test_scaled
 
         if self.backend == "sklearn":
             # Scikit-learn model

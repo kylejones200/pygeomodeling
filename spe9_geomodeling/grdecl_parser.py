@@ -4,6 +4,7 @@ Parses Eclipse-format GRDECL files to extract grid properties
 """
 
 import re
+from importlib import resources
 from pathlib import Path
 from typing import Optional
 
@@ -226,9 +227,17 @@ def load_spe9_data(
         Dictionary containing parsed SPE9 data
     """
     if data_path is None:
-        # Use the bundled data file in the project
-        module_dir = Path(__file__).parent.parent
-        data_path = module_dir / "data" / "SPE9.GRDECL"
+        try:
+            resource = resources.files("spe9_geomodeling.data") / "SPE9.GRDECL"
+        except (FileNotFoundError, ModuleNotFoundError):
+            raise_file_not_found(
+                "SPE9.GRDECL",
+                "bundled SPE9 dataset",
+            )
+
+        with resources.as_file(resource) as bundled_path:
+            parser = GRDECLParser(str(bundled_path))
+            return parser.load_data()
 
     parser = GRDECLParser(str(data_path))
     return parser.load_data()

@@ -271,14 +271,14 @@ class SPE9Toolkit:
             raise ValueError("scaler_type must be 'standard' or 'robust'")
 
         # Fit and transform training data
-        X_train_scaled = x_scaler.fit_transform(self.grid_data.X_train)
-        y_train_scaled = y_scaler.fit_transform(
+        self.grid_data.X_train_scaled = x_scaler.fit_transform(
+            self.grid_data.X_train
+        )
+        self.grid_data.y_train_scaled = y_scaler.fit_transform(
             self.grid_data.y_train.reshape(-1, 1)
         ).flatten()
 
         self.scalers = {"x_scaler": x_scaler, "y_scaler": y_scaler}
-        self.grid_data.X_train_scaled = X_train_scaled
-        self.grid_data.y_train_scaled = y_train_scaled
 
         print(f"Scalers setup: {scaler_type}")
         return x_scaler, y_scaler

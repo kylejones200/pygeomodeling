@@ -26,9 +26,29 @@ except ImportError:
 # Import model classes if GPyTorch is available
 try:
     from .model_gp import DeepGPModel, SPE9GPModel, create_gp_model
-except ImportError:
-    # GPyTorch not available
-    pass
+except ImportError as exc:  # pragma: no cover - executed only when optional deps missing
+    class _MissingGPDependency:
+        """Placeholder that raises a helpful error at runtime."""
+
+        def __init__(self, *args, **kwargs) -> None:
+            raise ImportError(
+                "Optional dependency for Gaussian Process models is missing. "
+                "Install the 'advanced' extras (pip install pygeomodeling[advanced]) "
+                "to enable SPE9GPModel support."
+            ) from exc
+
+    class SPE9GPModel(_MissingGPDependency):
+        """Placeholder SPE9 Gaussian Process model."""
+
+    class DeepGPModel(_MissingGPDependency):
+        """Placeholder Deep Gaussian Process model."""
+
+    def create_gp_model(*args, **kwargs):  # type: ignore[override]
+        raise ImportError(
+            "Optional dependency for Gaussian Process models is missing. "
+            "Install the 'advanced' extras (pip install pygeomodeling[advanced]) "
+            "to enable SPE9GPModel support."
+        ) from exc
 
 # Import experimental modules
 try:
