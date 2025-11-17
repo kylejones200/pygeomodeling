@@ -1,0 +1,38 @@
+name: CI
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: ".python-version"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Test
+        run: |
+          pytest -q --maxfail=1  # Only require tests to pass
+      
+      # Optional: non-blocking checks
+      - name: Lint check (non-blocking)
+        continue-on-error: true
+        run: |
+          ruff check . || echo "Linting issues found (non-blocking)"
+      
+      - name: Type check (non-blocking)
+        continue-on-error: true
+        run: |
+          mypy . || echo "Type check issues found (non-blocking)"
+

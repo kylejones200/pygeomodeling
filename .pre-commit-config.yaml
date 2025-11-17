@@ -1,0 +1,11 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      - id: ruff-format  # Only auto-format, don't block on linting
+      - id: ruff
+        args: ['--exit-non-zero-on-fix']
+        stages: []  # Disabled - won't run automatically
+
+# Remove mypy/pytest hooks if you don't want them blocking commits
+

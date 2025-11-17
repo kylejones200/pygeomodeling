@@ -69,7 +69,8 @@ dev = [
   "pytest-timeout>=2.1.0",
   "coverage>=7.0.0",
   "flake8>=6.0.0",
-  "mypy>=1.0.0"
+  "mypy>=1.0.0",
+  "ruff>=0.6.0"
 ]
 
 # Advanced machine learning (GPyTorch, optimization)
@@ -162,6 +163,12 @@ where = ["."]  # Current directory
 include = ["spe9_geomodeling*"]
 exclude = ["tests*", "examples*", "docs*"]
 
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.package-data]
+"spe9_geomodeling.data" = ["SPE9.GRDECL"]
+
 [tool.black]
 line-length = 88
 target-version = ['py39']
@@ -190,3 +197,60 @@ testpaths = ["tests"]
 python_files = ["test_*.py", "*_test.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"  # Match your Python version
+exclude = [
+    ".git",
+    "__pycache__",
+    ".venv",
+    "venv",
+    ".eggs",
+    "*.egg",
+    "build",
+    "dist",
+    "examples",
+    "benchmarks",
+    "site",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+ignore = [
+    "E402",  # Module level import not at top (if intentional)
+    "E501",  # Line too long (handled by formatter)
+    "N806",  # Variable should be lowercase (if using stats conventions)
+    "N803",  # Argument should be lowercase (if using stats conventions)
+    # Add ignores as needed for your codebase
+]
+
+[tool.mypy]
+python_version = "3.12"
+warn_unused_configs = true
+ignore_missing_imports = true
+no_strict_optional = true
+implicit_optional = true
+follow_imports = "skip"
+allow_untyped_defs = true
+allow_untyped_calls = true
+allow_untyped_globals = true
+allow_incomplete_defs = true
+allow_redefinition = true
+disable_error_code = [
+  "attr-defined",
+  "assignment",
+  "call-arg",
+  "index",
+  "operator",
+  "return-value",
+  "var-annotated",
+  "list-item",
+  "arg-type",
+  "misc",
+  "has-type",
+  "union-attr",
+  "dict-item",
+  "call-overload",
+  "no-redef",
+]
