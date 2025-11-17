@@ -27,6 +27,9 @@ except ImportError:
 try:
     from .model_gp import DeepGPModel, SPE9GPModel, create_gp_model
 except ImportError as exc:  # pragma: no cover - executed only when optional deps missing
+    # Store exception for use in closures
+    _gp_import_error = exc
+
     class _MissingGPDependency:
         """Placeholder that raises a helpful error at runtime."""
 
@@ -35,7 +38,7 @@ except ImportError as exc:  # pragma: no cover - executed only when optional dep
                 "Optional dependency for Gaussian Process models is missing. "
                 "Install the 'advanced' extras (pip install pygeomodeling[advanced]) "
                 "to enable SPE9GPModel support."
-            ) from exc
+            ) from _gp_import_error
 
     class SPE9GPModel(_MissingGPDependency):
         """Placeholder SPE9 Gaussian Process model."""
@@ -48,7 +51,7 @@ except ImportError as exc:  # pragma: no cover - executed only when optional dep
             "Optional dependency for Gaussian Process models is missing. "
             "Install the 'advanced' extras (pip install pygeomodeling[advanced]) "
             "to enable SPE9GPModel support."
-        ) from exc
+        ) from _gp_import_error
 
 # Import experimental modules
 try:
