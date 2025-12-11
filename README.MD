@@ -18,7 +18,7 @@ Advanced Gaussian Process Regression and Kriging toolkit for SPE9 reservoir mode
 - **🧠 Advanced Models**: Traditional GP (RBF, Matérn, Combined kernels) and Deep GP with neural network features
 - **📊 Rich Visualization**: Comprehensive plotting utilities for model comparison and spatial analysis
 
-### Production-Ready Features (v0.3.0)
+### Features (v0.3.0)
 
 - **🛡️ Error Handling**: Comprehensive validation with helpful error messages
 - **💾 Model Serialization**: Save/load models with versioning and metadata
@@ -177,9 +177,9 @@ If you use this toolkit in your research, please cite:
 ```bibtex
 @software{jones2025spe9geomodeling,
   title={SPE9 Geomodeling Toolkit: Advanced Gaussian Process Regression for Reservoir Modeling},
-  author={Jones, K.},
+  author={Jones, Kyle T.},
   year={2025},
-  url={https://github.com/yourusername/spe9-geomodeling}
+  url={https://github.com/kylejones200/pygeomodeling}
 }
 ```
 
