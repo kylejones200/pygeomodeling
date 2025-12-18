@@ -7,6 +7,7 @@ Helps identify predictions that need expert review in human-in-the-loop workflow
 Implements confidence assessment strategies for automated well log interpretation.
 """
 
+import logging
 from dataclasses import dataclass
 from typing import Optional
 
@@ -15,6 +16,9 @@ import pandas as pd
 from scipy.stats import entropy
 
 from .exceptions import DataValidationError
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -497,4 +501,4 @@ def export_review_list(
 
     # Export
     df.to_csv(output_file, index=False)
-    print(f"Exported {len(df)} items for review to {output_file}")
+    logger.info("Exported %d items for review to %s", len(df), output_file)

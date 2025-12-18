@@ -6,12 +6,20 @@ Use plots to check the fit. Clear models produce better spatial estimates.
 
 from typing import Optional
 
+import logging
 import matplotlib.pyplot as plt
 import numpy as np
+import signalplot
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
 from .variogram import VariogramModel, predict_variogram
+
+# Configure logging
+logger = logging.getLogger(__name__)
+
+# Apply style globally
+signalplot.apply()
 
 
 def plot_variogram(
@@ -51,9 +59,9 @@ def plot_variogram(
             semi_variance,
             s=sizes,
             alpha=0.6,
-            c="steelblue",
-            edgecolors="black",
-            linewidth=1,
+            c="#555555",
+            edgecolors="none",
+            linewidth=0,
             label="Experimental",
             zorder=3,
         )
@@ -63,9 +71,9 @@ def plot_variogram(
             semi_variance,
             s=100,
             alpha=0.6,
-            c="steelblue",
-            edgecolors="black",
-            linewidth=1,
+            c="#555555",
+            edgecolors="none",
+            linewidth=0,
             label="Experimental",
             zorder=3,
         )
@@ -78,7 +86,7 @@ def plot_variogram(
         ax.plot(
             h_fine,
             gamma_model,
-            "r-",
+            color=signalplot.ACCENT,
             linewidth=2,
             label=f"{model.model_type.capitalize()} Model",
             zorder=2,
@@ -129,13 +137,11 @@ def plot_variogram(
                 bbox=dict(boxstyle="round", facecolor="wheat", alpha=0.5),
             )
 
-    ax.set_xlabel("Distance (lag)", fontsize=12)
-    ax.set_ylabel("Semi-variance", fontsize=12)
-    ax.set_title(title, fontsize=14, fontweight="bold")
-    ax.legend(loc="lower right", fontsize=10)
-    ax.grid(True, alpha=0.3)
+    ax.set_xlabel("Distance (lag)")
+    ax.set_ylabel("Semi-variance")
+    ax.set_title(title)
+    ax.legend(loc="lower right")
 
-    plt.tight_layout()
     return fig, ax
 
 
@@ -188,22 +194,28 @@ def plot_variogram_comparison(
         )
 
     # Plot each model
-    colors = ["red", "green", "orange", "purple", "brown"]
     h_fine = np.linspace(0, lags.max() * 1.1, 200)
 
+    # Use signalplot's restrained color logic
     for i, model in enumerate(models):
         gamma_model = predict_variogram(model, h_fine)
-        color = colors[i % len(colors)]
+        # First model gets accent color, others get grays
+        if i == 0:
+            color = signalplot.ACCENT
+            linewidth = 2.5
+        else:
+            gray_val = min(0.3 + (i * 0.15), 0.7)
+            color = f"{gray_val}"
+            linewidth = 1.5
+            
         label = f"{model.model_type.capitalize()} (R²={model.r_squared:.3f})"
-        ax.plot(h_fine, gamma_model, color=color, linewidth=2, label=label, zorder=2)
+        ax.plot(h_fine, gamma_model, color=color, linewidth=linewidth, label=label, zorder=2)
 
-    ax.set_xlabel("Distance (lag)", fontsize=12)
-    ax.set_ylabel("Semi-variance", fontsize=12)
-    ax.set_title(title, fontsize=14, fontweight="bold")
-    ax.legend(loc="lower right", fontsize=10)
-    ax.grid(True, alpha=0.3)
+    ax.set_xlabel("Distance (lag)")
+    ax.set_ylabel("Semi-variance")
+    ax.set_title(title)
+    ax.legend(loc="lower right")
 
-    plt.tight_layout()
     return fig, ax
 
 
@@ -232,8 +244,7 @@ def plot_directional_variograms(
 
     fig, ax = plt.subplots(figsize=(12, 7))
 
-    colors = ["red", "blue", "green", "orange", "purple", "brown"]
-
+    # Use a gray scale with accent for directions
     for i, direction in enumerate(directions):
         try:
             lags, sv, n_pairs = directional_variogram(
@@ -241,7 +252,12 @@ def plot_directional_variograms(
             )
 
             if len(lags) > 0:
-                color = colors[i % len(colors)]
+                if i == 0:
+                    color = signalplot.ACCENT
+                else:
+                    gray_val = min(0.3 + (i * 0.15), 0.7)
+                    color = f"{gray_val}"
+                    
                 ax.plot(
                     lags,
                     sv,
@@ -250,18 +266,18 @@ def plot_directional_variograms(
                     linewidth=2,
                     markersize=6,
                     label=f"{direction}° ± {tolerance}°",
-                    alpha=0.7,
+                    alpha=0.8,
                 )
         except Exception as e:
-            print(
-                f"Warning: Could not compute variogram for direction {direction}°: {e}"
+            logger.warning(
+                "Could not compute variogram for direction %d: %s",
+                direction, e
             )
 
-    ax.set_xlabel("Distance (lag)", fontsize=12)
-    ax.set_ylabel("Semi-variance", fontsize=12)
-    ax.set_title(title, fontsize=14, fontweight="bold")
-    ax.legend(loc="lower right", fontsize=10)
-    ax.grid(True, alpha=0.3)
+    ax.set_xlabel("Distance (lag)")
+    ax.set_ylabel("Semi-variance")
+    ax.set_title(title)
+    ax.legend(loc="lower right")
 
     # Add compass rose
     ax_inset = fig.add_axes([0.15, 0.7, 0.15, 0.15])
@@ -275,7 +291,13 @@ def plot_directional_variograms(
         angle_rad = np.radians(90 - direction)  # Convert to math convention
         x = np.cos(angle_rad)
         y = np.sin(angle_rad)
-        color = colors[i % len(colors)]
+        
+        if i == 0:
+            color = signalplot.ACCENT
+        else:
+            gray_val = min(0.3 + (i * 0.15), 0.7)
+            color = f"{gray_val}"
+            
         ax_inset.arrow(
             0,
             0,
@@ -337,12 +359,11 @@ def plot_variogram_cloud(
         semi_variances = semi_variances[indices]
 
     # Plot cloud
-    ax.scatter(distances, semi_variances, alpha=0.3, s=10, c="steelblue")
+    ax.scatter(distances, semi_variances, alpha=0.3, s=10, c="#555555")
 
-    ax.set_xlabel("Distance", fontsize=12)
-    ax.set_ylabel("Semi-variance", fontsize=12)
-    ax.set_title(title, fontsize=14, fontweight="bold")
-    ax.grid(True, alpha=0.3)
+    ax.set_xlabel("Distance")
+    ax.set_ylabel("Semi-variance")
+    ax.set_title(title)
 
     plt.tight_layout()
     return fig, ax

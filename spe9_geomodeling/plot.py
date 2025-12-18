@@ -7,30 +7,36 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import logging
 import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
+import signalplot
 from matplotlib.colors import LogNorm
 from matplotlib.gridspec import GridSpec
 
-# Set style
-plt.style.use("default")
-sns.set_palette("husl")
+# Configure logging
+logger = logging.getLogger(__name__)
+
+# Apply signalplot style globally
+signalplot.apply()
 
 
 class SPE9Plotter:
     """Clean plotting utilities for SPE9 geomodeling results."""
 
-    def __init__(self, figsize: tuple[int, int] = (12, 8), dpi: int = 150):
-        """Initialize plotter with default settings.
+    def __init__(self, figsize: tuple[int, int] = (12, 8), dpi: int = 300):
+        """Initialize plotter with minimalist settings.
 
         Args:
             figsize: Default figure size
-            dpi: Default DPI for saved figures
+            dpi: Default DPI for saved figures (SignalPlot default is 300)
         """
         self.figsize = figsize
         self.dpi = dpi
-        self.colors = sns.color_palette("husl", 8)
+        # Use signalplot's restrained color logic instead of seaborn
+        self.accent_color = signalplot.ACCENT if hasattr(signalplot, "ACCENT") else "red"
+        # For multiple models, use gray-scale with one accent
+        self.colors = ["#333333", "#666666", "#999999", self.accent_color]
 
     def plot_slice(
         self,
@@ -60,18 +66,16 @@ class SPE9Plotter:
         norm = LogNorm() if log_scale else None
         im = ax.imshow(data.T, origin="lower", cmap=cmap, norm=norm)
 
-        ax.set_title(title, fontsize=14, fontweight="bold")
+        ax.set_title(title)
         ax.set_xlabel("X Index")
         ax.set_ylabel("Y Index")
 
         cbar = plt.colorbar(im, ax=ax, shrink=0.8)
-        cbar.set_label(colorbar_label, rotation=270, labelpad=20)
-
-        plt.tight_layout()
+        cbar.set_label(colorbar_label)
 
         if filename:
-            plt.savefig(filename, dpi=self.dpi, bbox_inches="tight")
-            print(f"Plot saved: {filename}")
+            plt.savefig(filename)
+            logger.info("Plot saved: %s", filename)
 
         plt.show()
 
@@ -117,18 +121,16 @@ class SPE9Plotter:
         im = ax.imshow(slice_data.T, origin="lower", cmap=cmap, norm=LogNorm())
 
         plot_title = title if title is not None else f"Permeability Slice (z={z_slice})"
-        ax.set_title(plot_title, fontsize=14, fontweight="bold")
+        ax.set_title(plot_title)
         ax.set_xlabel("X Index")
         ax.set_ylabel("Y Index")
 
         cbar = plt.colorbar(im, ax=ax, shrink=0.8)
-        cbar.set_label("Permeability (mD)", rotation=270, labelpad=20)
-
-        plt.tight_layout()
+        cbar.set_label("Permeability (mD)")
 
         if filename:
-            plt.savefig(filename, dpi=self.dpi, bbox_inches="tight")
-            print(f"Plot saved: {filename}")
+            plt.savefig(filename)
+            logger.info("Plot saved: %s", filename)
 
         return fig, ax
 
@@ -194,11 +196,9 @@ class SPE9Plotter:
             axes[2].set_title("Uncertainty")
             plt.colorbar(im3, ax=axes[2], shrink=0.8)
 
-        plt.tight_layout()
-
         if filename:
-            plt.savefig(filename, dpi=self.dpi, bbox_inches="tight")
-            print(f"Plot saved: {filename}")
+            plt.savefig(filename)
+            logger.info("Plot saved: %s", filename)
 
         return fig, axes
 
@@ -249,11 +249,9 @@ class SPE9Plotter:
         axes[2].set_ylabel("Frequency")
         axes[2].set_title("Residuals Distribution")
 
-        plt.tight_layout()
-
         if filename:
-            plt.savefig(filename, dpi=self.dpi, bbox_inches="tight")
-            print(f"Plot saved: {filename}")
+            plt.savefig(filename)
+            logger.info("Plot saved: %s", filename)
 
         return fig, axes
 
@@ -282,17 +280,14 @@ class SPE9Plotter:
         fig_size = figsize or (8, 6)
         fig, ax = plt.subplots(figsize=fig_size)
 
-        ax.plot(iterations, loss_values, "b-", linewidth=2)
+        ax.plot(iterations, loss_values, color=self.accent_color, linewidth=2)
         ax.set_xlabel("Iteration")
         ax.set_ylabel("Loss")
         ax.set_title("Training Curve")
-        ax.grid(True, alpha=0.3)
-
-        plt.tight_layout()
 
         if filename:
-            plt.savefig(filename, dpi=self.dpi, bbox_inches="tight")
-            print(f"Plot saved: {filename}")
+            plt.savefig(filename)
+            logger.info("Plot saved: %s", filename)
 
         return fig, ax
 
@@ -328,17 +323,15 @@ class SPE9Plotter:
         sorted_names = [feature_names[i] for i in sorted_idx]
         sorted_values = importance_values[sorted_idx]
 
-        ax.barh(range(len(sorted_names)), sorted_values)
+        ax.barh(range(len(sorted_names)), sorted_values, color="#555555")
         ax.set_yticks(range(len(sorted_names)))
         ax.set_yticklabels(sorted_names)
         ax.set_xlabel("Importance")
         ax.set_title("Feature Importance")
 
-        plt.tight_layout()
-
         if filename:
-            plt.savefig(filename, dpi=self.dpi, bbox_inches="tight")
-            print(f"Plot saved: {filename}")
+            plt.savefig(filename)
+            logger.info("Plot saved: %s", filename)
 
         return fig, ax
 
@@ -389,18 +382,16 @@ class SPE9Plotter:
         # Uncertainty (if provided)
         if uncertainty is not None:
             im3 = axes[2].imshow(uncertainty.T, origin="lower", cmap="magma")
-            axes[2].set_title(titles[2], fontweight="bold")
-            plt.colorbar(im3, ax=axes[2], label="σ", shrink=0.8)
+            axes[2].set_title(titles[2])
+            plt.colorbar(im3, ax=axes[2], label="sigma", shrink=0.8)
 
         for ax in axes:
             ax.set_xlabel("X Index")
             ax.set_ylabel("Y Index")
 
-        plt.tight_layout()
-
         if filename:
-            plt.savefig(filename, dpi=self.dpi, bbox_inches="tight")
-            print(f"Comparison plot saved: {filename}")
+            plt.savefig(filename)
+            logger.info("Comparison plot saved: %s", filename)
 
         plt.show()
 
@@ -425,11 +416,12 @@ class SPE9Plotter:
 
         # Predictions vs actual
         ax1 = fig.add_subplot(gs[0, 0])
-        ax1.scatter(y_true, y_pred, alpha=0.6, color=self.colors[0])
+        ax1.scatter(y_true, y_pred, alpha=0.6, color="#555555")
         ax1.plot(
             [y_true.min(), y_true.max()],
             [y_true.min(), y_true.max()],
-            "r--",
+            color=self.accent_color,
+            ls="--",
             lw=2,
             label="Perfect Prediction",
         )
@@ -437,39 +429,35 @@ class SPE9Plotter:
         ax1.set_ylabel("Predicted Values")
         ax1.set_title(f"{model_name}: Predicted vs Actual")
         ax1.legend()
-        ax1.grid(True, alpha=0.3)
 
         # Residuals vs predicted
         ax2 = fig.add_subplot(gs[0, 1])
         residuals = y_true - y_pred
-        ax2.scatter(y_pred, residuals, alpha=0.6, color=self.colors[1])
-        ax2.axhline(y=0, color="r", linestyle="--", lw=2)
+        ax2.scatter(y_pred, residuals, alpha=0.6, color="#555555")
+        ax2.axhline(y=0, color=self.accent_color, linestyle="--", lw=2)
         ax2.set_xlabel("Predicted Values")
         ax2.set_ylabel("Residuals")
         ax2.set_title("Residuals vs Predicted")
-        ax2.grid(True, alpha=0.3)
 
         # Residual histogram
         ax3 = fig.add_subplot(gs[1, 0])
-        ax3.hist(residuals, bins=30, alpha=0.7, color=self.colors[2], edgecolor="black")
+        ax3.hist(residuals, bins=30, alpha=0.7, color="#777777", edgecolor="white")
         ax3.set_xlabel("Residuals")
         ax3.set_ylabel("Frequency")
         ax3.set_title("Residual Distribution")
-        ax3.grid(True, alpha=0.3)
 
         # Q-Q plot
         ax4 = fig.add_subplot(gs[1, 1])
         from scipy import stats
 
         stats.probplot(residuals, dist="norm", plot=ax4)
-        ax4.set_title("Q-Q Plot (Normality Check)")
-        ax4.grid(True, alpha=0.3)
-
-        plt.tight_layout()
+        ax4.get_lines()[0].set_color("#555555")
+        ax4.get_lines()[1].set_color(self.accent_color)
+        ax4.set_title("Q-Q Plot")
 
         if filename:
-            plt.savefig(filename, dpi=self.dpi, bbox_inches="tight")
-            print(f"Performance plot saved: {filename}")
+            plt.savefig(filename)
+            logger.info("Performance plot saved: %s", filename)
 
         plt.show()
 
@@ -493,7 +481,7 @@ class SPE9Plotter:
         ax.plot(
             iterations,
             losses,
-            color=self.colors[0],
+            color="#555555",
             linewidth=2,
             marker="o",
             markersize=4,
@@ -502,7 +490,6 @@ class SPE9Plotter:
         ax.set_xlabel("Iteration")
         ax.set_ylabel("Loss")
         ax.set_title(f"{model_name} Training History")
-        ax.grid(True, alpha=0.3)
 
         # Add trend line
         if len(losses) > 10:
@@ -512,17 +499,15 @@ class SPE9Plotter:
                 iterations,
                 p(iterations),
                 "--",
-                color=self.colors[1],
+                color=self.accent_color,
                 alpha=0.8,
                 label="Trend",
             )
             ax.legend()
 
-        plt.tight_layout()
-
         if filename:
-            plt.savefig(filename, dpi=self.dpi, bbox_inches="tight")
-            print(f"Training history plot saved: {filename}")
+            plt.savefig(filename)
+            logger.info("Training history plot saved: %s", filename)
 
         plt.show()
 
@@ -554,9 +539,8 @@ class SPE9Plotter:
             bars = axes[i].bar(
                 model_names, values, color=self.colors[: len(model_names)]
             )
-            axes[i].set_title(f"{metric.upper()} Comparison", fontweight="bold")
+            axes[i].set_title(f"{metric.upper()} Comparison")
             axes[i].set_ylabel(metric.upper())
-            axes[i].grid(True, alpha=0.3, axis="y")
 
             # Add value labels on bars
             for bar, value in zip(bars, values):
@@ -573,11 +557,9 @@ class SPE9Plotter:
             if len(max(model_names, key=len)) > 8:
                 axes[i].tick_params(axis="x", rotation=45)
 
-        plt.tight_layout()
-
         if filename:
-            plt.savefig(filename, dpi=self.dpi, bbox_inches="tight")
-            print(f"Model comparison plot saved: {filename}")
+            plt.savefig(filename)
+            logger.info("Model comparison plot saved: %s", filename)
 
         return fig, axes
 
@@ -606,9 +588,10 @@ def quick_comparison_plot(
 
 
 if __name__ == "__main__":
-    print("SPE9 Plotting Utilities")
-    print("Clean, focused plotting module for geomodeling results")
-    print("\nExample usage:")
-    print("plotter = SPE9Plotter()")
-    print("plotter.plot_slice(data, 'My Plot', filename='output.png')")
-    print("plotter.plot_comparison(original, predicted, uncertainty)")
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
+    logger.info("SPE9 Plotting Utilities")
+    logger.info("Clean, focused plotting module for geomodeling results")
+    logger.info("\nExample usage:")
+    logger.info("plotter = SPE9Plotter()")
+    logger.info("plotter.plot_slice(data, 'My Plot', filename='output.png')")
+    logger.info("plotter.plot_comparison(original, predicted, uncertainty)")

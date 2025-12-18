@@ -10,11 +10,15 @@ interpretation systems.
 
 import datetime
 import json
+import logging
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
 
 import pandas as pd
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -194,9 +198,9 @@ class WorkflowManager:
         else:
             self.state.current_model_version = model_version
 
-        print(f"Starting iteration {self.state.current_iteration}")
-        print(f"  Model version: {self.state.current_model_version}")
-        print(f"  Wells to process: {len(wells_to_process)}")
+        logger.info("Starting iteration %d", self.state.current_iteration)
+        logger.info("  Model version: %s", self.state.current_model_version)
+        logger.info("  Wells to process: %d", len(wells_to_process))
 
         self.state.total_wells = len(wells_to_process)
         self.save_state()
@@ -214,8 +218,9 @@ class WorkflowManager:
             prediction_file: Path to prediction results
         """
         self.state.interpreted_wells += 1
-        print(
-            f"Interpreted well: {well_name} ({self.state.interpreted_wells}/{self.state.total_wells})"
+        logger.info(
+            "Interpreted well: %s (%d/%d)",
+            well_name, self.state.interpreted_wells, self.state.total_wells
         )
         self.save_state()
 
@@ -244,7 +249,7 @@ class WorkflowManager:
             corrected = df[df["ML_Prediction"] != df["Expert_Correction"]]
 
         if len(corrected) == 0:
-            print("No corrections found in file")
+            logger.info("No corrections found in file")
             return 0
 
         correction_date = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -266,9 +271,9 @@ class WorkflowManager:
         self.state.total_corrections += len(corrected)
         self.state.reviewed_wells += len(corrected["Well"].unique())
 
-        print(f"Imported {len(corrected)} corrections from {correction_file}")
-        print(f"  Total corrections: {self.state.total_corrections}")
-        print(f"  Reviewed wells: {self.state.reviewed_wells}")
+        logger.info("Imported %d corrections from %s", len(corrected), correction_file)
+        logger.info("  Total corrections: %d", self.state.total_corrections)
+        logger.info("  Reviewed wells: %d", self.state.reviewed_wells)
 
         self.save_state()
 
@@ -315,8 +320,9 @@ class WorkflowManager:
         # Note: You would need to merge with actual feature data here
         # This is a placeholder showing the pattern
 
-        print(
-            f"Training with {len(X_original)} original + {len(corrections_df)} corrected samples"
+        logger.info(
+            "Training with %d original + %d corrected samples",
+            len(X_original), len(corrections_df)
         )
 
         return X_original, y_original
@@ -351,10 +357,10 @@ class WorkflowManager:
 
         self.state.iterations.append(iteration)
 
-        print(f"\nCompleted iteration {self.state.current_iteration}")
-        print(f"  Wells processed: {self.state.interpreted_wells}")
-        print(f"  Corrections received: {iteration.corrections_received}")
-        print(f"  Model performance: {model_performance}")
+        logger.info("Completed iteration %d", self.state.current_iteration)
+        logger.info("  Wells processed: %d", self.state.interpreted_wells)
+        logger.info("  Corrections received: %d", iteration.corrections_received)
+        logger.info("  Model performance: %s", model_performance)
 
         self.save_state()
         self.generate_progress_report()
@@ -367,7 +373,7 @@ class WorkflowManager:
             DataFrame with iteration history
         """
         if not self.state.iterations:
-            print("No iterations completed yet")
+            logger.info("No iterations completed yet")
             return pd.DataFrame()
 
         rows = []
@@ -388,9 +394,9 @@ class WorkflowManager:
         report_file = self.reports_dir / "progress_report.csv"
         df.to_csv(report_file, index=False)
 
-        print(f"\nProgress Report:")
-        print(df.to_string())
-        print(f"\nFull report saved to: {report_file}")
+        logger.info("Progress Report:")
+        logger.info(df.to_string())
+        logger.info("Full report saved to: %s", report_file)
 
         return df
 
@@ -470,7 +476,7 @@ class WorkflowManager:
                 f"Report generated: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
             )
 
-        print(f"Workflow summary exported to {output_file}")
+        logger.info("Workflow summary exported to %s", output_file)
 
 
 def create_workflow_dashboard(workflow_manager: WorkflowManager) -> dict:

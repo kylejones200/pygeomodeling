@@ -10,6 +10,7 @@ import warnings
 
 warnings.filterwarnings("ignore")
 
+import logging
 import time
 from pathlib import Path
 from typing import Any
@@ -17,6 +18,7 @@ from typing import Any
 import gpytorch
 import matplotlib.pyplot as plt
 import numpy as np
+import signalplot
 import torch
 from model_gp import create_gp_model
 from plot import SPE9Plotter
@@ -26,6 +28,12 @@ from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
 
 from ..grdecl_parser import GRDECLParser
+
+# Configure logging
+logger = logging.getLogger(__name__)
+
+# Apply signalplot style globally
+signalplot.apply()
 
 
 class DeepGPExperiment:
@@ -55,9 +63,9 @@ class DeepGPExperiment:
         # Initialize plotter
         self.plotter = SPE9Plotter(figsize=(15, 10), dpi=150)
 
-        print("🔬 Deep GP Experiment Initialized")
-        print(f"📁 Data path: {self.data_path}")
-        print(f"🎲 Random state: {random_state}")
+        logger.info("Deep GP Experiment Initialized")
+        logger.info("Data path: %s", self.data_path)
+        logger.info("Random state: %d", random_state)
 
     def load_and_prepare_data(
         self,
@@ -75,7 +83,7 @@ class DeepGPExperiment:
         Returns:
             Tuple of (X_train, X_test, y_train, y_test) as torch tensors
         """
-        print(f"\n📊 Loading {property_name} data from SPE9...")
+        logger.info("Loading %s data from SPE9...", property_name)
 
         # Load data
         parser = GRDECLParser(str(self.data_path))
@@ -88,7 +96,7 @@ class DeepGPExperiment:
         nx, ny, nz = data["dimensions"]
         property_data = data["properties"][property_name]
 
-        print(f"📐 Grid dimensions: {nx} × {ny} × {nz} = {nx*ny*nz} cells")
+        logger.info("Grid dimensions: %d x %d x %d = %d cells", nx, ny, nz, nx*ny*nz)
 
         # Create coordinate grid
         x_coords, y_coords, z_coords = np.meshgrid(
@@ -104,15 +112,15 @@ class DeepGPExperiment:
         coords = coords[valid_mask]
         values = values[valid_mask]
 
-        print(f"✅ Valid cells: {len(values)} / {nx*ny*nz}")
-        print(f"📈 {property_name} range: {values.min():.2f} - {values.max():.2f}")
+        logger.info("Success: Valid cells: %d / %d", len(values), nx*ny*nz)
+        logger.info("Property range: %.2f - %.2f", values.min(), values.max())
 
         # Subsample if needed for computational efficiency
         if max_samples and len(values) > max_samples:
             indices = np.random.choice(len(values), max_samples, replace=False)
             coords = coords[indices]
             values = values[indices]
-            print(f"🎯 Subsampled to {max_samples} points for efficiency")
+            logger.info("Subsampled to %d points for efficiency", max_samples)
 
         # Log-transform the values (common for permeability)
         log_values = np.log10(values + 1e-8)
@@ -140,8 +148,8 @@ class DeepGPExperiment:
         y_train_tensor = torch.FloatTensor(y_train)
         y_test_tensor = torch.FloatTensor(y_test)
 
-        print(f"🚂 Training set: {len(X_train_tensor)} samples")
-        print(f"🧪 Test set: {len(X_test_tensor)} samples")
+        logger.info("Training set: %d samples", len(X_train_tensor))
+        logger.info("Test set: %d samples", len(X_test_tensor))
 
         # Store data for later use
         self.data = {
@@ -175,7 +183,7 @@ class DeepGPExperiment:
         Returns:
             Dictionary with training results
         """
-        print(f"\n🚀 Training {model_name} ({model_type} GP)...")
+        logger.info("Training %s (%s GP)...", model_name, model_type)
 
         X_train = self.data["X_train"]
         y_train = self.data["y_train"]
@@ -233,8 +241,8 @@ class DeepGPExperiment:
             "final_loss": losses[-1],
         }
 
-        print(f"✅ {model_name} trained in {training_time:.2f}s")
-        print(f"📉 Final loss: {losses[-1]:.4f}")
+        logger.info("DONE: %s trained in %.2fs", model_name, training_time)
+        logger.info("Final loss: %.4f", losses[-1])
 
         return self.models[model_name]
 
@@ -247,7 +255,7 @@ class DeepGPExperiment:
         Returns:
             Dictionary with evaluation metrics
         """
-        print(f"\n📊 Evaluating {model_name}...")
+        logger.info("Evaluating %s...", model_name)
 
         model_info = self.models[model_name]
         model = model_info["model"]
@@ -284,17 +292,16 @@ class DeepGPExperiment:
             "predictions": {"mean": y_pred_mean, "std": y_pred_std, "true": y_test_np},
         }
 
-        print(f"📈 R² Score: {metrics['r2_score']:.4f}")
-        print(f"📏 RMSE: {metrics['rmse']:.4f}")
-        print(f"📐 MAE: {metrics['mae']:.4f}")
-        print(f"🎯 Mean Uncertainty: {metrics['mean_uncertainty']:.4f}")
+        logger.info("R2 Score: %.4f", metrics['r2_score'])
+        logger.info("RMSE: %.4f", metrics['rmse'])
+        logger.info("MAE: %.4f", metrics['mae'])
+        logger.info("Mean Uncertainty: %.4f", metrics['mean_uncertainty'])
 
         return metrics
 
     def run_comparison_experiment(self) -> dict[str, Any]:
         """Run comprehensive comparison between different GP models."""
-        print("\n🔬 Starting Deep GP Comparison Experiment")
-        print("=" * 60)
+        logger.info("Starting Deep GP Comparison Experiment")
 
         # Load data
         self.load_and_prepare_data(max_samples=1500)  # Reasonable size for Deep GP
@@ -327,7 +334,7 @@ class DeepGPExperiment:
                 self.train_model(model_name, training_iter=150, **config)
                 self.evaluate_model(model_name)
             except Exception as e:
-                print(f"❌ Error training {model_name}: {e}")
+                logger.error("Error training %s: %s", model_name, e)
                 continue
 
         # Generate comparison plots
@@ -337,10 +344,10 @@ class DeepGPExperiment:
 
     def plot_comparison_results(self):
         """Generate comprehensive comparison plots."""
-        print("\n📊 Generating comparison plots...")
+        logger.info("Generating comparison plots...")
 
         if not self.results:
-            print("❌ No results to plot")
+            logger.error("Error: No results to plot")
             return
 
         # Create figure with subplots
@@ -353,17 +360,15 @@ class DeepGPExperiment:
         model_names = list(self.results.keys())
         metrics_data = {name: self.results[name]["metrics"] for name in model_names}
 
-        # 1. R² Score comparison
+        # 1. R2 Score comparison
         ax = axes[0, 0]
         r2_scores = [metrics_data[name]["r2_score"] for name in model_names]
-        colors = ["skyblue" if "Deep" not in name else "coral" for name in model_names]
+        colors = ["#555555" if "Deep" not in name else signalplot.ACCENT for name in model_names]
         bars = ax.bar(range(len(model_names)), r2_scores, color=colors)
-        ax.set_title("R² Score Comparison")
-        ax.set_ylabel("R² Score")
+        ax.set_title("R2 Score Comparison")
+        ax.set_ylabel("R2 Score")
         ax.set_xticks(range(len(model_names)))
         ax.set_xticklabels(model_names, rotation=45, ha="right")
-        ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
         # Add value labels on bars
         for bar, score in zip(bars, r2_scores):
             ax.text(
@@ -382,8 +387,6 @@ class DeepGPExperiment:
         ax.set_ylabel("RMSE")
         ax.set_xticks(range(len(model_names)))
         ax.set_xticklabels(model_names, rotation=45, ha="right")
-        ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
         for bar, rmse in zip(bars, rmse_values):
             ax.text(
                 bar.get_x() + bar.get_width() / 2,
@@ -401,8 +404,6 @@ class DeepGPExperiment:
         ax.set_ylabel("Time (seconds)")
         ax.set_xticks(range(len(model_names)))
         ax.set_xticklabels(model_names, rotation=45, ha="right")
-        ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
 
         for bar, time_val in zip(bars, train_times):
             ax.text(
@@ -418,67 +419,61 @@ class DeepGPExperiment:
         best_model = max(model_names, key=lambda x: metrics_data[x]["r2_score"])
         ax = axes[1, 0]
         pred_data = self.results[best_model]["predictions"]
-        ax.scatter(pred_data["true"], pred_data["mean"], alpha=0.6, s=20)
+        ax.scatter(pred_data["true"], pred_data["mean"], alpha=0.6, s=20, color="#555555")
         ax.plot(
             [pred_data["true"].min(), pred_data["true"].max()],
             [pred_data["true"].min(), pred_data["true"].max()],
-            "r--",
+            color=signalplot.ACCENT,
+            ls="--",
             lw=2,
         )
         ax.set_xlabel("True Values (log10)")
         ax.set_ylabel("Predicted Values (log10)")
         ax.set_title(f"Best Model: {best_model}")
-        ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
         # 5. Uncertainty vs Error plot
         ax = axes[1, 1]
         errors = np.abs(pred_data["true"] - pred_data["mean"])
-        ax.scatter(pred_data["std"], errors, alpha=0.6, s=20)
+        ax.scatter(pred_data["std"], errors, alpha=0.6, s=20, color="#555555")
         ax.set_xlabel("Predicted Uncertainty")
         ax.set_ylabel("Absolute Error")
         ax.set_title("Uncertainty vs Error")
-        ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
 
         # 6. Training loss curves
         ax = axes[1, 2]
         for model_name in model_names:
             if model_name in self.models:
                 losses = self.models[model_name]["losses"]
-                color = "blue" if "Deep" not in model_name else "red"
+                color = "#555555" if "Deep" not in model_name else signalplot.ACCENT
                 ax.plot(losses, label=model_name, color=color, alpha=0.7)
         ax.set_xlabel("Iteration")
         ax.set_ylabel("Loss")
         ax.set_title("Training Loss Curves")
         ax.legend(bbox_to_anchor=(1.05, 1), loc="upper left")
-        ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
 
-        plt.tight_layout()
-        plt.savefig("deep_gp_comparison.png", dpi=300, bbox_inches="tight")
+        plt.savefig("deep_gp_comparison.png")
         plt.show()
 
         # Print summary
-        print("\n📋 Experiment Summary:")
-        print("=" * 50)
+        logger.info("Experiment Summary:")
         for name in model_names:
             metrics = metrics_data[name]
-            model_type = "🧠 Deep GP" if "Deep" in name else "📊 Standard GP"
-            print(f"{model_type} {name}:")
-            print(
-                f"  R²: {metrics['r2_score']:.4f} | RMSE: {metrics['rmse']:.4f} | Time: {metrics['training_time']:.1f}s"
+            model_type = "Deep GP" if "Deep" in name else "Standard GP"
+            logger.info(
+                "%s %s: R2: %.4f | RMSE: %.4f | Time: %.1fs",
+                model_type, name, metrics['r2_score'], metrics['rmse'], metrics['training_time']
             )
 
         best_model = max(model_names, key=lambda x: metrics_data[x]["r2_score"])
-        print(
-            f"\n🏆 Best Model: {best_model} (R² = {metrics_data[best_model]['r2_score']:.4f})"
+        logger.info(
+            "Best Model: %s (R2 = %.4f)",
+            best_model, metrics_data[best_model]['r2_score']
         )
 
 
 def main():
     """Run the Deep GP experiment."""
-    print("🚀 Starting Deep GP Spatial Pattern Analysis")
-    print("=" * 60)
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
+    logger.info("Starting Deep GP Spatial Pattern Analysis")
 
     # Create experiment
     experiment = DeepGPExperiment()
@@ -486,8 +481,8 @@ def main():
     # Run comparison
     results = experiment.run_comparison_experiment()
 
-    print("\n✅ Experiment completed!")
-    print("📁 Results saved to: deep_gp_comparison.png")
+    logger.info("DONE: Experiment completed!")
+    logger.info("Files saved to: deep_gp_comparison.png")
 
     return experiment, results
 

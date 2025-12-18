@@ -8,6 +8,7 @@ Implements bidirectional data exchange for human-in-the-loop workflows.
 """
 
 import datetime
+import logging
 from pathlib import Path
 from typing import Optional
 
@@ -16,6 +17,9 @@ import pandas as pd
 
 from .exceptions import DataValidationError
 from .formation_tops import FormationTop
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 
 class LASExporter:
@@ -146,7 +150,7 @@ class LASExporter:
 
                 f.write(" ".join(row) + "\n")
 
-        print(f"Exported interpreted logs to {output_file}")
+        logger.info("Exported interpreted logs to %s", output_file)
 
 
 class FormationTopExporter:
@@ -180,7 +184,7 @@ class FormationTopExporter:
 
         df = pd.DataFrame(rows)
         df.to_csv(output_file, index=False)
-        print(f"Exported {len(tops)} formation tops to {output_file}")
+        logger.info("Exported %d formation tops to %s", len(tops), output_file)
 
     @staticmethod
     def export_to_petrel_format(
@@ -208,7 +212,7 @@ class FormationTopExporter:
                         f"{well_name}\t{top.formation_name}\t{top.depth:.2f}\t{top.depth:.2f}\t{top.confidence:.3f}\t{top.method}\n"
                     )
 
-        print(f"Exported formation tops for {len(tops_by_well)} wells to {output_file}")
+        logger.info("Exported formation tops for %d wells to %s", len(tops_by_well), output_file)
 
     @staticmethod
     def export_to_ascii(
@@ -243,7 +247,7 @@ class FormationTopExporter:
                     f"{top.formation_name:<30} {top.depth:>12.2f} {top.confidence:>12.3f} {top.method:<20}\n"
                 )
 
-        print(f"Exported formation tops to {output_file}")
+        logger.info("Exported formation tops to %s", output_file)
 
 
 class FaciesLogExporter:
@@ -280,7 +284,7 @@ class FaciesLogExporter:
 
         df = pd.DataFrame(data)
         df.to_csv(output_file, index=False)
-        print(f"Exported facies log with {len(depth)} samples to {output_file}")
+        logger.info("Exported facies log with %d samples to %s", len(depth), output_file)
 
     @staticmethod
     def create_facies_curve_for_las(
@@ -407,7 +411,7 @@ class PetrelProjectExporter:
             f.write(f"2. Load formation tops from formation_tops/ folder\n")
             f.write(f"3. Review low-confidence intervals flagged in qc/ reports\n")
 
-        print(f"Exported interpretation package to {output_dir}")
+        logger.info("Exported interpretation package to %s", output_dir)
 
 
 def create_correction_template(
@@ -445,10 +449,10 @@ def create_correction_template(
     df = df.sort_values("Confidence")
 
     df.to_csv(output_file, index=False)
-    print(f"Created correction template: {output_file}")
-    print(f"  - Edit 'Expert_Correction' column to fix errors")
-    print(f"  - Set 'Corrected' to TRUE for reviewed samples")
-    print(f"  - Add notes in 'Notes' column as needed")
+    logger.info("Created correction template: %s", output_file)
+    logger.info("  - Edit 'Expert_Correction' column to fix errors")
+    logger.info("  - Set 'Corrected' to TRUE for reviewed samples")
+    logger.info("  - Add notes in 'Notes' column as needed")
 
 
 def import_expert_corrections(
@@ -475,6 +479,6 @@ def import_expert_corrections(
             "Set 'Corrected' column to TRUE for reviewed samples",
         )
 
-    print(f"Imported {len(corrected)} expert corrections from {correction_file}")
+    logger.info("Imported %d expert corrections from %s", len(corrected), correction_file)
 
     return corrected, df

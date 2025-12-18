@@ -318,8 +318,11 @@ class TestUnifiedSPE9ToolkitUtilities:
 
         # Test with specific train size
         X_train, X_test, y_train, y_test = toolkit.create_train_test_split(
-            train_size=50
+            train_size=50, test_size=0.2
         )
 
-        assert len(X_train) == 50
-        assert len(y_train) == 50
+        # 50 points total, 20% test = 40 train, 10 test
+        assert len(X_train) == 40
+        assert len(y_train) == 40
+        assert len(X_test) == 10
+        assert len(y_test) == 10

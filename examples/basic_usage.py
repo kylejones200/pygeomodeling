@@ -5,6 +5,7 @@ Basic usage example for SPE9 Geomodeling Toolkit.
 This example demonstrates how to use the toolkit for basic geomodeling tasks.
 """
 
+import logging
 import sys
 from pathlib import Path
 
@@ -13,61 +14,60 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from spe9_geomodeling import UnifiedSPE9Toolkit, load_spe9_data
 
+# Configure logging
+logger = logging.getLogger(__name__)
+
 
 def main():
     """Run basic geomodeling example."""
-    print("🚀 SPE9 Geomodeling Toolkit - Basic Usage Example")
-    print("=" * 60)
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
+    logger.info("SPE9 Geomodeling Toolkit - Basic Usage Example")
 
     # Load SPE9 data
-    print("📂 Loading SPE9 dataset...")
+    logger.info("Loading SPE9 dataset...")
     try:
         data = load_spe9_data()
-        print(f"✅ Loaded SPE9 data: {data['grid_shape']} grid")
-        print(f"   Properties: {list(data['properties'].keys())}")
+        logger.info("Loaded SPE9 data: %s grid", data['grid_shape'])
+        logger.info("   Properties: %s", list(data['properties'].keys()))
     except FileNotFoundError:
-        print(
-            "❌ SPE9.GRDECL file not found. Please ensure the data file is available."
-        )
-        print("   The bundled data file should be automatically detected.")
+        logger.error("SPE9.GRDECL file not found. Please ensure the data file is available.")
+        logger.info("   The bundled data file should be automatically detected.")
         return
 
     # Create toolkit
-    print("\n🔧 Setting up toolkit...")
+    logger.info("Setting up toolkit...")
     toolkit = UnifiedSPE9Toolkit()
     toolkit.load_spe9_data(data)
 
     # Create train/test split
-    print("📊 Creating train/test split...")
+    logger.info("Creating train/test split...")
     X_train, X_test, y_train, y_test = toolkit.create_train_test_split(
         test_size=0.2, random_state=42
     )
-    print(f"   Training samples: {len(X_train)}")
-    print(f"   Test samples: {len(X_test)}")
+    logger.info("   Training samples: %d", len(X_train))
+    logger.info("   Test samples: %d", len(X_test))
 
     # Train a simple GP model
-    print("\n🤖 Training Gaussian Process model...")
+    logger.info("Training Gaussian Process model...")
     model = toolkit.create_sklearn_model("gpr", kernel_type="rbf")
     toolkit.train_sklearn_model(model, "rbf_gpr")
 
     # Evaluate the model
-    print("📈 Evaluating model performance...")
+    logger.info("Evaluating model performance...")
     results = toolkit.evaluate_model("rbf_gpr", X_test, y_test)
 
-    print(f"   R² Score: {results.r2:.4f}")
-    print(f"   RMSE: {results.rmse:.2f}")
-    print(f"   MAE: {results.mae:.2f}")
+    logger.info("   R² Score: %.4f", results.r2)
+    logger.info("   RMSE: %.2f", results.rmse)
+    logger.info("   MAE: %.2f", results.mae)
 
     # Make predictions on full grid
-    print("\n🔮 Making predictions on full grid...")
+    logger.info("Making predictions on full grid...")
     predictions = toolkit.predict_full_grid("rbf_gpr")
-    print(f"   Predicted {len(predictions)} grid points")
+    logger.info("   Predicted %d grid points", len(predictions))
 
-    print("\n✅ Basic example completed successfully!")
-    print("💡 Try running the Deep GP experiment for advanced comparisons:")
-    print(
-        "   python -c 'from spe9_geomodeling import DeepGPExperiment; DeepGPExperiment().run_comparison_experiment()'"
-    )
+    logger.info("Basic example completed successfully!")
+    logger.info("Note: Try running the Deep GP experiment for advanced comparisons:")
+    logger.info("   python -c 'from spe9_geomodeling import DeepGPExperiment; DeepGPExperiment().run_comparison_experiment()'")
 
 
 if __name__ == "__main__":

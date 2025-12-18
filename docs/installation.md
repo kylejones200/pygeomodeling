@@ -58,6 +58,7 @@ The toolkit uses modular dependencies to keep the base installation lightweight:
 - `pandas >= 1.5.0` - Data manipulation
 - `scikit-learn >= 1.3.0` - Machine learning
 - `matplotlib >= 3.7.0` - Basic plotting
+- `signalplot >= 0.1.0` - Minimalist visualization
 - `pykrige >= 1.6.0` - Kriging algorithms
 
 ### Advanced Dependencies
@@ -83,7 +84,6 @@ Install with `pip install spe9-geomodeling[geospatial]`:
 Install with `pip install spe9-geomodeling[visualization]`:
 
 - `plotly >= 5.15.0` - Interactive plots
-- `seaborn >= 0.12.0` - Statistical visualization
 - `ipywidgets >= 8.0.0` - Jupyter widgets
 
 ### Development Dependencies

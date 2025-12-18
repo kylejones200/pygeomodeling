@@ -5,6 +5,7 @@ Supports both scikit-learn and GPyTorch workflows in a single, Pythonic interfac
 
 from __future__ import annotations
 
+import logging
 import warnings
 from pathlib import Path
 from typing import Any
@@ -12,6 +13,13 @@ from typing import Any
 import joblib
 import matplotlib.pyplot as plt
 import numpy as np
+import signalplot
+
+# Configure logging
+logger = logging.getLogger(__name__)
+
+# Apply signalplot style
+signalplot.apply()
 from sklearn.base import BaseEstimator
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.gaussian_process import GaussianProcessRegressor
@@ -112,23 +120,23 @@ class UnifiedSPE9Toolkit:
         self.X_train_scaled: np.ndarray | None = None
         self.y_train_scaled: np.ndarray | None = None
 
-        print(f"Unified SPE9 Toolkit initialized with {backend} backend")
+        logger.info("Unified SPE9 Toolkit initialized with %s backend", backend)
 
     def load_data(self) -> dict[str, Any]:
         """Load SPE9 dataset."""
         if not self.data_path.exists():
             raise FileNotFoundError(f"SPE9 data file not found: {self.data_path}")
 
-        print(f"Loading SPE9 dataset from {self.data_path}")
+        logger.info("Loading SPE9 dataset from %s", self.data_path)
         self.data = load_spe9_data(str(self.data_path))
 
         nx, ny, nz = self.data["dimensions"]
         self.permx_3d = self.data["properties"]["PERMX"]
         self.dimensions = (nx, ny, nz)
 
-        print(f"Grid dimensions: {nx} × {ny} × {nz}")
-        print(f"PERMX range: {self.permx_3d.min():.2f} - {self.permx_3d.max():.2f} mD")
-        print(f"PERMX mean: {self.permx_3d.mean():.2f} mD")
+        logger.info("Grid dimensions: %d x %d x %d", nx, ny, nz)
+        logger.info("PERMX range: %.2f - %.2f mD", self.permx_3d.min(), self.permx_3d.max())
+        logger.info("PERMX mean: %.2f mD", self.permx_3d.mean())
 
         return self.data
 
@@ -181,7 +189,7 @@ class UnifiedSPE9Toolkit:
         self.y_grid = self.permx_3d.ravel()
         self.feature_names = feature_names
 
-        print(f"Features prepared: {feature_names}")
+        logger.info("Features prepared: %s", feature_names)
         return self.X_grid, self.y_grid
 
     def create_train_test_split(
@@ -205,9 +213,9 @@ class UnifiedSPE9Toolkit:
         # Apply log transform if requested (useful for GPyTorch)
         if log_transform:
             y_valid = np.log1p(y_valid)
-            print("Applied log1p transform to target values")
+            logger.info("Applied log1p transform to target values")
 
-        print(f"Valid cells: {len(y_valid):,} out of {len(self.y_grid):,}")
+        logger.info("Valid cells: %d out of %d", len(y_valid), len(self.y_grid))
 
         # Handle train_size parameter for GPyTorch workflow
         if train_size is not None:
@@ -216,7 +224,7 @@ class UnifiedSPE9Toolkit:
                 X_valid, _, y_valid, _ = train_test_split(
                     X_valid, y_valid, train_size=train_size, random_state=random_state
                 )
-                print(f"Sampled down to {train_size:,} points for efficiency")
+                logger.info("Sampled down to %d points for efficiency", train_size)
 
         # Split data
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
@@ -229,8 +237,9 @@ class UnifiedSPE9Toolkit:
         self.y_train_scaled = None
         self.X_test_scaled = None
 
-        print(
-            f"Training samples: {len(self.X_train):,}, Test samples: {len(self.X_test):,}"
+        logger.info(
+            "Training samples: %d, Test samples: %d",
+            len(self.X_train), len(self.X_test)
         )
         return self.X_train, self.X_test, self.y_train, self.y_test
 
@@ -269,7 +278,7 @@ class UnifiedSPE9Toolkit:
             x_scaler.transform(self.X_test) if self.X_test is not None else None
         )
 
-        print(f"Scalers setup: {scaler_type}")
+        logger.info("Scalers setup: %s", scaler_type)
         return x_scaler, y_scaler
 
     def create_sklearn_model(
@@ -347,14 +356,14 @@ class UnifiedSPE9Toolkit:
         X_scaled = self.X_train_scaled
         y_scaled = self.y_train_scaled
 
-        print(f"Training {model_name} (sklearn)...")
+        logger.info("Training %s (sklearn)...", model_name)
         model.fit(X_scaled, y_scaled)
 
         self.models[model_name] = model
-        print(f"{model_name} trained successfully!")
+        logger.info("%s trained successfully!", model_name)
 
         if hasattr(model, "kernel_"):
-            print(f"Final kernel: {model.kernel_}")
+            logger.info("Final kernel: %s", model.kernel_)
 
         return model
 
@@ -383,7 +392,7 @@ class UnifiedSPE9Toolkit:
         optimizer = torch.optim.Adam(model.parameters(), lr=lr)
         mll = gpytorch.mlls.ExactMarginalLogLikelihood(likelihood, model)
 
-        print(f"Training {model_name} (GPyTorch)...")
+        logger.info("Training %s (GPyTorch)...", model_name)
         for i in range(n_iter):
             optimizer.zero_grad()
             output = model(X_tensor)
@@ -391,12 +400,12 @@ class UnifiedSPE9Toolkit:
             loss.backward()
 
             if i % 20 == 0:
-                print(f"  Iter {i+1}/{n_iter} - Loss: {loss.item():.3f}")
+                logger.info("  Iter %d/%d - Loss: %.3f", i + 1, n_iter, loss.item())
 
             optimizer.step()
 
         self.models[model_name] = {"model": model, "likelihood": likelihood}
-        print(f"{model_name} trained successfully!")
+        logger.info("%s trained successfully!", model_name)
 
         return model, likelihood
 
@@ -457,10 +466,10 @@ class UnifiedSPE9Toolkit:
 
         self.results[model_name] = results
 
-        print(f"{model_name} Results:")
-        print(f"  R²: {results['r2']:.3f}")
-        print(f"  RMSE: {results['rmse']:.2f}")
-        print(f"  MAE: {results['mae']:.2f}")
+        logger.info("%s Results:", model_name)
+        logger.info("  R2: %.3f", results['r2'])
+        logger.info("  RMSE: %.2f", results['rmse'])
+        logger.info("  MAE: %.2f", results['mae'])
 
         return results
 
@@ -493,7 +502,7 @@ class UnifiedSPE9Toolkit:
         # Save scalers
         joblib.dump(self.scalers, output_dir / f"{model_name}_scalers.joblib")
 
-        print(f"Model {model_name} saved to {output_dir}")
+        logger.info("Model %s saved to %s", model_name, output_dir)
 
     def visualize_results(
         self,
@@ -516,7 +525,7 @@ class UnifiedSPE9Toolkit:
             self.permx_3d[:, :, z_slice].T, origin="lower", cmap="viridis"
         )
         axes[0, 0].set_title(f"Original PERMX (Z={z_slice})")
-        plt.colorbar(im1, ax=axes[0, 0], label="mD")
+        plt.colorbar(im1, ax=axes[0, 0], label="mD", shrink=0.8)
 
         # Model comparison (placeholder for now)
         axes[0, 1].text(
@@ -534,54 +543,55 @@ class UnifiedSPE9Toolkit:
         y_test = self.y_test
         y_pred = self.results[model_name]["y_pred"]
 
-        axes[1, 0].scatter(y_test, y_pred, alpha=0.6)
+        axes[1, 0].scatter(y_test, y_pred, alpha=0.6, color="#555555")
         axes[1, 0].plot(
-            [y_test.min(), y_test.max()], [y_test.min(), y_test.max()], "r--", lw=2
+            [y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 
+            color=signalplot.ACCENT, ls="--", lw=2
         )
         axes[1, 0].set_xlabel("True Values")
         axes[1, 0].set_ylabel("Predicted Values")
-        axes[1, 0].set_title(f"{model_name}: Predicted vs Actual")
+        axes[1, 0].set_title(f"Predicted vs Actual")
 
         # Residuals
         residuals = y_test - y_pred
-        axes[1, 1].scatter(y_pred, residuals, alpha=0.6)
-        axes[1, 1].axhline(y=0, color="r", linestyle="--")
+        axes[1, 1].scatter(y_pred, residuals, alpha=0.6, color="#555555")
+        axes[1, 1].axhline(y=0, color=signalplot.ACCENT, linestyle="--")
         axes[1, 1].set_xlabel("Predicted Values")
         axes[1, 1].set_ylabel("Residuals")
         axes[1, 1].set_title("Residuals vs Predicted")
 
         plt.tight_layout()
         filename = f"{model_name.lower()}_{self.backend}_results.png"
-        plt.savefig(filename, dpi=150, bbox_inches="tight")
-        print(f"Visualization saved: {filename}")
+        plt.savefig(filename)
+        logger.info("Visualization saved: %s", filename)
         plt.show()
 
 
 def main() -> None:
     """Example usage of the Unified SPE9 Toolkit."""
-    print("Unified SPE9 Geomodeling Toolkit")
-    print("=" * 50)
-    print("Supports both scikit-learn and GPyTorch backends")
-    print("\nExample usage:")
-    print("# Scikit-learn workflow")
-    print("toolkit = UnifiedSPE9Toolkit(backend='sklearn')")
-    print("toolkit.load_data()")
-    print("toolkit.prepare_features()")
-    print("toolkit.create_train_test_split()")
-    print("toolkit.setup_scalers()")
-    print("gpr = toolkit.create_sklearn_model('gpr')")
-    print("toolkit.train_sklearn_model(gpr, 'GPR')")
-    print("toolkit.evaluate_model('GPR')")
-    print()
-    print("# GPyTorch workflow")
-    print("toolkit = UnifiedSPE9Toolkit(backend='gpytorch')")
-    print("toolkit.load_data()")
-    print("toolkit.prepare_features()")
-    print("toolkit.create_train_test_split(train_size=3000, log_transform=True)")
-    print("toolkit.setup_scalers()")
-    print("model, likelihood = toolkit.create_gpytorch_model()")
-    print("toolkit.train_gpytorch_model(model, likelihood, 'GPyTorch_GP')")
-    print("toolkit.evaluate_model('GPyTorch_GP')")
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
+    logger.info("Unified SPE9 Geomodeling Toolkit")
+    logger.info("Supports both scikit-learn and GPyTorch backends")
+    logger.info("\nExample usage:")
+    logger.info("# Scikit-learn workflow")
+    logger.info("toolkit = UnifiedSPE9Toolkit(backend='sklearn')")
+    logger.info("toolkit.load_data()")
+    logger.info("toolkit.prepare_features()")
+    logger.info("toolkit.create_train_test_split()")
+    logger.info("toolkit.setup_scalers()")
+    logger.info("gpr = toolkit.create_sklearn_model('gpr')")
+    logger.info("toolkit.train_sklearn_model(gpr, 'GPR')")
+    logger.info("toolkit.evaluate_model('GPR')")
+    logger.info("")
+    logger.info("# GPyTorch workflow")
+    logger.info("toolkit = UnifiedSPE9Toolkit(backend='gpytorch')")
+    logger.info("toolkit.load_data()")
+    logger.info("toolkit.prepare_features()")
+    logger.info("toolkit.create_train_test_split(train_size=3000, log_transform=True)")
+    logger.info("toolkit.setup_scalers()")
+    logger.info("model, likelihood = toolkit.create_gpytorch_model()")
+    logger.info("toolkit.train_gpytorch_model(model, likelihood, 'GPyTorch_GP')")
+    logger.info("toolkit.evaluate_model('GPyTorch_GP')")
 
 
 if __name__ == "__main__":

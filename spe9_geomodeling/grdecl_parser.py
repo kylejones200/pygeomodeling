@@ -3,6 +3,7 @@ GRDECL File Parser for Reservoir Modeling Data
 Parses Eclipse-format GRDECL files to extract grid properties
 """
 
+import logging
 import re
 from importlib import resources
 from pathlib import Path
@@ -17,6 +18,9 @@ from .exceptions import (
     raise_invalid_format,
     raise_property_not_found,
 )
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 
 class GRDECLParser:
@@ -128,7 +132,7 @@ class GRDECLParser:
         nx, ny, nz = self.grid_dimensions
         total_cells = nx * ny * nz
 
-        print(f"Grid dimensions: {nx} x {ny} x {nz} = {total_cells} cells")
+        logger.info("Grid dimensions: %d x %d x %d = %d cells", nx, ny, nz, total_cells)
 
         # Parse available properties
         properties_to_parse = ["PERMX", "PERMY", "PERMZ", "PORO", "NTG"]
@@ -139,7 +143,7 @@ class GRDECLParser:
                 if len(prop_data) == total_cells:
                     # Reshape to 3D array (Fortran order for reservoir modeling)
                     self.properties[prop] = prop_data.reshape((nx, ny, nz), order="F")
-                    print(f"Loaded {prop}: {len(prop_data)} values")
+                    logger.info("Loaded %s: %d values", prop, len(prop_data))
                 else:
                     raise_dimension_mismatch(
                         expected=(total_cells,),
@@ -147,7 +151,7 @@ class GRDECLParser:
                         context=f"property {prop}",
                     )
             except ValueError as e:
-                print(f"Could not load {prop}: {e}")
+                logger.warning("Could not load %s: %s", prop, e)
 
         if not self.properties:
             raise DataValidationError(
@@ -245,11 +249,13 @@ def load_spe9_data(
 
 if __name__ == "__main__":
     # Test the parser
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
     data = load_spe9_data()
-    print("\nAvailable properties:", list(data["properties"].keys()))
+    logger.info("Available properties: %s", list(data["properties"].keys()))
 
     # Show some statistics
     for prop_name, prop_data in data["properties"].items():
-        print(
-            f"{prop_name}: min={prop_data.min():.2f}, max={prop_data.max():.2f}, mean={prop_data.mean():.2f}"
+        logger.info(
+            "%s: min=%.2f, max=%.2f, mean=%.2f",
+            prop_name, prop_data.min(), prop_data.max(), prop_data.mean()
         )

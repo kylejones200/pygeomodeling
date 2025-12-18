@@ -99,7 +99,7 @@ class TestDependencies:
             "scipy",
             "sklearn",
             "matplotlib",
-            "seaborn",
+            "signalplot",
             "pandas",
             "pathlib",
         ]

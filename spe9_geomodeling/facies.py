@@ -9,6 +9,7 @@ Based on the SEG tutorial by Brendon Hall (Enthought) using the Hugoton and
 Panoma gas fields dataset from University of Kansas.
 """
 
+import logging
 import warnings
 from dataclasses import dataclass
 from typing import Optional, Union
@@ -29,6 +30,9 @@ from sklearn.semi_supervised import LabelSpreading
 from sklearn.svm import SVC
 
 from .exceptions import DataValidationError, InvalidParameterError
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 # Standard facies descriptions from Hugoton/Panoma dataset
 FACIES_LABELS = {
@@ -556,8 +560,9 @@ class FaciesClassifier:
         self.is_fitted = True
 
         n_pseudo = high_conf_mask.sum()
-        print(
-            f"Semi-supervised learning: Added {n_pseudo} high-confidence pseudo-labels"
+        logger.info(
+            "Semi-supervised learning: Added %d high-confidence pseudo-labels",
+            n_pseudo
         )
 
         return self
@@ -590,14 +595,14 @@ class FaciesClassifier:
             X_target = X_target[self.feature_names].values
 
         # Phase 1: Pre-train on source data
-        print("Phase 1: Training on source basin...")
+        logger.info("Phase 1: Training on source basin...")
         X_source_scaled = self.scaler.fit_transform(X_source)
 
         self.model = self._create_model()
         self.model.fit(X_source_scaled, y_source)
 
         # Phase 2: Fine-tune on target data
-        print("Phase 2: Fine-tuning on target basin...")
+        logger.info("Phase 2: Fine-tuning on target basin...")
 
         # Combine source and target, but weight target more heavily
         X_combined = np.vstack([X_source, X_target])
@@ -624,8 +629,9 @@ class FaciesClassifier:
 
         self.is_fitted = True
 
-        print(
-            f"Transfer learning complete: {len(X_source)} source + {len(X_target)} target samples"
+        logger.info(
+            "Transfer learning complete: %d source + %d target samples",
+            len(X_source), len(X_target)
         )
 
         return self

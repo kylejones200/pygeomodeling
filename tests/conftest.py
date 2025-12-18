@@ -98,9 +98,10 @@ def mock_spe9_toolkit():
 def skip_if_no_gpytorch():
     """Skip test if GPyTorch is not available."""
     try:
-        pass
+        import gpytorch
+        import torch
 
-        return False
+        return True
     except ImportError:
         pytest.skip("GPyTorch not available")
 
@@ -109,9 +110,9 @@ def skip_if_no_gpytorch():
 def skip_if_no_sklearn():
     """Skip test if scikit-learn is not available."""
     try:
-        pass
+        import sklearn
 
-        return False
+        return True
     except ImportError:
         pytest.skip("scikit-learn not available")
 

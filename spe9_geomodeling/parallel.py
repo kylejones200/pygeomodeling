@@ -6,10 +6,14 @@ Leverages joblib for efficient parallel computation.
 
 from typing import Any, Callable, Union
 
+import logging
 import numpy as np
 from joblib import Parallel, delayed
 from sklearn.base import BaseEstimator, clone
 from tqdm import tqdm
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 
 class ParallelModelTrainer:
@@ -42,8 +46,9 @@ class ParallelModelTrainer:
             Dictionary of model_name -> trained model
         """
         if self.verbose > 0:
-            print(
-                f"Training {len(models)} models in parallel (n_jobs={self.n_jobs})..."
+            logger.info(
+                "Training %d models in parallel (n_jobs=%d)...",
+                len(models), self.n_jobs
             )
 
         def train_single_model(
@@ -63,7 +68,7 @@ class ParallelModelTrainer:
         trained_models = dict(results)
 
         if self.verbose > 0:
-            print(f"✓ Trained {len(trained_models)} models")
+            logger.info("Trained %d models", len(trained_models))
 
         return trained_models
 
@@ -99,8 +104,9 @@ class ParallelModelTrainer:
             }
 
         if self.verbose > 0:
-            print(
-                f"Training and evaluating {len(models)} models in parallel (n_jobs={self.n_jobs})..."
+            logger.info(
+                "Training and evaluating %d models in parallel (n_jobs=%d)...",
+                len(models), self.n_jobs
             )
 
         def train_and_eval_single(
@@ -141,12 +147,12 @@ class ParallelModelTrainer:
         all_results = dict(results)
 
         if self.verbose > 0:
-            print(f"\n✓ Results for {len(all_results)} models:")
+            logger.info("Results for %d models:", len(all_results))
             for name, result in all_results.items():
-                print(f"  {name}:")
+                logger.info("  %s:", name)
                 for metric_name, metric_value in result["metrics"].items():
-                    print(f"    {metric_name}: {metric_value:.4f}")
-                print(f"    training_time: {result['training_time']:.2f}s")
+                    logger.info("    %s: %.4f", metric_name, metric_value)
+                logger.info("    training_time: %.2fs", result['training_time'])
 
         return all_results
 
@@ -183,8 +189,9 @@ class BatchPredictor:
         n_batches = int(np.ceil(n_samples / self.batch_size))
 
         if self.verbose:
-            print(
-                f"Making predictions for {n_samples} samples in {n_batches} batches..."
+            logger.info(
+                "Making predictions for %d samples in %d batches...",
+                n_samples, n_batches
             )
 
         def predict_batch(
@@ -236,7 +243,7 @@ class BatchPredictor:
             Dictionary of model_name -> predictions
         """
         if self.verbose:
-            print(f"Making predictions with {len(models)} models...")
+            logger.info("Making predictions with %d models...", len(models))
 
         def predict_single_model(
             name: str, model: BaseEstimator
@@ -294,7 +301,7 @@ class ParallelCrossValidator:
         splits = list(cv_splitter.split(X, y))
 
         if self.verbose:
-            print(f"Performing {len(splits)}-fold cross-validation...")
+            logger.info("Performing %d-fold cross-validation...", len(splits))
 
         def evaluate_fold(
             fold_idx: int, train_idx: np.ndarray, test_idx: np.ndarray
@@ -328,7 +335,7 @@ class ParallelCrossValidator:
         scores = np.array(scores)
 
         if self.verbose:
-            print(f"\nCross-validation score: {scores.mean():.4f} ± {scores.std():.4f}")
+            logger.info("Cross-validation score: %.4f ± %.4f", scores.mean(), scores.std())
 
         return {
             "test_scores": scores,
@@ -377,7 +384,7 @@ def parallel_grid_search(
     param_combinations = list(product(*param_values))
 
     if verbose:
-        print(f"Testing {len(param_combinations)} parameter combinations...")
+        logger.info("Testing %d parameter combinations...", len(param_combinations))
 
     def evaluate_params(params_tuple: tuple) -> tuple[dict[str, Any], float]:
         """Evaluate a single parameter combination."""
@@ -402,8 +409,8 @@ def parallel_grid_search(
     best_params, best_score = max(results, key=lambda x: x[1])
 
     if verbose:
-        print(f"\nBest parameters: {best_params}")
-        print(f"Best score: {best_score:.4f}")
+        logger.info("Best parameters: %s", best_params)
+        logger.info("Best score: %.4f", best_score)
 
     return {
         "best_params": best_params,

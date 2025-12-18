@@ -5,8 +5,12 @@ Defines Gaussian Process models optimized for reservoir property prediction.
 
 from __future__ import annotations
 
+import logging
 import gpytorch
 import torch
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 
 class SPE9GPModel(gpytorch.models.ExactGP):
@@ -203,8 +207,9 @@ def create_gp_model(
 
 
 if __name__ == "__main__":
-    print("SPE9 GPyTorch Models")
-    print("Available models:")
-    print("- SPE9GPModel: Standard GP with flexible kernels")
-    print("- DeepGPModel: Deep GP with neural network features")
-    print("- create_gp_model(): Factory function for easy model creation")
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
+    logger.info("SPE9 GPyTorch Models")
+    logger.info("Available models:")
+    logger.info("- SPE9GPModel: Standard GP with flexible kernels")
+    logger.info("- DeepGPModel: Deep GP with neural network features")
+    logger.info("- create_gp_model(): Factory function for easy model creation")

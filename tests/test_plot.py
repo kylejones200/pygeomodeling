@@ -18,7 +18,7 @@ class TestSPE9Plotter:
         """Test plotter initialization."""
         plotter = SPE9Plotter()
         assert plotter.figsize == (12, 8)
-        assert plotter.dpi == 150
+        assert plotter.dpi == 300
         assert plotter.colors is not None
 
     def test_plotter_initialization_custom(self):

@@ -6,12 +6,17 @@ Provides spatial cross-validation methods specifically designed for geostatistic
 
 from typing import Any, Callable, Optional, Union
 
+import logging
 import numpy as np
 from sklearn.base import BaseEstimator, clone
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from tqdm import tqdm
 
 from .exceptions import CrossValidationError, raise_invalid_parameter
+
+# Configure logging
+logger = logging.getLogger(__name__)
+
 
 try:
     import optuna
@@ -284,11 +289,11 @@ def cross_validate_spatial(
         results["train_score"] = np.array(train_scores)
 
     if verbose:
-        print(f"\nCross-validation results:")
-        print(f"  Test score: {np.mean(test_scores):.4f} ± {np.std(test_scores):.4f}")
+        logger.info("Cross-validation results:")
+        logger.info("  Test score: %.4f ± %.4f", np.mean(test_scores), np.std(test_scores))
         if return_train_score:
-            print(
-                f"  Train score: {np.mean(train_scores):.4f} ± {np.std(train_scores):.4f}"
+            logger.info(
+                "  Train score: %.4f ± %.4f", np.mean(train_scores), np.std(train_scores)
             )
 
     return results
@@ -393,7 +398,7 @@ class HyperparameterTuner:
 
         # Optimize
         if verbose:
-            print(f"Starting hyperparameter tuning with {self.n_trials} trials...")
+            logger.info("Starting hyperparameter tuning with %d trials...", self.n_trials)
 
         self.study.optimize(
             lambda trial: self.objective(trial, X, y),
@@ -405,8 +410,8 @@ class HyperparameterTuner:
         self.best_score = self.study.best_value
 
         if verbose:
-            print(f"\nBest parameters: {self.best_params}")
-            print(f"Best score: {self.best_score:.4f}")
+            logger.info("Best parameters: %s", self.best_params)
+            logger.info("Best score: %.4f", self.best_score)
 
         return {
             "best_params": self.best_params,

@@ -6,29 +6,34 @@ This script provides various options for running tests with different configurat
 """
 
 import argparse
+import logging
 import subprocess
 import sys
 from pathlib import Path
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(message)s')
+logger = logging.getLogger(__name__)
 
 
 def run_command(cmd, description=""):
     """Run a command and return the result."""
     if description:
-        print(f"\n🔄 {description}")
+        logger.info("\n%s", description)
 
-    print(f"Running: {' '.join(cmd)}")
+    logger.info("Running: %s", ' '.join(cmd))
     result = subprocess.run(cmd, capture_output=True, text=True)
 
     if result.returncode == 0:
-        print(f"✅ Success: {description}")
+        logger.info("Success: %s", description)
         if result.stdout:
-            print(result.stdout)
+            logger.info(result.stdout)
     else:
-        print(f"❌ Failed: {description}")
+        logger.error("Failed: %s", description)
         if result.stderr:
-            print("STDERR:", result.stderr)
+            logger.error("STDERR: %s", result.stderr)
         if result.stdout:
-            print("STDOUT:", result.stdout)
+            logger.info("STDOUT: %s", result.stdout)
 
     return result.returncode == 0
 
@@ -75,7 +80,7 @@ def main():
         if args.file:
             cmd[-1] += f"::{args.function}"
         else:
-            print("Error: --function requires --file to be specified")
+            logger.error("Error: --function requires --file to be specified")
             return 1
 
     # Add options based on arguments
@@ -109,31 +114,30 @@ def main():
     # Add some default options
     cmd.extend(["--strict-markers", "--strict-config", "--disable-warnings"])
 
-    print("🧪 SPE9 Geomodeling Test Runner")
-    print("=" * 50)
+    logger.info("SPE9 Geomodeling Test Runner")
 
     # Check if we're in the right directory
     if not Path("tests").exists():
-        print("❌ Error: tests directory not found. Run from project root.")
+        logger.error("Error: tests directory not found. Run from project root.")
         return 1
 
     if not Path("spe9_geomodeling").exists():
-        print("❌ Error: spe9_geomodeling package not found. Run from project root.")
+        logger.error("Error: spe9_geomodeling package not found. Run from project root.")
         return 1
 
     # Run the tests
     success = run_command(cmd, "Running tests")
 
     if success:
-        print("\n🎉 All tests passed!")
+        logger.info("All tests passed!")
 
         if args.coverage:
-            print("\n📊 Coverage report generated:")
-            print("  - Terminal: see output above")
-            print("  - HTML: open htmlcov/index.html")
-            print("  - XML: coverage.xml")
+            logger.info("Coverage report generated:")
+            logger.info("  - Terminal: see output above")
+            logger.info("  - HTML: open htmlcov/index.html")
+            logger.info("  - XML: coverage.xml")
     else:
-        print("\n💥 Some tests failed!")
+        logger.error("Some tests failed!")
         return 1
 
     return 0

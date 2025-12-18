@@ -9,10 +9,12 @@ This script performs:
 5. Visualization of GPR prediction, uncertainty, and training coverage
 """
 
+import logging
 import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
+import signalplot
 from pykrige.ok import OrdinaryKriging
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF, Matern
@@ -22,10 +24,17 @@ from sklearn.preprocessing import StandardScaler
 
 from spe9_geomodeling.grdecl_parser import load_spe9_data
 
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(message)s')
+logger = logging.getLogger(__name__)
+
+# Apply signalplot style
+signalplot.apply()
+
 warnings.filterwarnings("ignore")
 
 # Load real SPE9 data
-print("Loading SPE9 dataset...")
+logger.info("Loading SPE9 dataset...")
 data, _ = load_spe9_data()
 nx, ny, nz = data["dimensions"]
 n_cells = nx * ny * nz
@@ -101,8 +110,8 @@ ax[1].imshow(pred_3d[:, :, z_mid].T, origin="lower", cmap="viridis")
 ax[1].set_title("GPR Predicted PERMX")
 ax[2].imshow(sigma_3d[:, :, z_mid].T, origin="lower", cmap="magma")
 ax[2].set_title("Prediction Uncertainty σ")
-plt.tight_layout()
-plt.savefig("gpr_prediction_slices.png", dpi=150)
+
+plt.savefig("gpr_prediction_slices.png")
 plt.show()
 
 
@@ -124,10 +133,10 @@ write_grdecl_property(
 )
 
 # Summary
-print("\n=== SUMMARY ===")
-print(f"Grid dimensions: {nx} x {ny} x {nz}")
-print(f"Valid cells: {X_valid.shape[0]} / {n_cells}")
-print(f"Predicted PERMX: {np.min(pred_perm):.2f} – {np.max(pred_perm):.2f} mD")
-print(f"Mean σ: {np.mean(sigma):.2f}")
-print(f"Training samples: {len(X_train)}, Test samples: {len(X_test)}")
-print(f"Cross-validation R²: {np.mean(cv_scores):.3f}, RMSE: {np.mean(cv_rmse):.2f} mD")
+logger.info("\n=== SUMMARY ===")
+logger.info("Grid dimensions: %d x %d x %d", nx, ny, nz)
+logger.info("Valid cells: %d / %d", X_valid.shape[0], n_cells)
+logger.info("Predicted PERMX: %.2f – %.2f mD", np.min(pred_perm), np.max(pred_perm))
+logger.info("Mean σ: %.2f", np.mean(sigma))
+logger.info("Training samples: %d, Test samples: %d", len(X_train), len(X_test))
+logger.info("Cross-validation R²: %.3f, RMSE: %.2f mD", np.mean(cv_scores), np.mean(cv_rmse))

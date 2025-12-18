@@ -43,7 +43,7 @@ dependencies = [
 
   # Visualization
   "matplotlib>=3.7.0,<4.0.0",
-  "seaborn>=0.12.0,<1.0.0",
+  "signalplot>=0.1.0",
 
   # Geostatistics
   "pykrige>=1.6.0,<2.0.0",

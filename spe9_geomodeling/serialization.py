@@ -5,6 +5,7 @@ Provides functionality to save/load trained models with metadata and versioning.
 """
 
 import json
+import logging
 import pickle
 from datetime import datetime
 from pathlib import Path
@@ -13,6 +14,10 @@ from typing import Any, Optional, Union
 import joblib
 
 from .exceptions import SerializationError, raise_invalid_parameter
+
+# Configure logging
+logger = logging.getLogger(__name__)
+
 
 try:
     import torch
@@ -197,12 +202,12 @@ class ModelSerializer:
             with open(version_path, "w") as f:
                 f.write(metadata.version)
 
-            print(f"✓ Model saved to: {model_dir}")
-            print(f"  - Model file: {model_path.name}")
-            print(f"  - Format: {format}")
+            logger.info("Model saved to: %s", model_dir)
+            logger.info("  - Model file: %s", model_path.name)
+            logger.info("  - Format: %s", format)
             if scaler is not None:
-                print(f"  - Scaler: saved")
-            print(f"  - Metadata: saved")
+                logger.info("  - Scaler: saved")
+            logger.info("  - Metadata: saved")
 
             return model_dir
 
@@ -271,13 +276,13 @@ class ModelSerializer:
             scaler_path = model_dir / "scaler.joblib"
             scaler = joblib.load(scaler_path) if scaler_path.exists() else None
 
-            print(f"✓ Model loaded from: {model_dir}")
-            print(f"  - Model: {metadata.model_name}")
-            print(f"  - Type: {metadata.model_type}")
-            print(f"  - Backend: {metadata.backend}")
-            print(f"  - Version: {metadata.version}")
+            logger.info("Model loaded from: %s", model_dir)
+            logger.info("  - Model: %s", metadata.model_name)
+            logger.info("  - Type: %s", metadata.model_type)
+            logger.info("  - Backend: %s", metadata.backend)
+            logger.info("  - Version: %s", metadata.version)
             if metadata.performance_metrics:
-                print(f"  - Metrics: {metadata.performance_metrics}")
+                logger.info("  - Metrics: %s", metadata.performance_metrics)
 
             return model, metadata, scaler
 
@@ -341,7 +346,7 @@ class ModelSerializer:
         import shutil
 
         shutil.rmtree(model_dir)
-        print(f"✓ Model deleted: {model_name}")
+        logger.info("Model deleted: %s", model_name)
 
 
 # Convenience functions

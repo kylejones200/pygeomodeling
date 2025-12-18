@@ -10,6 +10,7 @@ Follows PEP 8 conventions and Python best practices.
 
 from __future__ import annotations
 
+import logging
 import warnings
 
 warnings.warn(
@@ -24,6 +25,13 @@ from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
+import signalplot
+
+# Configure logging
+logger = logging.getLogger(__name__)
+
+# Apply signalplot style
+signalplot.apply()
 from sklearn.base import BaseEstimator
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.gaussian_process import GaussianProcessRegressor
@@ -120,15 +128,15 @@ class SPE9Toolkit:
         if not self.data_path.exists():
             raise FileNotFoundError(f"SPE9 data file not found: {self.data_path}")
 
-        print(f"Loading SPE9 dataset from {self.data_path}")
+        logger.info("Loading SPE9 dataset from %s", self.data_path)
         self.data = load_spe9_data(str(self.data_path))
 
         nx, ny, nz = self.data["dimensions"]
         permx_3d = self.data["properties"]["PERMX"]
 
-        print(f"Grid dimensions: {nx} × {ny} × {nz}")
-        print(f"PERMX range: {permx_3d.min():.2f} - {permx_3d.max():.2f} mD")
-        print(f"PERMX mean: {permx_3d.mean():.2f} mD")
+        logger.info("Grid dimensions: %d x %d x %d", nx, ny, nz)
+        logger.info("PERMX range: %.2f - %.2f mD", permx_3d.min(), permx_3d.max())
+        logger.info("PERMX mean: %.2f mD", permx_3d.mean())
 
         return self.data
 
@@ -197,7 +205,7 @@ class SPE9Toolkit:
             dimensions=(nx, ny, nz),
         )
 
-        print(f"Features prepared: {feature_names}")
+        logger.info("Features prepared: %s", feature_names)
         return self.grid_data
 
     def create_train_test_split(
@@ -224,14 +232,14 @@ class SPE9Toolkit:
         X_valid = self.grid_data.X_grid[valid_mask]
         y_valid = self.grid_data.y_grid[valid_mask]
 
-        print(f"Valid cells: {len(y_valid):,} out of {len(self.grid_data.y_grid):,}")
+        logger.info("Valid cells: %d out of %d", len(y_valid), len(self.grid_data.y_grid))
 
         # Split data
         X_train, X_test, y_train, y_test = train_test_split(
             X_valid, y_valid, test_size=test_size, random_state=random_state
         )
 
-        print(f"Training samples: {len(X_train):,}, Test samples: {len(X_test):,}")
+        logger.info("Training samples: %d, Test samples: %d", len(X_train), len(X_test))
 
         # Update grid_data
         self.grid_data.X_train = X_train
@@ -280,7 +288,7 @@ class SPE9Toolkit:
 
         self.scalers = {"x_scaler": x_scaler, "y_scaler": y_scaler}
 
-        print(f"Scalers setup: {scaler_type}")
+        logger.info("Scalers setup: %s", scaler_type)
         return x_scaler, y_scaler
 
     @staticmethod
@@ -345,7 +353,7 @@ class SPE9Toolkit:
         else:
             raise ValueError(f"Unknown model type: {model_type}")
 
-        print(f"{model_type.upper()} model created")
+        logger.info("%s model created", model_type.upper())
         return model
 
     def train_model(self, model: BaseEstimator, model_name: str) -> BaseEstimator:
@@ -364,14 +372,14 @@ class SPE9Toolkit:
         if not self.scalers or self.grid_data.X_train_scaled is None:
             raise ValueError("Setup scalers first")
 
-        print(f"Training {model_name}...")
+        logger.info("Training %s...", model_name)
         model.fit(self.grid_data.X_train_scaled, self.grid_data.y_train_scaled)
 
         self.models[model_name] = model
-        print(f"{model_name} trained successfully!")
+        logger.info("%s trained successfully!", model_name)
 
         if hasattr(model, "kernel_"):
-            print(f"Final kernel: {model.kernel_}")
+            logger.info("Final kernel: %s", model.kernel_)
 
         return model
 
@@ -419,10 +427,10 @@ class SPE9Toolkit:
 
         self.results[model_name] = results
 
-        print(f"{model_name} Results:")
-        print(f"  R²: {results.r2:.3f}")
-        print(f"  RMSE: {results.rmse:.2f} mD")
-        print(f"  MAE: {results.mae:.2f} mD")
+        logger.info("%s Results:", model_name)
+        logger.info("  R2: %.3f", results.r2)
+        logger.info("  RMSE: %.2f mD", results.rmse)
+        logger.info("  MAE: %.2f mD", results.mae)
 
         return results
 
@@ -456,22 +464,22 @@ class SPE9Toolkit:
             self.grid_data.permx_3d[:, :, z_slice].T, origin="lower", cmap="viridis"
         )
         axes[0, 0].set_title(f"Original PERMX (Z={z_slice})")
-        plt.colorbar(im1, ax=axes[0, 0], label="mD")
+        plt.colorbar(im1, ax=axes[0, 0], label="mD", shrink=0.8)
 
         # Predicted PERMX
         im2 = axes[0, 1].imshow(
             pred_3d[:, :, z_slice].T, origin="lower", cmap="viridis"
         )
-        axes[0, 1].set_title(f"{model_name} Predicted PERMX (Z={z_slice})")
-        plt.colorbar(im2, ax=axes[0, 1], label="mD")
+        axes[0, 1].set_title(f"Predicted PERMX (Z={z_slice})")
+        plt.colorbar(im2, ax=axes[0, 1], label="mD", shrink=0.8)
 
         # Uncertainty (if available)
         if self.results[model_name].y_std is not None:
             im3 = axes[1, 0].imshow(
-                sigma_3d[:, :, z_slice].T, origin="lower", cmap="magma"
+                sigma_3d[:, :, z_slice].T, origin="lower", cmap="plasma"
             )
-            axes[1, 0].set_title(f"{model_name} Uncertainty (Z={z_slice})")
-            plt.colorbar(im3, ax=axes[1, 0], label="σ")
+            axes[1, 0].set_title(f"Uncertainty (Z={z_slice})")
+            plt.colorbar(im3, ax=axes[1, 0], label="sigma", shrink=0.8)
         else:
             axes[1, 0].text(
                 0.5,
@@ -487,18 +495,19 @@ class SPE9Toolkit:
         y_test = self.grid_data.y_test
         y_pred = self.results[model_name].y_pred
 
-        axes[1, 1].scatter(y_test, y_pred, alpha=0.6)
+        axes[1, 1].scatter(y_test, y_pred, alpha=0.6, color="#555555")
         axes[1, 1].plot(
-            [y_test.min(), y_test.max()], [y_test.min(), y_test.max()], "r--", lw=2
+            [y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 
+            color=signalplot.ACCENT, ls="--", lw=2
         )
         axes[1, 1].set_xlabel("True PERMX (mD)")
         axes[1, 1].set_ylabel("Predicted PERMX (mD)")
-        axes[1, 1].set_title(f"{model_name}: Predicted vs Actual")
+        axes[1, 1].set_title(f"Predicted vs Actual")
 
         plt.tight_layout()
         filename = f"{model_name.lower()}_results.png"
-        plt.savefig(filename, dpi=150, bbox_inches="tight")
-        print(f"Visualization saved: {filename}")
+        plt.savefig(filename)
+        logger.info("Visualization saved: %s", filename)
         plt.show()
 
     def _predict_full_grid(self, model_name: str) -> tuple[np.ndarray, np.ndarray]:
@@ -573,25 +582,25 @@ class SPE9Toolkit:
         write_grdecl(pred_3d, f"PERMX_{model_name.upper()}", pred_file)
         write_grdecl(sigma_3d, f"SIGMA_{model_name.upper()}", sigma_file)
 
-        print(f"Exported: {pred_file.name}, {sigma_file.name}")
+        logger.info("Exported: %s, %s", pred_file.name, sigma_file.name)
         return pred_file, sigma_file
 
 
 def main() -> None:
     """Example usage of the SPE9 Toolkit."""
-    print("SPE9 Geomodeling Toolkit - Pythonic Version")
-    print("=" * 50)
-    print("No automatic training. Use the toolkit methods explicitly.")
-    print("\nExample workflow:")
-    print("toolkit = SPE9Toolkit()")
-    print("toolkit.load_data()")
-    print("toolkit.prepare_features(add_geological_features=True)")
-    print("toolkit.create_train_test_split()")
-    print("toolkit.setup_scalers()")
-    print("gpr = toolkit.create_model('gpr')")
-    print("toolkit.train_model(gpr, 'GPR')")
-    print("toolkit.evaluate_model('GPR')")
-    print("toolkit.visualize_results('GPR')")
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
+    logger.info("SPE9 Geomodeling Toolkit - Pythonic Version")
+    logger.info("No automatic training. Use the toolkit methods explicitly.")
+    logger.info("\nExample workflow:")
+    logger.info("toolkit = SPE9Toolkit()")
+    logger.info("toolkit.load_data()")
+    logger.info("toolkit.prepare_features(add_geological_features=True)")
+    logger.info("toolkit.create_train_test_split()")
+    logger.info("toolkit.setup_scalers()")
+    logger.info("gpr = toolkit.create_model('gpr')")
+    logger.info("toolkit.train_model(gpr, 'GPR')")
+    logger.info("toolkit.evaluate_model('GPR')")
+    logger.info("toolkit.visualize_results('GPR')")
 
 
 if __name__ == "__main__":

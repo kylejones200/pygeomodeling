@@ -283,14 +283,18 @@ class TestGPModelPrediction:
 class TestGPModelWithoutGPyTorch:
     """Test behavior when GPyTorch is not available."""
 
-    def test_import_error_handling(self):
-        """Test that import errors are handled gracefully."""
-        # This test runs regardless of GPyTorch availability
-        try:
-            pass
+    def test_placeholder_classes_raise_error(self):
+        """Test that placeholder classes raise ImportError on instantiation."""
+        if GPYTORCH_AVAILABLE:
+            pytest.skip("GPyTorch is available")
 
-            # If import succeeds, GPyTorch is available
-            assert GPYTORCH_AVAILABLE
-        except ImportError:
-            # If import fails, GPyTorch is not available
-            assert not GPYTORCH_AVAILABLE
+        from spe9_geomodeling import DeepGPModel, SPE9GPModel, create_gp_model
+
+        with pytest.raises(ImportError, match="Optional dependency.*Gaussian Process"):
+            SPE9GPModel()
+
+        with pytest.raises(ImportError, match="Optional dependency.*Gaussian Process"):
+            DeepGPModel()
+
+        with pytest.raises(ImportError, match="Optional dependency.*Gaussian Process"):
+            create_gp_model()

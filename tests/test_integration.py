@@ -48,7 +48,7 @@ class TestPackageImports:
 class TestEndToEndWorkflow:
     """Test complete end-to-end workflows."""
 
-    @patch("spe9_geomodeling.spe9_toolkit.load_spe9_data")
+    @patch("spe9_geomodeling.toolkit.load_spe9_data")
     @patch("pathlib.Path.exists")
     def test_spe9_toolkit_complete_workflow(
         self, mock_exists, mock_load, sample_grdecl_data
@@ -160,7 +160,7 @@ class TestDataCompatibility:
         }
 
         with patch(
-            "spe9_geomodeling.spe9_toolkit.load_spe9_data", return_value=small_data
+            "spe9_geomodeling.toolkit.load_spe9_data", return_value=small_data
         ):
             toolkit = SPE9Toolkit()
             toolkit.load_data()
@@ -181,7 +181,7 @@ class TestDataCompatibility:
         }
 
         with patch(
-            "spe9_geomodeling.spe9_toolkit.load_spe9_data", return_value=large_data
+            "spe9_geomodeling.toolkit.load_spe9_data", return_value=large_data
         ):
             toolkit = SPE9Toolkit()
             toolkit.load_data()
@@ -201,7 +201,7 @@ class TestDataCompatibility:
         }
 
         with patch(
-            "spe9_geomodeling.spe9_toolkit.load_spe9_data", return_value=incomplete_data
+            "spe9_geomodeling.toolkit.load_spe9_data", return_value=incomplete_data
         ):
             toolkit = SPE9Toolkit()
             data = toolkit.load_data()
@@ -241,21 +241,21 @@ class TestErrorHandling:
         """Test error when trying to evaluate non-existent model."""
         toolkit = SPE9Toolkit()
 
-        with pytest.raises(ValueError, match="Model GPR not found"):
+        with pytest.raises(ValueError, match="Model 'GPR' not found"):
             toolkit.evaluate_model("GPR")
 
     def test_invalid_model_type(self):
         """Test error with invalid model type."""
         toolkit = SPE9Toolkit()
 
-        with pytest.raises(ValueError, match="Unknown model type"):
+        with pytest.raises(ValueError, match="Unknown.*model type"):
             toolkit.create_model("invalid_model_type")
 
 
 class TestPerformanceAndMemory:
     """Test performance and memory considerations."""
 
-    @patch("spe9_geomodeling.spe9_toolkit.load_spe9_data")
+    @patch("spe9_geomodeling.toolkit.load_spe9_data")
     @patch("pathlib.Path.exists")
     def test_memory_efficient_processing(self, mock_exists, mock_load):
         """Test that processing doesn't consume excessive memory."""
@@ -295,7 +295,7 @@ class TestPerformanceAndMemory:
         }
 
         with patch(
-            "spe9_geomodeling.spe9_toolkit.load_spe9_data", return_value=small_data
+            "spe9_geomodeling.toolkit.load_spe9_data", return_value=small_data
         ):
             toolkit = SPE9Toolkit()
             toolkit.load_data()
@@ -317,7 +317,7 @@ class TestPerformanceAndMemory:
 class TestCrossCompatibility:
     """Test compatibility between different components."""
 
-    @patch("spe9_geomodeling.spe9_toolkit.load_spe9_data")
+    @patch("spe9_geomodeling.toolkit.load_spe9_data")
     @patch("spe9_geomodeling.unified_toolkit.load_spe9_data")
     def test_toolkit_interoperability(
         self, mock_unified_load, mock_spe9_load, sample_grdecl_data
@@ -343,7 +343,7 @@ class TestCrossCompatibility:
     def test_plotter_with_toolkit_results(self, sample_grdecl_data):
         """Test that plotter works with toolkit results."""
         with patch(
-            "spe9_geomodeling.spe9_toolkit.load_spe9_data",
+            "spe9_geomodeling.toolkit.load_spe9_data",
             return_value=sample_grdecl_data,
         ):
             toolkit = SPE9Toolkit()

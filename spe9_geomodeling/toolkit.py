@@ -10,6 +10,7 @@ Supports both scikit-learn and GPyTorch workflows in a single interface.
 
 from __future__ import annotations
 
+import logging
 import warnings
 
 warnings.warn(
@@ -24,6 +25,9 @@ from typing import Any
 
 import joblib
 import numpy as np
+
+# Configure logging
+logger = logging.getLogger(__name__)
 from sklearn.base import BaseEstimator
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.gaussian_process import GaussianProcessRegressor
@@ -139,7 +143,7 @@ class SPE9Toolkit:
         self.scalers: dict[str, StandardScaler] = {}
         self.results: dict[str, ModelResults] = {}
 
-        print(f"SPE9 Toolkit initialized with {backend} backend")
+        logger.info("SPE9 Toolkit initialized with %s backend", backend)
 
     def load_data(self) -> dict[str, Any]:
         """Load SPE9 dataset.
@@ -153,15 +157,15 @@ class SPE9Toolkit:
         if not self.data_path.exists():
             raise FileNotFoundError(f"SPE9 data file not found: {self.data_path}")
 
-        print(f"Loading SPE9 dataset from {self.data_path}")
+        logger.info("Loading SPE9 dataset from %s", self.data_path)
         self.data = load_spe9_data(str(self.data_path))
 
         nx, ny, nz = self.data["dimensions"]
         permx_3d = self.data["properties"]["PERMX"]
 
-        print(f"Grid dimensions: {nx} × {ny} × {nz}")
-        print(f"PERMX range: {permx_3d.min():.2f} - {permx_3d.max():.2f} mD")
-        print(f"PERMX mean: {permx_3d.mean():.2f} mD")
+        logger.info("Grid dimensions: %d x %d x %d", nx, ny, nz)
+        logger.info("PERMX range: %.2f - %.2f mD", permx_3d.min(), permx_3d.max())
+        logger.info("PERMX mean: %.2f mD", permx_3d.mean())
 
         return self.data
 
@@ -230,8 +234,10 @@ class SPE9Toolkit:
             valid_mask=valid_mask,
         )
 
-        print(
-            f"Features prepared: {len(feature_names)} features, {len(self.grid_data.X_grid)} valid samples"
+        logger.info(
+            "Features prepared: %d features, %d valid samples",
+            len(feature_names),
+            len(self.grid_data.X_grid),
         )
         return self.grid_data
 
@@ -268,7 +274,7 @@ class SPE9Toolkit:
         self.grid_data.y_train = y_train
         self.grid_data.y_test = y_test
 
-        print(f"Train/test split: {len(X_train)} train, {len(X_test)} test samples")
+        logger.info("Train/test split: %d train, %d test samples", len(X_train), len(X_test))
         return X_train, X_test, y_train, y_test
 
     def setup_scalers(
@@ -311,7 +317,7 @@ class SPE9Toolkit:
 
         self.scalers = {"x_scaler": x_scaler, "y_scaler": y_scaler}
 
-        print(f"Scalers setup: {scaler_type}")
+        logger.info("Scalers setup: %s", scaler_type)
         return x_scaler, y_scaler
 
     def create_model(
@@ -425,14 +431,14 @@ class SPE9Toolkit:
             raise ValueError("Scalers must be set up first. Call setup_scalers().")
 
         if self.backend == "sklearn":
-            print(f"Training {model_name} model...")
+            logger.info("Training %s model...", model_name)
             model.fit(self.grid_data.X_train_scaled, self.grid_data.y_train_scaled)
             self.models[model_name] = model
-            print(f"✅ {model_name} training completed")
+            logger.info("DONE: %s training completed", model_name)
 
         elif self.backend == "gpytorch":
             # GPyTorch training would go here
-            print(f"GPyTorch training for {model_name} not implemented in this version")
+            logger.warning("GPyTorch training for %s not implemented in this version", model_name)
             self.models[model_name] = model
 
         return model
@@ -489,10 +495,10 @@ class SPE9Toolkit:
 
         self.results[model_name] = results
 
-        print(f"📊 {model_name} Results:")
-        print(f"   R² Score: {r2:.4f}")
-        print(f"   RMSE: {rmse:.4f}")
-        print(f"   MAE: {mae:.4f}")
+        logger.info("RESULTS: %s Results:", model_name)
+        logger.info("   R2 Score: %.4f", r2)
+        logger.info("   RMSE: %.4f", rmse)
+        logger.info("   MAE: %.4f", mae)
 
         return results
 
@@ -517,7 +523,7 @@ class SPE9Toolkit:
         }
 
         joblib.dump(model_data, filepath)
-        print(f"Model '{model_name}' saved to {filepath}")
+        logger.info("Model '%s' saved to %s", model_name, filepath)
 
     def load_model(self, model_name: str, filepath: str | Path) -> None:
         """Load a trained model from disk.
@@ -531,13 +537,13 @@ class SPE9Toolkit:
         self.models[model_name] = model_data["model"]
         self.scalers = model_data["scalers"]
 
-        print(f"Model '{model_name}' loaded from {filepath}")
+        logger.info("Model '%s' loaded from %s", model_name, filepath)
 
 
 def main():
     """Example usage of the unified SPE9 Toolkit."""
-    print("🚀 SPE9 Unified Geomodeling Toolkit")
-    print("=" * 50)
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
+    logger.info("SPE9 Unified Geomodeling Toolkit")
 
     # Initialize toolkit
     toolkit = SPE9Toolkit(backend="sklearn")
@@ -549,7 +555,7 @@ def main():
     toolkit.setup_scalers()
 
     # Train models
-    print("\n🤖 Training models...")
+    logger.info("Training models...")
 
     # Gaussian Process Regression
     gpr = toolkit.create_model("gpr", kernel_type="combined")
@@ -560,12 +566,13 @@ def main():
     toolkit.train_model(rf, "RandomForest")
 
     # Evaluate models
-    print("\n📊 Evaluating models...")
+    logger.info("Evaluating models...")
     gpr_results = toolkit.evaluate_model("GPR")
     rf_results = toolkit.evaluate_model("RandomForest")
 
-    print(
-        f"\n🏆 Best model: {'GPR' if gpr_results.r2 > rf_results.r2 else 'RandomForest'}"
+    logger.info(
+        "Best model: %s",
+        'GPR' if gpr_results.r2 > rf_results.r2 else 'RandomForest'
     )
 
 

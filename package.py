@@ -5,10 +5,15 @@ Package preparation script for SPE9 Geomodeling Toolkit.
 This script helps prepare your project for distribution.
 """
 
+import logging
 import shutil
 import subprocess
 import sys
 from pathlib import Path
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(message)s')
+logger = logging.getLogger(__name__)
 
 try:  # Python 3.11+
     import tomllib  # type: ignore[attr-defined]
@@ -28,11 +33,11 @@ def check_requirements():
             missing.append(package)
 
     if missing:
-        print(f"❌ Missing required packages: {', '.join(missing)}")
-        print(f"Install with: pip install {' '.join(missing)}")
+        logger.error("Missing required packages: %s", ", ".join(missing))
+        logger.info("Install with: pip install %s", " ".join(missing))
         return False
 
-    print("✅ All packaging requirements satisfied")
+    logger.info("All packaging requirements satisfied")
     return True
 
 
@@ -44,33 +49,33 @@ def clean_build():
         for path in Path(".").glob(pattern):
             if path.is_dir():
                 shutil.rmtree(path)
-                print(f"🧹 Cleaned {path}")
+                logger.info("Cleaned %s", path)
 
 
 def build_package():
     """Build the package."""
-    print("🔨 Building package...")
+    logger.info("Building package...")
     try:
         result = subprocess.run(
             [sys.executable, "-m", "build"], capture_output=True, text=True
         )
         if result.returncode == 0:
-            print("✅ Package built successfully!")
-            print("📦 Created files:")
+            logger.info("Package built successfully!")
+            logger.info("Created files:")
             for file in Path("dist").glob("*"):
-                print(f"  - {file}")
+                logger.info("  - %s", file)
             return True
         else:
-            print(f"❌ Build failed: {result.stderr}")
+            logger.error("Build failed: %s", result.stderr)
             return False
     except Exception as e:
-        print(f"❌ Build error: {e}")
+        logger.error("Build error: %s", e)
         return False
 
 
 def create_archive():
     """Create a simple archive for sharing."""
-    print("📦 Creating archive...")
+    logger.info("Creating archive...")
 
     files_to_include = [
         "*.py",
@@ -90,9 +95,9 @@ def create_archive():
         for file in archive_files:
             if file.is_file():
                 tar.add(file)
-                print(f"  + {file}")
+                logger.info("  + %s", file)
 
-    print("✅ Archive created: spe9-geomodeling-toolkit.tar.gz")
+    logger.info("Archive created: spe9-geomodeling-toolkit.tar.gz")
 
 
 def get_project_metadata() -> dict:
@@ -117,37 +122,34 @@ def show_installation_instructions():
     version = metadata.get("version", "0.0.0")
     wheel_name = f"{dist_name.replace('-', '_')}-{version}-py3-none-any.whl"
 
-    print("\n" + "=" * 60)
-    print("📋 INSTALLATION INSTRUCTIONS FOR USERS")
-    print("=" * 60)
+    logger.info("INSTALLATION INSTRUCTIONS FOR USERS")
 
-    print("\n🎯 Option 1: Install from wheel (if built):")
-    print(f"pip install dist/{wheel_name}")
+    logger.info("Option 1: Install from wheel (if built):")
+    logger.info("pip install dist/%s", wheel_name)
 
-    print("\n🎯 Option 2: Install from source (core dependencies):")
-    print("pip install .")
-    print("pip install -e .  # development mode")
+    logger.info("Option 2: Install from source (core dependencies):")
+    logger.info("pip install .")
+    logger.info("pip install -e .  # development mode")
 
-    print("\n🎯 Option 3: Install with optional extras:")
-    print("pip install '.[dev]'        # development tooling")
-    print("pip install '.[advanced]'   # GPyTorch/Optuna workflow")
-    print("pip install '.[geospatial]' # Geo file I/O stack")
-    print("pip install '.[all]'        # Everything except GPU-only extras")
+    logger.info("Option 3: Install with optional extras:")
+    logger.info("pip install '.[dev]'        # development tooling")
+    logger.info("pip install '.[advanced]'   # GPyTorch/Optuna workflow")
+    logger.info("pip install '.[geospatial]' # Geo file I/O stack")
+    logger.info("pip install '.[all]'        # Everything except GPU-only extras")
 
-    print("\n🎯 Option 4: From source archive:")
-    print("tar -xzf spe9-geomodeling-toolkit.tar.gz")
-    print("cd spe9-geomodeling-toolkit")
-    print("pip install -e .")
+    logger.info("Option 4: From source archive:")
+    logger.info("tar -xzf spe9-geomodeling-toolkit.tar.gz")
+    logger.info("cd spe9-geomodeling-toolkit")
+    logger.info("pip install -e .")
 
 
 def main():
     """Run the main packaging workflow."""
-    print("🚀 SPE9 Geomodeling Toolkit - Package Preparation")
-    print("=" * 60)
+    logger.info("SPE9 Geomodeling Toolkit - Package Preparation")
 
     # Check if we're in the right directory
     if not Path("pyproject.toml").exists():
-        print("❌ pyproject.toml not found. Run this script from the project root.")
+        logger.error("Error: pyproject.toml not found. Run this script from the project root.")
         return
 
     # Clean previous builds
@@ -155,12 +157,12 @@ def main():
 
     # Check requirements
     if not check_requirements():
-        print("\n💡 Install missing packages and run again.")
+        logger.info("Note: Install missing packages and run again.")
         return
 
     # Build package
     if build_package():
-        print("\n✅ Package ready for distribution!")
+        logger.info("Package ready for distribution!")
 
     # Create simple archive as backup
     create_archive()
@@ -168,8 +170,8 @@ def main():
     # Show instructions
     show_installation_instructions()
 
-    print(f"\n🎉 Your SPE9 geomodeling toolkit is ready to share!")
-    print(f"📁 Files created in: {Path.cwd()}")
+    logger.info("Your SPE9 geomodeling toolkit is ready to share!")
+    logger.info("Files created in: %s", Path.cwd())
 
 
 if __name__ == "__main__":

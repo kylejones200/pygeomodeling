@@ -9,27 +9,27 @@
 
 Advanced Gaussian Process Regression and Kriging toolkit for SPE9 reservoir modeling. This toolkit provides a comprehensive framework for spatial modeling of reservoir properties using both traditional Gaussian Process models and cutting-edge Deep Gaussian Process architectures.
 
-## 🚀 Key Features
+## Key Features
 
 ### Core Capabilities
 
-- **🔧 GRDECL Parser**: Load and parse Eclipse GRDECL files with automatic property extraction
-- **🤖 Unified Toolkit**: Single interface supporting both scikit-learn and GPyTorch workflows
-- **🧠 Advanced Models**: Traditional GP (RBF, Matérn, Combined kernels) and Deep GP with neural network features
-- **📊 Rich Visualization**: Comprehensive plotting utilities for model comparison and spatial analysis
+- **GRDECL Parser**: Load and parse Eclipse GRDECL files with automatic property extraction
+- **Unified Toolkit**: Single interface supporting both scikit-learn and GPyTorch workflows
+- **Advanced Models**: Traditional GP (RBF, Matérn, Combined kernels) and Deep GP with neural network features
+- **Rich Visualization**: Comprehensive plotting utilities for model comparison and spatial analysis
 
 ### Features (v0.3.0)
 
-- **🛡️ Error Handling**: Comprehensive validation with helpful error messages
-- **💾 Model Serialization**: Save/load models with versioning and metadata
-- **🗺️ Spatial Cross-Validation**: Proper validation for geostatistical data
-- **⚡ Parallel Processing**: 3-4x speedup with multi-core training
-- **🎯 Hyperparameter Tuning**: Optuna integration for optimization
-- **📈 Variogram Analysis**: Semi-variogram modeling for spatial correlation (NEW!)
-- **📚 Tutorial Notebooks**: Interactive learning with Jupyter
-- **🔬 Research-Ready**: Built for reproducible scientific research
+- **Error Handling**: Comprehensive validation with helpful error messages
+- **Model Serialization**: Save/load models with versioning and metadata
+- **Spatial Cross-Validation**: Proper validation for geostatistical data
+- **Parallel Processing**: 3-4x speedup with multi-core training
+- **Hyperparameter Tuning**: Optuna integration for optimization
+- **Variogram Analysis**: Semi-variogram modeling for spatial correlation (NEW!)
+- **Tutorial Notebooks**: Interactive learning with Jupyter
+- **Research-Ready**: Built for reproducible scientific research
 
-## 📦 Installation
+## Installation
 
 ### Basic Installation (Traditional GP Models)
 
@@ -58,7 +58,7 @@ cd pygeomodeling
 # or manually: pip install -e ".[dev,docs,all]"
 ```
 
-## 🎯 Quick Start
+## Quick Start
 
 ### Basic Usage
 
@@ -95,7 +95,7 @@ results = experiment.run_comparison_experiment()
 print(f"Best model: {max(results.keys(), key=lambda x: results[x]['metrics']['r2_score'])}")
 ```
 
-## 📊 What's Included
+## What's Included
 
 ### Core Modules
 
@@ -110,7 +110,7 @@ print(f"Best model: {max(results.keys(), key=lambda x: results[x]['metrics']['r2
 - **`main.py`**: Traditional geomodeling workflow
 - **`package.py`**: Packaging and distribution helper
 
-## 🔬 Scientific Applications
+## Scientific Applications
 
 This toolkit has been designed for:
 
@@ -119,7 +119,7 @@ This toolkit has been designed for:
 - **Model Comparison**: Traditional vs Deep GP performance analysis
 - **Geostatistical Research**: Advanced spatial modeling techniques
 
-## 📈 Model Performance
+## Model Performance
 
 Based on SPE9 reservoir dataset analysis:
 
@@ -129,7 +129,7 @@ Based on SPE9 reservoir dataset analysis:
 
 *Traditional Gaussian Process models with combined RBF+Matérn kernels outperform Deep GP models for SPE9 spatial patterns, demonstrating the effectiveness of classical geostatistical approaches for this dataset.*
 
-## 🛠️ Dependencies
+## Dependencies
 
 ### Core Dependencies (Always Installed)
 
@@ -146,7 +146,7 @@ Based on SPE9 reservoir dataset analysis:
 - **Performance**: numba (for JIT compilation)
 - **Visualization**: plotly, ipywidgets (for interactive plots)
 
-## 📚 Documentation
+## Documentation
 
 Detailed documentation and examples are available in the repository:
 
@@ -154,15 +154,15 @@ Detailed documentation and examples are available in the repository:
 - [Tutorial Notebooks](examples/)
 - [Model Comparison Guide](docs/model_comparison.md)
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 📞 Support
+## Support
 
 For questions, issues, or contributions:
 
@@ -170,7 +170,7 @@ For questions, issues, or contributions:
 - **Email**: <kyletjones@gmail.com>
 - **Documentation**: [Project Wiki](https://github.com/yourusername/spe9-geomodeling/wiki)
 
-## 🏆 Citation
+## Citation
 
 If you use this toolkit in your research, please cite:
 
