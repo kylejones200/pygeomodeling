@@ -159,9 +159,7 @@ class TestDataCompatibility:
             },
         }
 
-        with patch(
-            "spe9_geomodeling.toolkit.load_spe9_data", return_value=small_data
-        ):
+        with patch("spe9_geomodeling.toolkit.load_spe9_data", return_value=small_data):
             toolkit = SPE9Toolkit()
             toolkit.load_data()
             grid_data = toolkit.prepare_features()
@@ -180,9 +178,7 @@ class TestDataCompatibility:
             },
         }
 
-        with patch(
-            "spe9_geomodeling.toolkit.load_spe9_data", return_value=large_data
-        ):
+        with patch("spe9_geomodeling.toolkit.load_spe9_data", return_value=large_data):
             toolkit = SPE9Toolkit()
             toolkit.load_data()
             grid_data = toolkit.prepare_features()
@@ -294,9 +290,7 @@ class TestPerformanceAndMemory:
             },
         }
 
-        with patch(
-            "spe9_geomodeling.toolkit.load_spe9_data", return_value=small_data
-        ):
+        with patch("spe9_geomodeling.toolkit.load_spe9_data", return_value=small_data):
             toolkit = SPE9Toolkit()
             toolkit.load_data()
             toolkit.prepare_features()

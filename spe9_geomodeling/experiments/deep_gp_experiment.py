@@ -96,7 +96,9 @@ class DeepGPExperiment:
         nx, ny, nz = data["dimensions"]
         property_data = data["properties"][property_name]
 
-        logger.info("Grid dimensions: %d x %d x %d = %d cells", nx, ny, nz, nx*ny*nz)
+        logger.info(
+            "Grid dimensions: %d x %d x %d = %d cells", nx, ny, nz, nx * ny * nz
+        )
 
         # Create coordinate grid
         x_coords, y_coords, z_coords = np.meshgrid(
@@ -112,7 +114,7 @@ class DeepGPExperiment:
         coords = coords[valid_mask]
         values = values[valid_mask]
 
-        logger.info("Success: Valid cells: %d / %d", len(values), nx*ny*nz)
+        logger.info("Success: Valid cells: %d / %d", len(values), nx * ny * nz)
         logger.info("Property range: %.2f - %.2f", values.min(), values.max())
 
         # Subsample if needed for computational efficiency
@@ -292,10 +294,10 @@ class DeepGPExperiment:
             "predictions": {"mean": y_pred_mean, "std": y_pred_std, "true": y_test_np},
         }
 
-        logger.info("R2 Score: %.4f", metrics['r2_score'])
-        logger.info("RMSE: %.4f", metrics['rmse'])
-        logger.info("MAE: %.4f", metrics['mae'])
-        logger.info("Mean Uncertainty: %.4f", metrics['mean_uncertainty'])
+        logger.info("R2 Score: %.4f", metrics["r2_score"])
+        logger.info("RMSE: %.4f", metrics["rmse"])
+        logger.info("MAE: %.4f", metrics["mae"])
+        logger.info("Mean Uncertainty: %.4f", metrics["mean_uncertainty"])
 
         return metrics
 
@@ -363,7 +365,10 @@ class DeepGPExperiment:
         # 1. R2 Score comparison
         ax = axes[0, 0]
         r2_scores = [metrics_data[name]["r2_score"] for name in model_names]
-        colors = ["#555555" if "Deep" not in name else signalplot.ACCENT for name in model_names]
+        colors = [
+            "#555555" if "Deep" not in name else signalplot.ACCENT
+            for name in model_names
+        ]
         bars = ax.bar(range(len(model_names)), r2_scores, color=colors)
         ax.set_title("R2 Score Comparison")
         ax.set_ylabel("R2 Score")
@@ -419,7 +424,9 @@ class DeepGPExperiment:
         best_model = max(model_names, key=lambda x: metrics_data[x]["r2_score"])
         ax = axes[1, 0]
         pred_data = self.results[best_model]["predictions"]
-        ax.scatter(pred_data["true"], pred_data["mean"], alpha=0.6, s=20, color="#555555")
+        ax.scatter(
+            pred_data["true"], pred_data["mean"], alpha=0.6, s=20, color="#555555"
+        )
         ax.plot(
             [pred_data["true"].min(), pred_data["true"].max()],
             [pred_data["true"].min(), pred_data["true"].max()],
@@ -460,19 +467,24 @@ class DeepGPExperiment:
             model_type = "Deep GP" if "Deep" in name else "Standard GP"
             logger.info(
                 "%s %s: R2: %.4f | RMSE: %.4f | Time: %.1fs",
-                model_type, name, metrics['r2_score'], metrics['rmse'], metrics['training_time']
+                model_type,
+                name,
+                metrics["r2_score"],
+                metrics["rmse"],
+                metrics["training_time"],
             )
 
         best_model = max(model_names, key=lambda x: metrics_data[x]["r2_score"])
         logger.info(
             "Best Model: %s (R2 = %.4f)",
-            best_model, metrics_data[best_model]['r2_score']
+            best_model,
+            metrics_data[best_model]["r2_score"],
         )
 
 
 def main():
     """Run the Deep GP experiment."""
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
     logger.info("Starting Deep GP Spatial Pattern Analysis")
 
     # Create experiment

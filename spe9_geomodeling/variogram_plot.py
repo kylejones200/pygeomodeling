@@ -207,9 +207,11 @@ def plot_variogram_comparison(
             gray_val = min(0.3 + (i * 0.15), 0.7)
             color = f"{gray_val}"
             linewidth = 1.5
-            
+
         label = f"{model.model_type.capitalize()} (R²={model.r_squared:.3f})"
-        ax.plot(h_fine, gamma_model, color=color, linewidth=linewidth, label=label, zorder=2)
+        ax.plot(
+            h_fine, gamma_model, color=color, linewidth=linewidth, label=label, zorder=2
+        )
 
     ax.set_xlabel("Distance (lag)")
     ax.set_ylabel("Semi-variance")
@@ -257,7 +259,7 @@ def plot_directional_variograms(
                 else:
                     gray_val = min(0.3 + (i * 0.15), 0.7)
                     color = f"{gray_val}"
-                    
+
                 ax.plot(
                     lags,
                     sv,
@@ -270,8 +272,7 @@ def plot_directional_variograms(
                 )
         except Exception as e:
             logger.warning(
-                "Could not compute variogram for direction %d: %s",
-                direction, e
+                "Could not compute variogram for direction %d: %s", direction, e
             )
 
     ax.set_xlabel("Distance (lag)")
@@ -291,13 +292,13 @@ def plot_directional_variograms(
         angle_rad = np.radians(90 - direction)  # Convert to math convention
         x = np.cos(angle_rad)
         y = np.sin(angle_rad)
-        
+
         if i == 0:
             color = signalplot.ACCENT
         else:
             gray_val = min(0.3 + (i * 0.15), 0.7)
             color = f"{gray_val}"
-            
+
         ax_inset.arrow(
             0,
             0,

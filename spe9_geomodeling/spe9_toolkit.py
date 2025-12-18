@@ -232,7 +232,9 @@ class SPE9Toolkit:
         X_valid = self.grid_data.X_grid[valid_mask]
         y_valid = self.grid_data.y_grid[valid_mask]
 
-        logger.info("Valid cells: %d out of %d", len(y_valid), len(self.grid_data.y_grid))
+        logger.info(
+            "Valid cells: %d out of %d", len(y_valid), len(self.grid_data.y_grid)
+        )
 
         # Split data
         X_train, X_test, y_train, y_test = train_test_split(
@@ -279,9 +281,7 @@ class SPE9Toolkit:
             raise ValueError("scaler_type must be 'standard' or 'robust'")
 
         # Fit and transform training data
-        self.grid_data.X_train_scaled = x_scaler.fit_transform(
-            self.grid_data.X_train
-        )
+        self.grid_data.X_train_scaled = x_scaler.fit_transform(self.grid_data.X_train)
         self.grid_data.y_train_scaled = y_scaler.fit_transform(
             self.grid_data.y_train.reshape(-1, 1)
         ).flatten()
@@ -497,8 +497,11 @@ class SPE9Toolkit:
 
         axes[1, 1].scatter(y_test, y_pred, alpha=0.6, color="#555555")
         axes[1, 1].plot(
-            [y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 
-            color=signalplot.ACCENT, ls="--", lw=2
+            [y_test.min(), y_test.max()],
+            [y_test.min(), y_test.max()],
+            color=signalplot.ACCENT,
+            ls="--",
+            lw=2,
         )
         axes[1, 1].set_xlabel("True PERMX (mD)")
         axes[1, 1].set_ylabel("Predicted PERMX (mD)")
@@ -588,7 +591,7 @@ class SPE9Toolkit:
 
 def main() -> None:
     """Example usage of the SPE9 Toolkit."""
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
     logger.info("SPE9 Geomodeling Toolkit - Pythonic Version")
     logger.info("No automatic training. Use the toolkit methods explicitly.")
     logger.info("\nExample workflow:")

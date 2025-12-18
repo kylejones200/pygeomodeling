@@ -274,7 +274,9 @@ class SPE9Toolkit:
         self.grid_data.y_train = y_train
         self.grid_data.y_test = y_test
 
-        logger.info("Train/test split: %d train, %d test samples", len(X_train), len(X_test))
+        logger.info(
+            "Train/test split: %d train, %d test samples", len(X_train), len(X_test)
+        )
         return X_train, X_test, y_train, y_test
 
     def setup_scalers(
@@ -438,7 +440,9 @@ class SPE9Toolkit:
 
         elif self.backend == "gpytorch":
             # GPyTorch training would go here
-            logger.warning("GPyTorch training for %s not implemented in this version", model_name)
+            logger.warning(
+                "GPyTorch training for %s not implemented in this version", model_name
+            )
             self.models[model_name] = model
 
         return model
@@ -542,7 +546,7 @@ class SPE9Toolkit:
 
 def main():
     """Example usage of the unified SPE9 Toolkit."""
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
     logger.info("SPE9 Unified Geomodeling Toolkit")
 
     # Initialize toolkit
@@ -571,8 +575,7 @@ def main():
     rf_results = toolkit.evaluate_model("RandomForest")
 
     logger.info(
-        "Best model: %s",
-        'GPR' if gpr_results.r2 > rf_results.r2 else 'RandomForest'
+        "Best model: %s", "GPR" if gpr_results.r2 > rf_results.r2 else "RandomForest"
     )
 
 

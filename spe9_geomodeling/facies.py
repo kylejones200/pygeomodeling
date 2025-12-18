@@ -561,8 +561,7 @@ class FaciesClassifier:
 
         n_pseudo = high_conf_mask.sum()
         logger.info(
-            "Semi-supervised learning: Added %d high-confidence pseudo-labels",
-            n_pseudo
+            "Semi-supervised learning: Added %d high-confidence pseudo-labels", n_pseudo
         )
 
         return self
@@ -631,7 +630,8 @@ class FaciesClassifier:
 
         logger.info(
             "Transfer learning complete: %d source + %d target samples",
-            len(X_source), len(X_target)
+            len(X_source),
+            len(X_target),
         )
 
         return self

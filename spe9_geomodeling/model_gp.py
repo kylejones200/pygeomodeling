@@ -207,7 +207,7 @@ def create_gp_model(
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
     logger.info("SPE9 GPyTorch Models")
     logger.info("Available models:")
     logger.info("- SPE9GPModel: Standard GP with flexible kernels")

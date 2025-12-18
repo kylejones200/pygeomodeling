@@ -26,7 +26,9 @@ except ImportError:
 # Import model classes if GPyTorch is available
 try:
     from .model_gp import DeepGPModel, SPE9GPModel, create_gp_model
-except ImportError as exc:  # pragma: no cover - executed only when optional deps missing
+except (
+    ImportError
+) as exc:  # pragma: no cover - executed only when optional deps missing
     # Store exception for use in closures
     _gp_import_error = exc
 
@@ -52,6 +54,7 @@ except ImportError as exc:  # pragma: no cover - executed only when optional dep
             "Install the 'advanced' extras (pip install pygeomodeling[advanced]) "
             "to enable SPE9GPModel support."
         ) from _gp_import_error
+
 
 # Import experimental modules
 try:

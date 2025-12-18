@@ -135,7 +135,9 @@ class UnifiedSPE9Toolkit:
         self.dimensions = (nx, ny, nz)
 
         logger.info("Grid dimensions: %d x %d x %d", nx, ny, nz)
-        logger.info("PERMX range: %.2f - %.2f mD", self.permx_3d.min(), self.permx_3d.max())
+        logger.info(
+            "PERMX range: %.2f - %.2f mD", self.permx_3d.min(), self.permx_3d.max()
+        )
         logger.info("PERMX mean: %.2f mD", self.permx_3d.mean())
 
         return self.data
@@ -239,7 +241,8 @@ class UnifiedSPE9Toolkit:
 
         logger.info(
             "Training samples: %d, Test samples: %d",
-            len(self.X_train), len(self.X_test)
+            len(self.X_train),
+            len(self.X_test),
         )
         return self.X_train, self.X_test, self.y_train, self.y_test
 
@@ -271,9 +274,7 @@ class UnifiedSPE9Toolkit:
 
         self.scalers = {"x_scaler": x_scaler, "y_scaler": y_scaler}
         self.X_train_scaled = x_scaler.transform(self.X_train)
-        self.y_train_scaled = (
-            y_scaler.transform(self.y_train.reshape(-1, 1)).ravel()
-        )
+        self.y_train_scaled = y_scaler.transform(self.y_train.reshape(-1, 1)).ravel()
         self.X_test_scaled = (
             x_scaler.transform(self.X_test) if self.X_test is not None else None
         )
@@ -467,9 +468,9 @@ class UnifiedSPE9Toolkit:
         self.results[model_name] = results
 
         logger.info("%s Results:", model_name)
-        logger.info("  R2: %.3f", results['r2'])
-        logger.info("  RMSE: %.2f", results['rmse'])
-        logger.info("  MAE: %.2f", results['mae'])
+        logger.info("  R2: %.3f", results["r2"])
+        logger.info("  RMSE: %.2f", results["rmse"])
+        logger.info("  MAE: %.2f", results["mae"])
 
         return results
 
@@ -545,8 +546,11 @@ class UnifiedSPE9Toolkit:
 
         axes[1, 0].scatter(y_test, y_pred, alpha=0.6, color="#555555")
         axes[1, 0].plot(
-            [y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 
-            color=signalplot.ACCENT, ls="--", lw=2
+            [y_test.min(), y_test.max()],
+            [y_test.min(), y_test.max()],
+            color=signalplot.ACCENT,
+            ls="--",
+            lw=2,
         )
         axes[1, 0].set_xlabel("True Values")
         axes[1, 0].set_ylabel("Predicted Values")
@@ -569,7 +573,7 @@ class UnifiedSPE9Toolkit:
 
 def main() -> None:
     """Example usage of the Unified SPE9 Toolkit."""
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
     logger.info("Unified SPE9 Geomodeling Toolkit")
     logger.info("Supports both scikit-learn and GPyTorch backends")
     logger.info("\nExample usage:")

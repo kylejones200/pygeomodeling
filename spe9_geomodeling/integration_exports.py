@@ -212,7 +212,9 @@ class FormationTopExporter:
                         f"{well_name}\t{top.formation_name}\t{top.depth:.2f}\t{top.depth:.2f}\t{top.confidence:.3f}\t{top.method}\n"
                     )
 
-        logger.info("Exported formation tops for %d wells to %s", len(tops_by_well), output_file)
+        logger.info(
+            "Exported formation tops for %d wells to %s", len(tops_by_well), output_file
+        )
 
     @staticmethod
     def export_to_ascii(
@@ -284,7 +286,9 @@ class FaciesLogExporter:
 
         df = pd.DataFrame(data)
         df.to_csv(output_file, index=False)
-        logger.info("Exported facies log with %d samples to %s", len(depth), output_file)
+        logger.info(
+            "Exported facies log with %d samples to %s", len(depth), output_file
+        )
 
     @staticmethod
     def create_facies_curve_for_las(
@@ -479,6 +483,8 @@ def import_expert_corrections(
             "Set 'Corrected' column to TRUE for reviewed samples",
         )
 
-    logger.info("Imported %d expert corrections from %s", len(corrected), correction_file)
+    logger.info(
+        "Imported %d expert corrections from %s", len(corrected), correction_file
+    )
 
     return corrected, df

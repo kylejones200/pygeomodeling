@@ -249,7 +249,7 @@ def load_spe9_data(
 
 if __name__ == "__main__":
     # Test the parser
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
     data = load_spe9_data()
     logger.info("Available properties: %s", list(data["properties"].keys()))
 
@@ -257,5 +257,8 @@ if __name__ == "__main__":
     for prop_name, prop_data in data["properties"].items():
         logger.info(
             "%s: min=%.2f, max=%.2f, mean=%.2f",
-            prop_name, prop_data.min(), prop_data.max(), prop_data.mean()
+            prop_name,
+            prop_data.min(),
+            prop_data.max(),
+            prop_data.mean(),
         )

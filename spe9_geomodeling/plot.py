@@ -34,7 +34,9 @@ class SPE9Plotter:
         self.figsize = figsize
         self.dpi = dpi
         # Use signalplot's restrained color logic instead of seaborn
-        self.accent_color = signalplot.ACCENT if hasattr(signalplot, "ACCENT") else "red"
+        self.accent_color = (
+            signalplot.ACCENT if hasattr(signalplot, "ACCENT") else "red"
+        )
         # For multiple models, use gray-scale with one accent
         self.colors = ["#333333", "#666666", "#999999", self.accent_color]
 
@@ -588,7 +590,7 @@ def quick_comparison_plot(
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
     logger.info("SPE9 Plotting Utilities")
     logger.info("Clean, focused plotting module for geomodeling results")
     logger.info("\nExample usage:")

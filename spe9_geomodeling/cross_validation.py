@@ -290,10 +290,14 @@ def cross_validate_spatial(
 
     if verbose:
         logger.info("Cross-validation results:")
-        logger.info("  Test score: %.4f ± %.4f", np.mean(test_scores), np.std(test_scores))
+        logger.info(
+            "  Test score: %.4f ± %.4f", np.mean(test_scores), np.std(test_scores)
+        )
         if return_train_score:
             logger.info(
-                "  Train score: %.4f ± %.4f", np.mean(train_scores), np.std(train_scores)
+                "  Train score: %.4f ± %.4f",
+                np.mean(train_scores),
+                np.std(train_scores),
             )
 
     return results
@@ -398,7 +402,9 @@ class HyperparameterTuner:
 
         # Optimize
         if verbose:
-            logger.info("Starting hyperparameter tuning with %d trials...", self.n_trials)
+            logger.info(
+                "Starting hyperparameter tuning with %d trials...", self.n_trials
+            )
 
         self.study.optimize(
             lambda trial: self.objective(trial, X, y),

@@ -48,7 +48,8 @@ class ParallelModelTrainer:
         if self.verbose > 0:
             logger.info(
                 "Training %d models in parallel (n_jobs=%d)...",
-                len(models), self.n_jobs
+                len(models),
+                self.n_jobs,
             )
 
         def train_single_model(
@@ -106,7 +107,8 @@ class ParallelModelTrainer:
         if self.verbose > 0:
             logger.info(
                 "Training and evaluating %d models in parallel (n_jobs=%d)...",
-                len(models), self.n_jobs
+                len(models),
+                self.n_jobs,
             )
 
         def train_and_eval_single(
@@ -152,7 +154,7 @@ class ParallelModelTrainer:
                 logger.info("  %s:", name)
                 for metric_name, metric_value in result["metrics"].items():
                     logger.info("    %s: %.4f", metric_name, metric_value)
-                logger.info("    training_time: %.2fs", result['training_time'])
+                logger.info("    training_time: %.2fs", result["training_time"])
 
         return all_results
 
@@ -191,7 +193,8 @@ class BatchPredictor:
         if self.verbose:
             logger.info(
                 "Making predictions for %d samples in %d batches...",
-                n_samples, n_batches
+                n_samples,
+                n_batches,
             )
 
         def predict_batch(
@@ -335,7 +338,9 @@ class ParallelCrossValidator:
         scores = np.array(scores)
 
         if self.verbose:
-            logger.info("Cross-validation score: %.4f ± %.4f", scores.mean(), scores.std())
+            logger.info(
+                "Cross-validation score: %.4f ± %.4f", scores.mean(), scores.std()
+            )
 
         return {
             "test_scores": scores,

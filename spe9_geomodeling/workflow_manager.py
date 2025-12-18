@@ -220,7 +220,9 @@ class WorkflowManager:
         self.state.interpreted_wells += 1
         logger.info(
             "Interpreted well: %s (%d/%d)",
-            well_name, self.state.interpreted_wells, self.state.total_wells
+            well_name,
+            self.state.interpreted_wells,
+            self.state.total_wells,
         )
         self.save_state()
 
@@ -322,7 +324,8 @@ class WorkflowManager:
 
         logger.info(
             "Training with %d original + %d corrected samples",
-            len(X_original), len(corrections_df)
+            len(X_original),
+            len(corrections_df),
         )
 
         return X_original, y_original
