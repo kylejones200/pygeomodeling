@@ -1,7 +1,18 @@
 """Test configuration and fixtures for SPE9 geomodeling tests."""
 
+import warnings
+
 import numpy as np
 import pytest
+from sklearn.exceptions import ConvergenceWarning
+
+# Suppress warnings that clutter CI output
+warnings.filterwarnings("ignore", category=ConvergenceWarning)
+warnings.filterwarnings(
+    "ignore",
+    message=".*spe9_geomodeling.toolkit.SPE9Toolkit is deprecated.*",
+    category=DeprecationWarning,
+)
 
 
 @pytest.fixture

@@ -54,6 +54,8 @@ class TestSPE9GPModel:
         likelihood = gpytorch.likelihoods.GaussianLikelihood()
 
         model = SPE9GPModel(train_x, train_y, likelihood)
+        model.eval()
+        likelihood.eval()
 
         # Test forward pass
         test_x = torch.randn(10, 3)
@@ -124,6 +126,8 @@ class TestDeepGPModel:
         likelihood = gpytorch.likelihoods.GaussianLikelihood()
 
         model = DeepGPModel(train_x, train_y, likelihood)
+        model.eval()
+        likelihood.eval()
 
         # Test forward pass
         test_x = torch.randn(10, 3)
