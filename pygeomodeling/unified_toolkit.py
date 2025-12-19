@@ -194,7 +194,9 @@ class UnifiedSPE9Toolkit:
         return self.data
 
     def load_synthetic_data(
-        self, grid_size: tuple[int, int, int] = (50, 50, 10), random_state: int | None = None
+        self,
+        grid_size: tuple[int, int, int] = (50, 50, 10),
+        random_state: int | None = None,
     ) -> dict[str, Any]:
         """Generate and load synthetic spatial data for testing.
 
@@ -230,12 +232,8 @@ class UnifiedSPE9Toolkit:
         depth_trend = 1.0 - 0.3 * Z_full  # Decreasing with depth
 
         # Horizontal trends (channel-like features)
-        channel1 = 0.5 * np.exp(
-            -((X_full - 0.3) ** 2 + (Y_full - 0.4) ** 2) / 0.1
-        )
-        channel2 = 0.4 * np.exp(
-            -((X_full - 0.7) ** 2 + (Y_full - 0.6) ** 2) / 0.12
-        )
+        channel1 = 0.5 * np.exp(-((X_full - 0.3) ** 2 + (Y_full - 0.4) ** 2) / 0.1)
+        channel2 = 0.4 * np.exp(-((X_full - 0.7) ** 2 + (Y_full - 0.6) ** 2) / 0.12)
 
         # Add some random spatial correlation using a simple approach
         # Create a smooth random field by convolving white noise
@@ -265,7 +263,9 @@ class UnifiedSPE9Toolkit:
         self.permx_3d = permx
         self.dimensions = (nx, ny, nz)
 
-        logger.info("Generated synthetic data with grid dimensions: %d x %d x %d", nx, ny, nz)
+        logger.info(
+            "Generated synthetic data with grid dimensions: %d x %d x %d", nx, ny, nz
+        )
         logger.info(
             "PERMX range: %.2f - %.2f mD", self.permx_3d.min(), self.permx_3d.max()
         )
@@ -656,17 +656,13 @@ class UnifiedSPE9Toolkit:
             raise ValueError(f"Model {model_name} not found. Train it first.")
 
         if self.X_grid is None:
-            raise ValueError(
-                "Features not prepared. Call prepare_features() first."
-            )
+            raise ValueError("Features not prepared. Call prepare_features() first.")
 
         model = self.models[model_name]
 
         # Scale the full grid features
         if "x_scaler" not in self.scalers:
-            raise ValueError(
-                "Scalers not set up. Call setup_scalers() first."
-            )
+            raise ValueError("Scalers not set up. Call setup_scalers() first.")
 
         X_grid_scaled = self.scalers["x_scaler"].transform(self.X_grid)
 

@@ -49,6 +49,7 @@ class DeepGPExperiment:
         if data_path is None:
             # Use bundled data file
             from importlib import resources
+
             try:
                 resource = resources.files("pygeomodeling.data") / "SPE9.GRDECL"
                 self.data_path = Path(resource)
