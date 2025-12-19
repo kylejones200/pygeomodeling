@@ -19,7 +19,7 @@ setup(
     description="Gaussian Process Regression and Kriging for 3D Reservoir Simulation Data",
     author="Kyle T. Jones",
     author_email="kyletjones@gmail.com",
-    packages=find_packages(),
+    packages=find_packages(include=["pygeomodeling", "pygeomodeling.*"]),
     include_package_data=True,
     install_requires=[
         "torch>=2.0",
