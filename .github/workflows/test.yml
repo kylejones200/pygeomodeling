@@ -33,22 +33,22 @@ jobs:
     - name: Lint with flake8
       run: |
         # Stop the build if there are Python syntax errors or undefined names
-        flake8 spe9_geomodeling --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 pygeomodeling --count --select=E9,F63,F7,F82 --show-source --statistics
         # Exit-zero treats all errors as warnings
-        flake8 spe9_geomodeling --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
+        flake8 pygeomodeling --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
 
     - name: Check code formatting with black
       run: |
-        black --check spe9_geomodeling tests
+        black --check pygeomodeling tests
 
     - name: Type check with mypy
       run: |
-        mypy spe9_geomodeling --ignore-missing-imports || true
+        mypy pygeomodeling --ignore-missing-imports || true
       continue-on-error: true
 
     - name: Run tests with pytest
       run: |
-        pytest tests/ -v --cov=spe9_geomodeling --cov-report=xml --cov-report=term
+        pytest tests/ -v --cov=pygeomodeling --cov-report=xml --cov-report=term
 
     - name: Upload coverage to Codecov
       if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
@@ -130,5 +130,5 @@ jobs:
     - name: Check for security vulnerabilities
       run: |
         safety check --json || true
-        bandit -r spe9_geomodeling -f json || true
+        bandit -r pygeomodeling -f json || true
       continue-on-error: true
