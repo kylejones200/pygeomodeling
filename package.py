@@ -91,13 +91,13 @@ def create_archive():
     # Create tar.gz archive
     import tarfile
 
-    with tarfile.open("spe9-geomodeling-toolkit.tar.gz", "w:gz") as tar:
+    with tarfile.open("pygeomodeling-toolkit.tar.gz", "w:gz") as tar:
         for file in archive_files:
             if file.is_file():
                 tar.add(file)
                 logger.info("  + %s", file)
 
-    logger.info("Archive created: spe9-geomodeling-toolkit.tar.gz")
+    logger.info("Archive created: pygeomodeling-toolkit.tar.gz")
 
 
 def get_project_metadata() -> dict:
@@ -138,8 +138,8 @@ def show_installation_instructions():
     logger.info("pip install '.[all]'        # Everything except GPU-only extras")
 
     logger.info("Option 4: From source archive:")
-    logger.info("tar -xzf spe9-geomodeling-toolkit.tar.gz")
-    logger.info("cd spe9-geomodeling-toolkit")
+    logger.info("tar -xzf pygeomodeling-toolkit.tar.gz")
+    logger.info("cd pygeomodeling-toolkit")
     logger.info("pip install -e .")
 
 

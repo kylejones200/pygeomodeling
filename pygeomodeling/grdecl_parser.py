@@ -232,7 +232,7 @@ def load_spe9_data(
     """
     if data_path is None:
         try:
-            resource = resources.files("spe9_geomodeling.data") / "SPE9.GRDECL"
+            resource = resources.files("pygeomodeling.data") / "SPE9.GRDECL"
         except (FileNotFoundError, ModuleNotFoundError):
             raise_file_not_found(
                 "SPE9.GRDECL",

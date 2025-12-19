@@ -10,7 +10,7 @@ from sklearn.exceptions import ConvergenceWarning
 warnings.filterwarnings("ignore", category=ConvergenceWarning)
 warnings.filterwarnings(
     "ignore",
-    message=".*spe9_geomodeling.toolkit.SPE9Toolkit is deprecated.*",
+    message=".*pygeomodeling.toolkit.SPE9Toolkit is deprecated.*",
     category=DeprecationWarning,
 )
 
@@ -77,7 +77,7 @@ def sample_features():
 @pytest.fixture
 def mock_spe9_toolkit():
     """Create a mock SPE9Toolkit for testing without real data."""
-    from spe9_geomodeling.spe9_toolkit import GridData, SPE9Toolkit
+    from pygeomodeling.spe9_toolkit import GridData, SPE9Toolkit
 
     toolkit = SPE9Toolkit()
 

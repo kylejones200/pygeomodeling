@@ -5,7 +5,7 @@ from unittest.mock import patch
 import numpy as np
 import pytest
 
-from spe9_geomodeling import SPE9Plotter, SPE9Toolkit, UnifiedSPE9Toolkit
+from pygeomodeling import SPE9Plotter, SPE9Toolkit, UnifiedSPE9Toolkit
 
 
 class TestPackageImports:
@@ -13,7 +13,7 @@ class TestPackageImports:
 
     def test_main_imports(self):
         """Test importing main classes."""
-        from spe9_geomodeling import SPE9Plotter, SPE9Toolkit, UnifiedSPE9Toolkit
+        from pygeomodeling import SPE9Plotter, SPE9Toolkit, UnifiedSPE9Toolkit
 
         assert SPE9Toolkit is not None
         assert UnifiedSPE9Toolkit is not None
@@ -21,14 +21,14 @@ class TestPackageImports:
 
     def test_parser_imports(self):
         """Test importing parser components."""
-        from spe9_geomodeling import load_spe9_data
+        from pygeomodeling import load_spe9_data
 
         assert load_spe9_data is not None
 
     def test_optional_imports(self):
         """Test optional imports don't break package."""
         try:
-            from spe9_geomodeling import SPE9GPModel
+            from pygeomodeling import SPE9GPModel
 
             # If import succeeds, GPyTorch is available
             assert SPE9GPModel is not None
@@ -38,17 +38,17 @@ class TestPackageImports:
 
     def test_package_metadata(self):
         """Test package metadata is accessible."""
-        import spe9_geomodeling
+        import pygeomodeling
 
-        assert hasattr(spe9_geomodeling, "__version__")
-        assert hasattr(spe9_geomodeling, "__author__")
-        assert hasattr(spe9_geomodeling, "__email__")
+        assert hasattr(pygeomodeling, "__version__")
+        assert hasattr(pygeomodeling, "__author__")
+        assert hasattr(pygeomodeling, "__email__")
 
 
 class TestEndToEndWorkflow:
     """Test complete end-to-end workflows."""
 
-    @patch("spe9_geomodeling.toolkit.load_spe9_data")
+    @patch("pygeomodeling.toolkit.load_spe9_data")
     @patch("pathlib.Path.exists")
     def test_spe9_toolkit_complete_workflow(
         self, mock_exists, mock_load, sample_grdecl_data
@@ -93,7 +93,7 @@ class TestEndToEndWorkflow:
         assert hasattr(gpr_results, "r2")
         assert hasattr(rf_results, "r2")
 
-    @patch("spe9_geomodeling.unified_toolkit.load_spe9_data")
+    @patch("pygeomodeling.unified_toolkit.load_spe9_data")
     @patch("pathlib.Path.exists")
     def test_unified_toolkit_sklearn_workflow(
         self, mock_exists, mock_load, sample_grdecl_data
@@ -159,7 +159,7 @@ class TestDataCompatibility:
             },
         }
 
-        with patch("spe9_geomodeling.toolkit.load_spe9_data", return_value=small_data):
+        with patch("pygeomodeling.toolkit.load_spe9_data", return_value=small_data):
             toolkit = SPE9Toolkit()
             toolkit.load_data()
             grid_data = toolkit.prepare_features()
@@ -178,7 +178,7 @@ class TestDataCompatibility:
             },
         }
 
-        with patch("spe9_geomodeling.toolkit.load_spe9_data", return_value=large_data):
+        with patch("pygeomodeling.toolkit.load_spe9_data", return_value=large_data):
             toolkit = SPE9Toolkit()
             toolkit.load_data()
             grid_data = toolkit.prepare_features()
@@ -197,7 +197,7 @@ class TestDataCompatibility:
         }
 
         with patch(
-            "spe9_geomodeling.toolkit.load_spe9_data", return_value=incomplete_data
+            "pygeomodeling.toolkit.load_spe9_data", return_value=incomplete_data
         ):
             toolkit = SPE9Toolkit()
             data = toolkit.load_data()
@@ -251,7 +251,7 @@ class TestErrorHandling:
 class TestPerformanceAndMemory:
     """Test performance and memory considerations."""
 
-    @patch("spe9_geomodeling.toolkit.load_spe9_data")
+    @patch("pygeomodeling.toolkit.load_spe9_data")
     @patch("pathlib.Path.exists")
     def test_memory_efficient_processing(self, mock_exists, mock_load):
         """Test that processing doesn't consume excessive memory."""
@@ -290,7 +290,7 @@ class TestPerformanceAndMemory:
             },
         }
 
-        with patch("spe9_geomodeling.toolkit.load_spe9_data", return_value=small_data):
+        with patch("pygeomodeling.toolkit.load_spe9_data", return_value=small_data):
             toolkit = SPE9Toolkit()
             toolkit.load_data()
             toolkit.prepare_features()
@@ -311,8 +311,8 @@ class TestPerformanceAndMemory:
 class TestCrossCompatibility:
     """Test compatibility between different components."""
 
-    @patch("spe9_geomodeling.toolkit.load_spe9_data")
-    @patch("spe9_geomodeling.unified_toolkit.load_spe9_data")
+    @patch("pygeomodeling.toolkit.load_spe9_data")
+    @patch("pygeomodeling.unified_toolkit.load_spe9_data")
     def test_toolkit_interoperability(
         self, mock_unified_load, mock_spe9_load, sample_grdecl_data
     ):
@@ -337,7 +337,7 @@ class TestCrossCompatibility:
     def test_plotter_with_toolkit_results(self, sample_grdecl_data):
         """Test that plotter works with toolkit results."""
         with patch(
-            "spe9_geomodeling.toolkit.load_spe9_data",
+            "pygeomodeling.toolkit.load_spe9_data",
             return_value=sample_grdecl_data,
         ):
             toolkit = SPE9Toolkit()

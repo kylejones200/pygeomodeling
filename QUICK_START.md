@@ -15,7 +15,7 @@ pip install pygeomodeling[all]
 ## Your First Model
 
 ```python
-from spe9_geomodeling import load_spe9_data, UnifiedSPE9Toolkit
+from pygeomodeling import load_spe9_data, UnifiedSPE9Toolkit
 
 # 1. Load sample data
 data = load_spe9_data('data/sample_small.grdecl')
@@ -31,7 +31,8 @@ toolkit.train_sklearn_model(model, 'my_first_model')
 
 # 4. Evaluate
 results = toolkit.evaluate_model('my_first_model', X_test, y_test)
-print(f"R² Score: {results['r2']:.4f}")
+# Results are available in the results dictionary
+# Access with: results['r2'], results['rmse'], results['mae']
 ```
 
 ## Next Steps
@@ -49,7 +50,7 @@ jupyter notebook examples/notebooks/
 ### Explore Advanced Features
 
 ```python
-from spe9_geomodeling import (
+from pygeomodeling import (
     SpatialKFold,           # Spatial cross-validation
     ParallelModelTrainer,   # Train multiple models
     save_model,             # Save with metadata
@@ -69,7 +70,7 @@ python examples/advanced_workflow.py
 ### Load Your Own Data
 
 ```python
-from spe9_geomodeling import GRDECLParser
+from pygeomodeling import GRDECLParser
 
 parser = GRDECLParser('path/to/your/file.grdecl')
 data = parser.load_data()
@@ -78,7 +79,7 @@ data = parser.load_data()
 ### Train Multiple Models in Parallel
 
 ```python
-from spe9_geomodeling import ParallelModelTrainer
+from pygeomodeling import ParallelModelTrainer
 from sklearn.ensemble import RandomForestRegressor
 
 models = {
@@ -95,7 +96,7 @@ results = trainer.train_and_evaluate(
 ### Save and Load Models
 
 ```python
-from spe9_geomodeling import save_model, load_model
+from pygeomodeling import save_model, load_model
 
 # Save
 save_model(
@@ -112,11 +113,11 @@ model, metadata, scaler = load_model('production_v1')
 ### Spatial Cross-Validation
 
 ```python
-from spe9_geomodeling import SpatialKFold, cross_validate_spatial
+from pygeomodeling import SpatialKFold, cross_validate_spatial
 
 cv = SpatialKFold(n_splits=5)
 results = cross_validate_spatial(model, X, y, cv=cv)
-print(f"CV Score: {results['test_score'].mean():.4f}")
+# Access CV scores: results['test_score'].mean()
 ```
 
 ## Getting Help
@@ -134,4 +135,4 @@ print(f"CV Score: {results['test_score'].mean():.4f}")
 - → **Read Documentation** - Deep dive into capabilities
 - → **Join Community** - Contribute and share
 
-Happy modeling! 🚀
+Happy modeling!

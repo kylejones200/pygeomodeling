@@ -5,7 +5,7 @@ from unittest.mock import patch
 import numpy as np
 import pytest
 
-from spe9_geomodeling.unified_toolkit import UnifiedSPE9Toolkit
+from pygeomodeling.unified_toolkit import UnifiedSPE9Toolkit
 
 
 class TestUnifiedSPE9Toolkit:
@@ -27,7 +27,7 @@ class TestUnifiedSPE9Toolkit:
 
     def test_toolkit_initialization_gpytorch_unavailable(self):
         """Test toolkit initialization with gpytorch when unavailable."""
-        with patch("spe9_geomodeling.unified_toolkit.GPYTORCH_AVAILABLE", False):
+        with patch("pygeomodeling.unified_toolkit.GPYTORCH_AVAILABLE", False):
             with pytest.raises(
                 ValueError,
                 match="GPyTorch backend requested but GPyTorch is not installed",
@@ -39,7 +39,7 @@ class TestUnifiedSPE9Toolkit:
         with pytest.raises(ValueError, match="Backend must be 'sklearn' or 'gpytorch'"):
             UnifiedSPE9Toolkit(backend="invalid")
 
-    @patch("spe9_geomodeling.unified_toolkit.load_spe9_data")
+    @patch("pygeomodeling.unified_toolkit.load_spe9_data")
     def test_load_data(self, mock_load, sample_grdecl_data):
         """Test data loading."""
         mock_load.return_value = sample_grdecl_data
@@ -57,7 +57,7 @@ class TestUnifiedSPE9Toolkit:
         with pytest.raises(ValueError, match="Load data first"):
             toolkit.prepare_features()
 
-    @patch("spe9_geomodeling.unified_toolkit.load_spe9_data")
+    @patch("pygeomodeling.unified_toolkit.load_spe9_data")
     def test_prepare_features(self, mock_load, sample_grdecl_data):
         """Test feature preparation."""
         mock_load.return_value = sample_grdecl_data
@@ -78,7 +78,7 @@ class TestUnifiedSPE9Toolkit:
         with pytest.raises(ValueError, match="Prepare features first"):
             toolkit.create_train_test_split()
 
-    @patch("spe9_geomodeling.unified_toolkit.load_spe9_data")
+    @patch("pygeomodeling.unified_toolkit.load_spe9_data")
     def test_create_train_test_split(self, mock_load, sample_grdecl_data):
         """Test train/test split creation."""
         mock_load.return_value = sample_grdecl_data
@@ -103,7 +103,7 @@ class TestUnifiedSPE9Toolkit:
         with pytest.raises(ValueError, match="Create train/test split first"):
             toolkit.setup_scalers()
 
-    @patch("spe9_geomodeling.unified_toolkit.load_spe9_data")
+    @patch("pygeomodeling.unified_toolkit.load_spe9_data")
     def test_setup_scalers(self, mock_load, sample_grdecl_data):
         """Test scaler setup."""
         mock_load.return_value = sample_grdecl_data
@@ -157,7 +157,7 @@ class TestUnifiedSPE9ToolkitSklearn:
         with pytest.raises(ValueError, match="Unknown sklearn model type"):
             toolkit.create_sklearn_model("invalid")
 
-    @patch("spe9_geomodeling.unified_toolkit.load_spe9_data")
+    @patch("pygeomodeling.unified_toolkit.load_spe9_data")
     def test_train_sklearn_model(self, mock_load, sample_grdecl_data):
         """Test sklearn model training."""
         mock_load.return_value = sample_grdecl_data
@@ -208,7 +208,7 @@ class TestUnifiedSPE9ToolkitEvaluation:
         with pytest.raises(ValueError, match="Model GPR not found"):
             toolkit.evaluate_model("GPR")
 
-    @patch("spe9_geomodeling.unified_toolkit.load_spe9_data")
+    @patch("pygeomodeling.unified_toolkit.load_spe9_data")
     def test_evaluate_sklearn_model(self, mock_load, sample_grdecl_data):
         """Test sklearn model evaluation."""
         mock_load.return_value = sample_grdecl_data
@@ -233,7 +233,7 @@ class TestUnifiedSPE9ToolkitEvaluation:
 class TestUnifiedSPE9ToolkitIntegration:
     """Integration tests for UnifiedSPE9Toolkit."""
 
-    @patch("spe9_geomodeling.unified_toolkit.load_spe9_data")
+    @patch("pygeomodeling.unified_toolkit.load_spe9_data")
     def test_full_sklearn_workflow(self, mock_load, sample_grdecl_data):
         """Test complete sklearn workflow."""
         mock_load.return_value = sample_grdecl_data
@@ -256,7 +256,7 @@ class TestUnifiedSPE9ToolkitIntegration:
         assert "mae" in results
         assert "y_pred" in results
 
-    @patch("spe9_geomodeling.unified_toolkit.load_spe9_data")
+    @patch("pygeomodeling.unified_toolkit.load_spe9_data")
     def test_multiple_sklearn_models(self, mock_load, sample_grdecl_data):
         """Test training multiple sklearn models."""
         mock_load.return_value = sample_grdecl_data
@@ -289,7 +289,7 @@ class TestUnifiedSPE9ToolkitIntegration:
 class TestUnifiedSPE9ToolkitUtilities:
     """Test utility functions."""
 
-    @patch("spe9_geomodeling.unified_toolkit.load_spe9_data")
+    @patch("pygeomodeling.unified_toolkit.load_spe9_data")
     def test_log_transform_option(self, mock_load, sample_grdecl_data):
         """Test log transform option in train/test split."""
         mock_load.return_value = sample_grdecl_data
@@ -307,7 +307,7 @@ class TestUnifiedSPE9ToolkitUtilities:
         original_y = toolkit.y_grid[toolkit.valid_mask]
         assert not np.allclose(np.concatenate([y_train, y_test]), original_y)
 
-    @patch("spe9_geomodeling.unified_toolkit.load_spe9_data")
+    @patch("pygeomodeling.unified_toolkit.load_spe9_data")
     def test_train_size_option(self, mock_load, sample_grdecl_data):
         """Test train_size option in train/test split."""
         mock_load.return_value = sample_grdecl_data

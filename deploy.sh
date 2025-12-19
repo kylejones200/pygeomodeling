@@ -48,7 +48,7 @@ echo -e "\n${YELLOW}[5/8] Staging changes...${NC}"
 
 # Remove generated files
 git rm -f .DS_Store PERMX_GPR.GRDECL SIGMA_GPR.GRDECL 2>/dev/null || true
-git rm -rf __pycache__/ spe9_geomodeling.egg-info/ 2>/dev/null || true
+git rm -rf __pycache__/ pygeomodeling.egg-info/ 2>/dev/null || true
 git rm -f deep_gp_comparison.png gpr_prediction_slices.png 2>/dev/null || true
 git rm -f docs/stylesheets/extra.css 2>/dev/null || true
 
@@ -58,12 +58,12 @@ git add pyproject.toml
 git add mkdocs.yml
 
 # Core modules
-git add spe9_geomodeling/__init__.py
-git add spe9_geomodeling/grdecl_parser.py
-git add spe9_geomodeling/exceptions.py
-git add spe9_geomodeling/serialization.py
-git add spe9_geomodeling/cross_validation.py
-git add spe9_geomodeling/parallel.py
+git add pygeomodeling/__init__.py
+git add pygeomodeling/grdecl_parser.py
+git add pygeomodeling/exceptions.py
+git add pygeomodeling/serialization.py
+git add pygeomodeling/cross_validation.py
+git add pygeomodeling/parallel.py
 
 # CI/CD and tooling
 git add .github/workflows/test.yml

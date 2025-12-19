@@ -22,7 +22,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import KFold, train_test_split
 from sklearn.preprocessing import StandardScaler
 
-from spe9_geomodeling.grdecl_parser import load_spe9_data
+from pygeomodeling.grdecl_parser import load_spe9_data
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(message)s')
@@ -31,7 +31,6 @@ logger = logging.getLogger(__name__)
 # Apply signalplot style
 signalplot.apply()
 
-warnings.filterwarnings("ignore")
 
 # Load real SPE9 data
 logger.info("Loading SPE9 dataset...")

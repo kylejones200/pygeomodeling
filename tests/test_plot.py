@@ -8,7 +8,7 @@ matplotlib.use("Agg")  # Use non-interactive backend for testing
 
 import matplotlib.pyplot as plt
 
-from spe9_geomodeling.plot import SPE9Plotter
+from pygeomodeling.plot import SPE9Plotter
 
 
 class TestSPE9Plotter:

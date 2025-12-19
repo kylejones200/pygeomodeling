@@ -1,11 +1,11 @@
 # Include important files for PyPI distribution
-include README.md
+include README.MD
 include LICENSE
 include pyproject.toml
 include setup.py
 
 # Include the main package
-recursive-include spe9_geomodeling *.py
+recursive-include pygeomodeling *.py
 
 # Include examples (but not in the installed package)
 recursive-include examples *.py

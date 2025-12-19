@@ -29,7 +29,7 @@ This directory contains sample GRDECL files for testing and tutorials.
 ### Python
 
 ```python
-from spe9_geomodeling import GRDECLParser
+from pygeomodeling import GRDECLParser
 
 # Load sample data
 parser = GRDECLParser('data/sample_small.grdecl')
@@ -43,7 +43,7 @@ print(f"Properties: {list(data['properties'].keys())}")
 
 ```bash
 # View sample data
-python -c "from spe9_geomodeling import GRDECLParser; \
+python -c "from pygeomodeling import GRDECLParser; \
            p = GRDECLParser('data/sample_small.grdecl'); \
            d = p.load_data(); \
            print('Loaded:', list(d['properties'].keys()))"

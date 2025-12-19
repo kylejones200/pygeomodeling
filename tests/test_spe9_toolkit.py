@@ -7,7 +7,7 @@ import pytest
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.gaussian_process import GaussianProcessRegressor
 
-from spe9_geomodeling.spe9_toolkit import GridData, ModelResults, SPE9Toolkit
+from pygeomodeling.spe9_toolkit import GridData, ModelResults, SPE9Toolkit
 
 
 class TestSPE9Toolkit:
@@ -27,7 +27,7 @@ class TestSPE9Toolkit:
         toolkit = SPE9Toolkit(data_path=sample_grdecl_file)
         assert str(toolkit.data_path) == sample_grdecl_file
 
-    @patch("spe9_geomodeling.spe9_toolkit.load_spe9_data")
+    @patch("pygeomodeling.spe9_toolkit.load_spe9_data")
     @patch("pathlib.Path.exists")
     def test_load_data(self, mock_exists, mock_load, sample_grdecl_data):
         """Test data loading."""

@@ -1,4 +1,4 @@
-"""Basic tests for the spe9_geomodeling package."""
+"""Basic tests for the pygeomodeling package."""
 
 import sys
 from pathlib import Path
@@ -19,17 +19,17 @@ class TestPackageBasics:
     def test_package_import(self):
         """Test that the main package can be imported."""
         try:
-            import spe9_geomodeling
+            import pygeomodeling
 
-            assert hasattr(spe9_geomodeling, "__version__")
-            assert hasattr(spe9_geomodeling, "__author__")
+            assert hasattr(pygeomodeling, "__version__")
+            assert hasattr(pygeomodeling, "__author__")
         except ImportError:
             pytest.skip("Package not installed in development mode")
 
     def test_package_structure(self):
         """Test that package has expected structure."""
         try:
-            import spe9_geomodeling
+            import pygeomodeling
 
             # Test that main classes are available
             # UnifiedSPE9Toolkit is the primary toolkit (SPE9Toolkit is deprecated)
@@ -41,7 +41,7 @@ class TestPackageBasics:
             ]
 
             for class_name in expected_classes:
-                assert hasattr(spe9_geomodeling, class_name), f"Missing {class_name}"
+                assert hasattr(pygeomodeling, class_name), f"Missing {class_name}"
 
         except ImportError:
             pytest.skip("Package not installed in development mode")
@@ -49,15 +49,15 @@ class TestPackageBasics:
     def test_optional_dependencies(self):
         """Test handling of optional dependencies."""
         try:
-            import spe9_geomodeling
+            import pygeomodeling
 
             # GPyTorch classes should be available if GPyTorch is installed
             try:
                 pass
 
                 # If GPyTorch is available, these should be importable
-                assert hasattr(spe9_geomodeling, "SPE9GPModel")
-                assert hasattr(spe9_geomodeling, "DeepGPModel")
+                assert hasattr(pygeomodeling, "SPE9GPModel")
+                assert hasattr(pygeomodeling, "DeepGPModel")
             except ImportError:
                 # GPyTorch not available, classes might not be in __all__
                 pass
@@ -68,9 +68,9 @@ class TestPackageBasics:
     def test_version_format(self):
         """Test that version follows semantic versioning."""
         try:
-            import spe9_geomodeling
+            import pygeomodeling
 
-            version = spe9_geomodeling.__version__
+            version = pygeomodeling.__version__
 
             # Basic check for semantic versioning format (X.Y.Z)
             parts = version.split(".")

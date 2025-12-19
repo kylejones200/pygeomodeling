@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "pygeomodeling"
 version = "0.3.0"
 description = "Advanced Gaussian Process Regression and Kriging toolkit for SPE9 reservoir modeling"
-readme = "README.md"
+readme = {file = "README.MD", content-type = "text/markdown"}
 requires-python = ">=3.9"
 license = {text = "MIT"}
 authors = [
@@ -97,11 +97,8 @@ performance = [
   "cupy>=12.0.0,<13.0.0"  # GPU acceleration (optional)
 ]
 
-# Interactive visualization
-visualization = [
-  "plotly>=5.15.0,<6.0.0",
-  "ipywidgets>=8.0.0"
-]
+# Interactive visualization (currently empty - reserved for future use)
+visualization = []
 
 # Documentation dependencies
 docs = [
@@ -125,11 +122,8 @@ all = [
   "shapely>=2.0.0,<3.0.0",
   "xarray>=2023.1.0,<2024.0.0",
   "netcdf4>=1.6.0,<2.0.0",
-  "h5py>=3.8.0,<4.0.0",
-  # Interactive visualization
-  "plotly>=5.15.0,<6.0.0",
-  "ipywidgets>=8.0.0",
-  # Development tools
+    "h5py>=3.8.0,<4.0.0",
+    # Development tools
   "jupyter>=1.0.0,<2.0.0",
   "ipykernel>=6.20.0,<7.0.0",
   "black>=23.0.0",
@@ -156,18 +150,18 @@ Documentation = "https://github.com/kylejones200/pygeomodeling#readme"
 "Bug Tracker" = "https://github.com/kylejones200/pygeomodeling/issues"
 
 [project.scripts]
-spe9-experiment = "spe9_geomodeling.experiments.deep_gp_experiment:main"
+spe9-experiment = "pygeomodeling.experiments.deep_gp_experiment:main"
 
 [tool.setuptools.packages.find]
 where = ["."]  # Current directory
-include = ["spe9_geomodeling*"]
+include = ["pygeomodeling*"]
 exclude = ["tests*", "examples*", "docs*"]
 
 [tool.setuptools]
 include-package-data = true
 
 [tool.setuptools.package-data]
-"spe9_geomodeling.data" = ["SPE9.GRDECL"]
+"pygeomodeling.data" = ["SPE9.GRDECL"]
 
 [tool.black]
 line-length = 88

@@ -5,13 +5,13 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from spe9_geomodeling.exceptions import (
+from pygeomodeling.exceptions import (
     DataLoadError,
     DataValidationError,
     FileFormatError,
 )
 
-from spe9_geomodeling.grdecl_parser import GRDECLParser, load_spe9_data
+from pygeomodeling.grdecl_parser import GRDECLParser, load_spe9_data
 
 
 class TestGRDECLParser:

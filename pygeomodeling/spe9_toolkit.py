@@ -5,7 +5,7 @@ Follows PEP 8 conventions and Python best practices.
 
 .. deprecated:: 0.3.0
     This module is deprecated. Use :class:`UnifiedSPE9Toolkit` from
-    :mod:`spe9_geomodeling.unified_toolkit` instead.
+    :mod:`pygeomodeling.unified_toolkit` instead.
 """
 
 from __future__ import annotations
@@ -14,8 +14,8 @@ import logging
 import warnings
 
 warnings.warn(
-    "spe9_geomodeling.spe9_toolkit.SPE9Toolkit is deprecated. "
-    "Use spe9_geomodeling.UnifiedSPE9Toolkit instead.",
+    "pygeomodeling.spe9_toolkit.SPE9Toolkit is deprecated. "
+    "Use pygeomodeling.UnifiedSPE9Toolkit instead.",
     DeprecationWarning,
     stacklevel=2,
 )
@@ -47,8 +47,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
 from .grdecl_parser import load_spe9_data
-
-warnings.filterwarnings("ignore")
 
 
 @dataclass

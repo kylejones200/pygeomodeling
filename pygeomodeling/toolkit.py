@@ -5,7 +5,7 @@ Supports both scikit-learn and GPyTorch workflows in a single interface.
 
 .. deprecated:: 0.3.0
     This module is deprecated. Use :class:`UnifiedSPE9Toolkit` from
-    :mod:`spe9_geomodeling.unified_toolkit` instead.
+    :mod:`pygeomodeling.unified_toolkit` instead.
 """
 
 from __future__ import annotations
@@ -14,8 +14,8 @@ import logging
 import warnings
 
 warnings.warn(
-    "spe9_geomodeling.toolkit.SPE9Toolkit is deprecated. "
-    "Use spe9_geomodeling.UnifiedSPE9Toolkit instead.",
+    "pygeomodeling.toolkit.SPE9Toolkit is deprecated. "
+    "Use pygeomodeling.UnifiedSPE9Toolkit instead.",
     DeprecationWarning,
     stacklevel=2,
 )
@@ -52,8 +52,6 @@ except ImportError:
     GPModel = None
 
 from .grdecl_parser import load_spe9_data
-
-warnings.filterwarnings("ignore")
 
 
 @dataclass
@@ -492,7 +490,8 @@ class SPE9Toolkit:
             try:
                 _, y_std_scaled = model.predict(X_test_scaled, return_std=True)
                 y_std = y_scaler.scale_ * y_std_scaled
-            except:
+            except (AttributeError, ValueError, TypeError):
+                # Model doesn't support return_std or other prediction error
                 pass
 
         results = ModelResults(r2=r2, rmse=rmse, mae=mae, y_pred=y_pred, y_std=y_std)

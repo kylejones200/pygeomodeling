@@ -19,7 +19,7 @@ class TestSPE9GPModel:
 
     def test_model_initialization(self):
         """Test GP model initialization."""
-        from spe9_geomodeling.model_gp import SPE9GPModel
+        from pygeomodeling.model_gp import SPE9GPModel
 
         # Create sample data
         train_x = torch.randn(50, 3)
@@ -34,7 +34,7 @@ class TestSPE9GPModel:
 
     def test_model_initialization_with_kernel_types(self):
         """Test GP model initialization with different kernel types."""
-        from spe9_geomodeling.model_gp import SPE9GPModel
+        from pygeomodeling.model_gp import SPE9GPModel
 
         train_x = torch.randn(50, 3)
         train_y = torch.randn(50)
@@ -47,7 +47,7 @@ class TestSPE9GPModel:
 
     def test_model_forward(self):
         """Test GP model forward pass."""
-        from spe9_geomodeling.model_gp import SPE9GPModel
+        from pygeomodeling.model_gp import SPE9GPModel
 
         train_x = torch.randn(50, 3)
         train_y = torch.randn(50)
@@ -66,7 +66,7 @@ class TestSPE9GPModel:
 
     def test_model_ard_option(self):
         """Test Automatic Relevance Determination option."""
-        from spe9_geomodeling.model_gp import SPE9GPModel
+        from pygeomodeling.model_gp import SPE9GPModel
 
         train_x = torch.randn(50, 5)  # 5 features
         train_y = torch.randn(50)
@@ -89,7 +89,7 @@ class TestDeepGPModel:
 
     def test_deep_model_initialization(self):
         """Test Deep GP model initialization."""
-        from spe9_geomodeling.model_gp import DeepGPModel
+        from pygeomodeling.model_gp import DeepGPModel
 
         train_x = torch.randn(50, 3)
         train_y = torch.randn(50)
@@ -103,7 +103,7 @@ class TestDeepGPModel:
 
     def test_deep_model_with_custom_architecture(self):
         """Test Deep GP model with custom architecture."""
-        from spe9_geomodeling.model_gp import DeepGPModel
+        from pygeomodeling.model_gp import DeepGPModel
 
         train_x = torch.randn(50, 5)
         train_y = torch.randn(50)
@@ -119,7 +119,7 @@ class TestDeepGPModel:
 
     def test_deep_model_forward(self):
         """Test Deep GP model forward pass."""
-        from spe9_geomodeling.model_gp import DeepGPModel
+        from pygeomodeling.model_gp import DeepGPModel
 
         train_x = torch.randn(50, 3)
         train_y = torch.randn(50)
@@ -143,7 +143,7 @@ class TestCreateGPModel:
 
     def test_create_standard_gp_model(self):
         """Test creating standard GP model."""
-        from spe9_geomodeling.model_gp import create_gp_model
+        from pygeomodeling.model_gp import create_gp_model
 
         train_x = torch.randn(50, 3)
         train_y = torch.randn(50)
@@ -156,7 +156,7 @@ class TestCreateGPModel:
 
     def test_create_deep_gp_model(self):
         """Test creating Deep GP model."""
-        from spe9_geomodeling.model_gp import create_gp_model
+        from pygeomodeling.model_gp import create_gp_model
 
         train_x = torch.randn(50, 3)
         train_y = torch.randn(50)
@@ -169,7 +169,7 @@ class TestCreateGPModel:
 
     def test_create_gp_model_with_options(self):
         """Test creating GP model with custom options."""
-        from spe9_geomodeling.model_gp import create_gp_model
+        from pygeomodeling.model_gp import create_gp_model
 
         train_x = torch.randn(50, 5)
         train_y = torch.randn(50)
@@ -183,7 +183,7 @@ class TestCreateGPModel:
 
     def test_create_gp_model_invalid_type(self):
         """Test creating GP model with invalid type."""
-        from spe9_geomodeling.model_gp import create_gp_model
+        from pygeomodeling.model_gp import create_gp_model
 
         train_x = torch.randn(50, 3)
         train_y = torch.randn(50)
@@ -198,7 +198,7 @@ class TestGPModelTraining:
 
     def test_model_training_mode(self):
         """Test model training mode switching."""
-        from spe9_geomodeling.model_gp import SPE9GPModel
+        from pygeomodeling.model_gp import SPE9GPModel
 
         train_x = torch.randn(50, 3)
         train_y = torch.randn(50)
@@ -220,7 +220,7 @@ class TestGPModelTraining:
 
     def test_model_parameters(self):
         """Test model parameters are accessible."""
-        from spe9_geomodeling.model_gp import SPE9GPModel
+        from pygeomodeling.model_gp import SPE9GPModel
 
         train_x = torch.randn(50, 3)
         train_y = torch.randn(50)
@@ -243,7 +243,7 @@ class TestGPModelPrediction:
 
     def test_model_prediction_shapes(self):
         """Test prediction output shapes."""
-        from spe9_geomodeling.model_gp import SPE9GPModel
+        from pygeomodeling.model_gp import SPE9GPModel
 
         train_x = torch.randn(50, 3)
         train_y = torch.randn(50)
@@ -266,7 +266,7 @@ class TestGPModelPrediction:
 
     def test_batch_prediction(self):
         """Test batch prediction functionality."""
-        from spe9_geomodeling.model_gp import SPE9GPModel
+        from pygeomodeling.model_gp import SPE9GPModel
 
         train_x = torch.randn(50, 3)
         train_y = torch.randn(50)
@@ -292,7 +292,7 @@ class TestGPModelWithoutGPyTorch:
         if GPYTORCH_AVAILABLE:
             pytest.skip("GPyTorch is available")
 
-        from spe9_geomodeling import DeepGPModel, SPE9GPModel, create_gp_model
+        from pygeomodeling import DeepGPModel, SPE9GPModel, create_gp_model
 
         with pytest.raises(ImportError, match="Optional dependency.*Gaussian Process"):
             SPE9GPModel()

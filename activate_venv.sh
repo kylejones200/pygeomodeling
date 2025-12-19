@@ -7,7 +7,7 @@ source venv/bin/activate
 echo "✅ Virtual environment activated!"
 echo "📦 Python location: $(which python)"
 echo "📋 Installed packages:"
-echo "   - spe9-geomodeling (development mode)"
+echo "   - pygeomodeling (development mode)"
 echo "   - All core dependencies (numpy, pandas, scikit-learn, etc.)"
 echo "   - Development tools (black, pytest, jupyter)"
 echo "   - Documentation tools (mkdocs, mkdocs-material)"

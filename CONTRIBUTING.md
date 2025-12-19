@@ -50,10 +50,10 @@ We use Black for code formatting and flake8 for linting:
 
 ```bash
 # Format code
-black spe9_geomodeling tests
+black pygeomodeling tests
 
 # Check linting
-flake8 spe9_geomodeling tests
+flake8 pygeomodeling tests
 ```
 
 Key conventions:
@@ -72,7 +72,7 @@ All new features and bug fixes should include tests:
 pytest tests/
 
 # Run with coverage
-pytest tests/ --cov=spe9_geomodeling --cov-report=html
+pytest tests/ --cov=pygeomodeling --cov-report=html
 ```
 
 Test guidelines:
@@ -122,8 +122,8 @@ Commit message format:
 Before submitting a PR, ensure:
 
 - All tests pass: pytest tests/
-- Code is formatted: black spe9_geomodeling tests
-- Linting passes: flake8 spe9_geomodeling tests
+- Code is formatted: black pygeomodeling tests
+- Linting passes: flake8 pygeomodeling tests
 - Documentation builds: mkdocs build
 - New features have tests
 - New features have documentation
@@ -142,7 +142,7 @@ Before submitting a PR, ensure:
 
 ```
 pygeomodeling/
-├── spe9_geomodeling/       # Main package
+├── pygeomodeling/       # Main package
 │   ├── grdecl_parser.py    # GRDECL file parsing
 │   ├── unified_toolkit.py  # Main toolkit
 │   ├── model_gp.py         # GP models

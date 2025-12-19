@@ -48,8 +48,6 @@ except ImportError as exc:
 
 from .grdecl_parser import load_spe9_data
 
-warnings.filterwarnings("ignore")
-
 
 class UnifiedSPE9Toolkit:
     """Unified toolkit supporting both scikit-learn and GPyTorch workflows.
@@ -67,13 +65,19 @@ class UnifiedSPE9Toolkit:
     """
 
     def __init__(
-        self, data_path: str | Path | None = None, backend: str = "sklearn"
+        self,
+        data_path: str | Path | None = None,
+        backend: str = "sklearn",
+        random_state: int = 42,
+        verbose: bool = False,
     ) -> None:
         """Initialize the unified toolkit.
 
         Args:
             data_path: Path to SPE9 dataset file
             backend: Modeling backend ('sklearn' or 'gpytorch')
+            random_state: Random seed for reproducibility
+            verbose: Enable verbose output
 
         Raises:
             ValueError: If backend is invalid or GPyTorch backend is requested but not available
@@ -95,6 +99,8 @@ class UnifiedSPE9Toolkit:
             default_path = Path(data_path)
         self.data_path = default_path
         self.backend = backend
+        self.random_state = random_state
+        self.verbose = verbose
 
         self.data: dict[str, Any] | None = None
         self.X_grid: np.ndarray | None = None
@@ -120,6 +126,12 @@ class UnifiedSPE9Toolkit:
         self.X_train_scaled: np.ndarray | None = None
         self.y_train_scaled: np.ndarray | None = None
 
+        # Configure logging level based on verbose
+        if verbose:
+            logging.getLogger(__name__).setLevel(logging.INFO)
+        else:
+            logging.getLogger(__name__).setLevel(logging.WARNING)
+
         logger.info("Unified SPE9 Toolkit initialized with %s backend", backend)
 
     def load_data(self) -> dict[str, Any]:
@@ -135,6 +147,125 @@ class UnifiedSPE9Toolkit:
         self.dimensions = (nx, ny, nz)
 
         logger.info("Grid dimensions: %d x %d x %d", nx, ny, nz)
+        logger.info(
+            "PERMX range: %.2f - %.2f mD", self.permx_3d.min(), self.permx_3d.max()
+        )
+        logger.info("PERMX mean: %.2f mD", self.permx_3d.mean())
+
+        return self.data
+
+    def load_spe9_data(self, data: dict[str, Any]) -> dict[str, Any]:
+        """Load SPE9 dataset from a data dictionary.
+
+        This method allows loading data that has already been parsed,
+        useful when you've loaded data using the standalone load_spe9_data() function.
+
+        Args:
+            data: Dictionary containing grid data and properties with keys:
+                - 'dimensions': tuple of (nx, ny, nz)
+                - 'properties': dict with property arrays (must include 'PERMX')
+
+        Returns:
+            The loaded data dictionary
+
+        Raises:
+            ValueError: If data structure is invalid
+        """
+        if not isinstance(data, dict):
+            raise ValueError("Data must be a dictionary")
+
+        if "dimensions" not in data:
+            raise ValueError("Data must contain 'dimensions' key")
+
+        if "properties" not in data or "PERMX" not in data["properties"]:
+            raise ValueError("Data must contain 'properties' dict with 'PERMX' key")
+
+        self.data = data
+        nx, ny, nz = data["dimensions"]
+        self.permx_3d = data["properties"]["PERMX"]
+        self.dimensions = (nx, ny, nz)
+
+        logger.info("Loaded SPE9 data with grid dimensions: %d x %d x %d", nx, ny, nz)
+        logger.info(
+            "PERMX range: %.2f - %.2f mD", self.permx_3d.min(), self.permx_3d.max()
+        )
+        logger.info("PERMX mean: %.2f mD", self.permx_3d.mean())
+
+        return self.data
+
+    def load_synthetic_data(
+        self, grid_size: tuple[int, int, int] = (50, 50, 10), random_state: int | None = None
+    ) -> dict[str, Any]:
+        """Generate and load synthetic spatial data for testing.
+
+        Creates a 3D grid with spatially correlated permeability values
+        that mimic reservoir properties.
+
+        Args:
+            grid_size: Dimensions of synthetic grid (nx, ny, nz)
+            random_state: Random seed for reproducibility (uses instance default if None)
+
+        Returns:
+            Dictionary with same structure as load_spe9_data() output
+        """
+        nx, ny, nz = grid_size
+        # Use instance random_state if not provided
+        if random_state is None:
+            random_state = self.random_state
+        np.random.seed(random_state)
+
+        # Create coordinate grids
+        x_coords = np.linspace(0, 1, nx)
+        y_coords = np.linspace(0, 1, ny)
+        z_coords = np.linspace(0, 1, nz)
+        X_full, Y_full, Z_full = np.meshgrid(
+            x_coords, y_coords, z_coords, indexing="ij"
+        )
+
+        # Create spatially correlated permeability field
+        # Use a combination of smooth trends and random noise
+        # This mimics reservoir heterogeneity
+
+        # Base trend (depth-dependent)
+        depth_trend = 1.0 - 0.3 * Z_full  # Decreasing with depth
+
+        # Horizontal trends (channel-like features)
+        channel1 = 0.5 * np.exp(
+            -((X_full - 0.3) ** 2 + (Y_full - 0.4) ** 2) / 0.1
+        )
+        channel2 = 0.4 * np.exp(
+            -((X_full - 0.7) ** 2 + (Y_full - 0.6) ** 2) / 0.12
+        )
+
+        # Add some random spatial correlation using a simple approach
+        # Create a smooth random field by convolving white noise
+        noise = np.random.randn(nx, ny, nz)
+        from scipy import ndimage
+
+        # Smooth the noise to create spatial correlation
+        smooth_noise = ndimage.gaussian_filter(noise, sigma=2.0)
+
+        # Combine components
+        permx_base = depth_trend + channel1 + channel2 + 0.2 * smooth_noise
+
+        # Transform to log-normal distribution (typical for permeability)
+        log_permx = np.log(10.0) + permx_base  # Base around 10 mD
+        permx = np.exp(log_permx)
+
+        # Clip to reasonable range (0.1 to 10000 mD)
+        permx = np.clip(permx, 0.1, 10000.0)
+
+        # Store as data structure matching SPE9 format
+        self.data = {
+            "dimensions": (nx, ny, nz),
+            "properties": {"PERMX": permx},
+            "grid_shape": (nx, ny, nz),
+        }
+
+        self.permx_3d = permx
+        self.dimensions = (nx, ny, nz)
+
+        logger.info("Generated synthetic data with grid dimensions: %d x %d x %d", nx, ny, nz)
         logger.info(
             "PERMX range: %.2f - %.2f mD", self.permx_3d.min(), self.permx_3d.max()
         )
@@ -200,12 +331,16 @@ class UnifiedSPE9Toolkit:
         test_size: float = 0.2,
         train_size: int | None = None,
         min_perm: float = 1.0,
-        random_state: int = 42,
+        random_state: int | None = None,
         log_transform: bool = False,
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """Create training and test sets."""
         if self.X_grid is None:
             raise ValueError("Prepare features first using prepare_features()")
+
+        # Use instance random_state if not provided
+        if random_state is None:
+            random_state = self.random_state
 
         # Filter valid cells
         self.valid_mask = self.y_grid > min_perm
@@ -306,13 +441,13 @@ class UnifiedSPE9Toolkit:
                 kernel=kernel,
                 alpha=kwargs.get("alpha", 1e-6),
                 n_restarts_optimizer=kwargs.get("n_restarts_optimizer", 5),
-                random_state=kwargs.get("random_state", 42),
+                random_state=kwargs.get("random_state", self.random_state),
             )
         elif model_type == "rf":
             model = RandomForestRegressor(
                 n_estimators=kwargs.get("n_estimators", 100),
                 max_depth=kwargs.get("max_depth", 10),
-                random_state=kwargs.get("random_state", 42),
+                random_state=kwargs.get("random_state", self.random_state),
                 n_jobs=kwargs.get("n_jobs", -1),
             )
         elif model_type == "svr":
@@ -504,6 +639,73 @@ class UnifiedSPE9Toolkit:
         joblib.dump(self.scalers, output_dir / f"{model_name}_scalers.joblib")
 
         logger.info("Model %s saved to %s", model_name, output_dir)
+
+    def predict_full_grid(self, model_name: str) -> np.ndarray:
+        """Make predictions on the full spatial grid.
+
+        Args:
+            model_name: Name of trained model
+
+        Returns:
+            Predictions for all grid points as a 1D array matching X_grid shape
+
+        Raises:
+            ValueError: If model not found or features not prepared
+        """
+        if model_name not in self.models:
+            raise ValueError(f"Model {model_name} not found. Train it first.")
+
+        if self.X_grid is None:
+            raise ValueError(
+                "Features not prepared. Call prepare_features() first."
+            )
+
+        model = self.models[model_name]
+
+        # Scale the full grid features
+        if "x_scaler" not in self.scalers:
+            raise ValueError(
+                "Scalers not set up. Call setup_scalers() first."
+            )
+
+        X_grid_scaled = self.scalers["x_scaler"].transform(self.X_grid)
+
+        if self.backend == "sklearn":
+            # Scikit-learn model
+            if hasattr(model, "predict"):
+                y_pred_scaled = model.predict(X_grid_scaled)
+            else:
+                raise ValueError(f"Model {model_name} does not support prediction")
+
+            # Inverse transform predictions
+            y_pred = (
+                self.scalers["y_scaler"]
+                .inverse_transform(y_pred_scaled.reshape(-1, 1))
+                .flatten()
+            )
+
+        else:
+            # GPyTorch model
+            gp_model = model["model"]
+            likelihood = model["likelihood"]
+
+            gp_model.eval()
+            likelihood.eval()
+
+            X_tensor = torch.tensor(X_grid_scaled, dtype=torch.float32)
+
+            with torch.no_grad(), gpytorch.settings.fast_pred_var():
+                preds = likelihood(gp_model(X_tensor))
+                y_pred = preds.mean.numpy()
+
+        logger.info(
+            "Full grid predictions completed: %d points, range: %.2f - %.2f",
+            len(y_pred),
+            y_pred.min(),
+            y_pred.max(),
+        )
+
+        return y_pred
 
     def visualize_results(
         self,

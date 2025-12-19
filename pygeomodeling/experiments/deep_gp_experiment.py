@@ -6,10 +6,6 @@ to analyze complex spatial patterns in the SPE9 reservoir dataset.
 
 from __future__ import annotations
 
-import warnings
-
-warnings.filterwarnings("ignore")
-
 import logging
 import time
 from pathlib import Path
@@ -20,8 +16,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import signalplot
 import torch
-from model_gp import create_gp_model
-from plot import SPE9Plotter
+from ..model_gp import create_gp_model
+from ..plot import SPE9Plotter
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
@@ -41,7 +37,7 @@ class DeepGPExperiment:
 
     def __init__(
         self,
-        data_path: str = "~/Documents/Pandey_Ch05_Geomodeling_Code/data/SPE9.GRDECL",
+        data_path: str | None = None,
         random_state: int = 42,
     ):
         """Initialize the experiment.
@@ -50,7 +46,17 @@ class DeepGPExperiment:
             data_path: Path to SPE9 GRDECL file
             random_state: Random seed for reproducibility
         """
-        self.data_path = Path(data_path).expanduser()
+        if data_path is None:
+            # Use bundled data file
+            from importlib import resources
+            try:
+                resource = resources.files("pygeomodeling.data") / "SPE9.GRDECL"
+                self.data_path = Path(resource)
+            except (ModuleNotFoundError, FileNotFoundError):
+                # Fallback to a reasonable default location
+                self.data_path = Path("data/SPE9.GRDECL")
+        else:
+            self.data_path = Path(data_path).expanduser()
         self.random_state = random_state
         self.results = {}
         self.models = {}

@@ -63,7 +63,7 @@ cd pygeomodeling
 ### Basic Usage
 
 ```python
-from spe9_geomodeling import GRDECLParser, UnifiedSPE9Toolkit
+from pygeomodeling import GRDECLParser, UnifiedSPE9Toolkit
 
 # Load SPE9 dataset
 parser = GRDECLParser('path/to/SPE9.GRDECL')
@@ -85,7 +85,7 @@ print(f"R² Score: {results.r2:.4f}")
 ### Deep GP Experiment
 
 ```python
-from spe9_geomodeling import DeepGPExperiment
+from pygeomodeling import DeepGPExperiment
 
 # Run comprehensive comparison
 experiment = DeepGPExperiment()
@@ -144,15 +144,11 @@ Based on SPE9 reservoir dataset analysis:
 - **Advanced**: torch, gpytorch, botorch, optuna (for Deep GP models)
 - **Geospatial**: rasterio, geopandas, shapely (for advanced spatial analysis)
 - **Performance**: numba (for JIT compilation)
-- **Visualization**: plotly, ipywidgets (for interactive plots)
+- **Visualization**: matplotlib, signalplot (for publication-quality plots)
 
 ## Documentation
 
-Detailed documentation and examples are available in the repository:
-
-- [API Reference](docs/api.md)
-- [Tutorial Notebooks](examples/)
-- [Model Comparison Guide](docs/model_comparison.md)
+Tutorial notebooks are available in the [examples/](examples/) directory.
 
 ## Contributing
 
@@ -166,9 +162,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For questions, issues, or contributions:
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/spe9-geomodeling/issues)
+- **Issues**: [GitHub Issues](https://github.com/kylejones200/pygeomodeling/issues)
 - **Email**: <kyletjones@gmail.com>
-- **Documentation**: [Project Wiki](https://github.com/yourusername/spe9-geomodeling/wiki)
+- **Documentation**: [Project Wiki](https://github.com/kylejones200/pygeomodeling/wiki)
 
 ## Citation
 

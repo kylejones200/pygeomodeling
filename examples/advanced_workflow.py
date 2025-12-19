@@ -17,7 +17,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF, ConstantKernel, Matern, WhiteKernel
 
-from spe9_geomodeling import (
+from pygeomodeling import (
     BatchPredictor,
     BlockCV,
     HyperparameterTuner,

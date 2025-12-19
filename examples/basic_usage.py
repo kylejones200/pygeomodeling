@@ -12,7 +12,7 @@ from pathlib import Path
 # Add the parent directory to the path so we can import the package
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from spe9_geomodeling import UnifiedSPE9Toolkit, load_spe9_data
+from pygeomodeling import UnifiedSPE9Toolkit, load_spe9_data
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -67,7 +67,7 @@ def main():
 
     logger.info("Basic example completed successfully!")
     logger.info("Note: Try running the Deep GP experiment for advanced comparisons:")
-    logger.info("   python -c 'from spe9_geomodeling import DeepGPExperiment; DeepGPExperiment().run_comparison_experiment()'")
+    logger.info("   python -c 'from pygeomodeling import DeepGPExperiment; DeepGPExperiment().run_comparison_experiment()'")
 
 
 if __name__ == "__main__":

@@ -92,7 +92,7 @@ def main():
     if args.coverage:
         cmd.extend(
             [
-                "--cov=spe9_geomodeling",
+                "--cov=pygeomodeling",
                 "--cov-report=term-missing",
                 "--cov-report=html:htmlcov",
                 "--cov-report=xml:coverage.xml",
@@ -121,8 +121,8 @@ def main():
         logger.error("Error: tests directory not found. Run from project root.")
         return 1
 
-    if not Path("spe9_geomodeling").exists():
-        logger.error("Error: spe9_geomodeling package not found. Run from project root.")
+    if not Path("pygeomodeling").exists():
+        logger.error("Error: pygeomodeling package not found. Run from project root.")
         return 1
 
     # Run the tests
