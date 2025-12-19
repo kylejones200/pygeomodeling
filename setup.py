@@ -15,7 +15,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="pygeomodeling",
-    version="0.3.0",
+    version="0.3.1",
     description="Gaussian Process Regression and Kriging for 3D Reservoir Simulation Data",
     author="Kyle T. Jones",
     author_email="kyletjones@gmail.com",
