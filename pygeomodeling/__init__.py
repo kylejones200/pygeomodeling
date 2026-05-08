@@ -25,7 +25,20 @@ except ImportError:
 
 # Import model classes if GPyTorch is available
 try:
-    from .model_gp import DeepGPModel, SPE9GPModel, create_gp_model
+    from .model_gp import (
+        BayesianNeuralNetwork,
+        DeepGPModel,
+        MultiOutputGPModel,
+        NeuralNetworkGPModel,
+        SPE9GPModel,
+        SparseGPModel,
+        create_gp_model,
+    )
+    from .advanced_kernels import (
+        NonStationaryRBFKernel,
+        SpectralMixtureKernel,
+        create_advanced_kernel,
+    )
 except (
     ImportError
 ) as exc:  # pragma: no cover - executed only when optional deps missing
@@ -48,11 +61,36 @@ except (
     class DeepGPModel(_MissingGPDependency):
         """Placeholder Deep Gaussian Process model."""
 
+    class MultiOutputGPModel(_MissingGPDependency):
+        """Placeholder Multi-Output Gaussian Process model."""
+
+    class SparseGPModel(_MissingGPDependency):
+        """Placeholder Sparse Gaussian Process model."""
+
+    class NeuralNetworkGPModel(_MissingGPDependency):
+        """Placeholder Neural Network Gaussian Process model."""
+
+    class BayesianNeuralNetwork(_MissingGPDependency):
+        """Placeholder Bayesian Neural Network model."""
+
+    class NonStationaryRBFKernel(_MissingGPDependency):
+        """Placeholder Non-Stationary RBF Kernel."""
+
+    class SpectralMixtureKernel(_MissingGPDependency):
+        """Placeholder Spectral Mixture Kernel."""
+
     def create_gp_model(*args, **kwargs):  # type: ignore[override]
         raise ImportError(
             "Optional dependency for Gaussian Process models is missing. "
             "Install the 'advanced' extras (pip install pygeomodeling[advanced]) "
-            "to enable SPE9GPModel support."
+            "to enable GP model support."
+        ) from _gp_import_error
+
+    def create_advanced_kernel(*args, **kwargs):  # type: ignore[override]
+        raise ImportError(
+            "Optional dependency for advanced kernels is missing. "
+            "Install the 'advanced' extras (pip install pygeomodeling[advanced]) "
+            "to enable advanced kernel support."
         ) from _gp_import_error
 
 
@@ -159,6 +197,20 @@ try:
         WorkflowState,
         create_workflow_dashboard,
     )
+    from .reservoir_formats import (
+        ASCIIGridReader,
+        GridMetadata,
+        PetrelASCIIReader,
+        PetrelBinaryReader,
+        RESQMLReader,
+        ReservoirGrid,
+        load_reservoir_data,
+    )
+    from .spatial_reference import (
+        SpatialReference,
+        get_crs_from_epsg,
+        transform_coordinates,
+    )
 except ImportError:
     # Advanced features not available
     pass
@@ -173,7 +225,15 @@ __all__ = [
     # Model classes
     "SPE9GPModel",
     "DeepGPModel",
+    "MultiOutputGPModel",
+    "SparseGPModel",
+    "NeuralNetworkGPModel",
+    "BayesianNeuralNetwork",
     "create_gp_model",
+    # Advanced kernels
+    "NonStationaryRBFKernel",
+    "SpectralMixtureKernel",
+    "create_advanced_kernel",
     # Experiments
     "DeepGPExperiment",
     # Serialization
@@ -262,6 +322,18 @@ __all__ = [
     "CorrectionRecord",
     "WorkflowState",
     "create_workflow_dashboard",
+    # Reservoir formats
+    "load_reservoir_data",
+    "ReservoirGrid",
+    "GridMetadata",
+    "PetrelASCIIReader",
+    "PetrelBinaryReader",
+    "RESQMLReader",
+    "ASCIIGridReader",
+    # Spatial reference
+    "SpatialReference",
+    "transform_coordinates",
+    "get_crs_from_epsg",
     # Exceptions
     "exceptions",
 ]
