@@ -139,7 +139,7 @@ class VolumetricsCalculator:
             )
         else:
             raise InvalidParameterError(
-                f"Unknown unit system: {unit_system}", valid_values=["field", "metric"]
+                f"Unknown unit system: {unit_system}", "Valid values: ['field', 'metric']"
             )
 
         return stoiip
@@ -204,7 +204,7 @@ class VolumetricsCalculator:
             )
         else:
             raise InvalidParameterError(
-                f"Unknown unit system: {unit_system}", valid_values=["field", "metric"]
+                f"Unknown unit system: {unit_system}", "Valid values: ['field', 'metric']"
             )
 
         return giip
@@ -559,5 +559,5 @@ def decline_curve_analysis(
     else:
         raise InvalidParameterError(
             f"Decline type '{decline_type}' not yet implemented",
-            valid_values=["exponential"],
+            "Valid values: ['exponential']",
         )

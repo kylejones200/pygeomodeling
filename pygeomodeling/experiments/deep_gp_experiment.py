@@ -52,16 +52,16 @@ class DeepGPExperiment:
 
             try:
                 resource = resources.files("pygeomodeling.data") / "SPE9.GRDECL"
-                self.data_path = Path(resource)
+                self.data_path = Path(str(resource))
             except (ModuleNotFoundError, FileNotFoundError):
                 # Fallback to a reasonable default location
                 self.data_path = Path("data/SPE9.GRDECL")
         else:
             self.data_path = Path(data_path).expanduser()
         self.random_state = random_state
-        self.results = {}
-        self.models = {}
-        self.scalers = {}
+        self.results: dict[str, Any] = {}
+        self.models: dict[str, Any] = {}
+        self.scalers: dict[str, Any] = {}
 
         # Set random seeds
         np.random.seed(random_state)
@@ -316,7 +316,7 @@ class DeepGPExperiment:
         self.load_and_prepare_data(max_samples=1500)  # Reasonable size for Deep GP
 
         # Model configurations to test
-        model_configs = {
+        model_configs: dict[str, dict[str, Any]] = {
             "Standard_GP_RBF": {
                 "model_type": "standard",
                 "kernel_type": "rbf",

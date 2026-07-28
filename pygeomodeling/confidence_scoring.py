@@ -9,7 +9,7 @@ Implements confidence assessment strategies for automated well log interpretatio
 
 import logging
 from dataclasses import dataclass
-from typing import Optional
+from typing import Any, Optional
 
 import numpy as np
 import pandas as pd
@@ -382,7 +382,7 @@ class ConfidenceScorer:
             DataFrame with per-facies confidence statistics
         """
         # Group by predicted facies
-        facies_stats = {}
+        facies_stats: dict[Any, dict[str, Any]] = {}
 
         for pred, score in zip(report.predictions, report.confidence_scores):
             if pred not in facies_stats:

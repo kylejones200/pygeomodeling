@@ -58,16 +58,16 @@ class ModelMetadata:
         self.metadata = kwargs
 
         # Training information
-        self.training_info = {}
-        self.hyperparameters = {}
-        self.performance_metrics = {}
+        self.training_info: dict[str, Any] = {}
+        self.hyperparameters: dict[str, Any] = {}
+        self.performance_metrics: dict[str, Any] = {}
 
     def add_training_info(
         self,
         n_samples: int,
         n_features: int,
-        feature_names: list = None,
-        training_time: float = None,
+        feature_names: list | None = None,
+        training_time: float | None = None,
     ):
         """Add training information to metadata."""
         self.training_info = {
@@ -357,7 +357,7 @@ def save_model(
     backend: str = "sklearn",
     save_dir: Union[str, Path] = "saved_models",
     scaler: Any = None,
-    metrics: dict[str, float] = None,
+    metrics: dict[str, float] | None = None,
     **kwargs,
 ) -> Path:
     """Convenience function to save a model.

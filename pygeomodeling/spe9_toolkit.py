@@ -279,6 +279,8 @@ class SPE9Toolkit:
             raise ValueError("scaler_type must be 'standard' or 'robust'")
 
         # Fit and transform training data
+        assert self.grid_data is not None
+        assert self.grid_data.y_train is not None
         self.grid_data.X_train_scaled = x_scaler.fit_transform(self.grid_data.X_train)
         self.grid_data.y_train_scaled = y_scaler.fit_transform(
             self.grid_data.y_train.reshape(-1, 1)
@@ -367,6 +369,7 @@ class SPE9Toolkit:
         Raises:
             ValueError: If scalers haven't been setup yet
         """
+        assert self.grid_data is not None
         if not self.scalers or self.grid_data.X_train_scaled is None:
             raise ValueError("Setup scalers first")
 
@@ -396,6 +399,7 @@ class SPE9Toolkit:
         if model_name not in self.models:
             raise ValueError(f"Model {model_name} not found. Train it first.")
 
+        assert self.grid_data is not None
         model = self.models[model_name]
         X_test_scaled = self.scalers["x_scaler"].transform(self.grid_data.X_test)
 
@@ -449,6 +453,7 @@ class SPE9Toolkit:
         if model_name not in self.results:
             raise ValueError(f"Evaluate {model_name} first")
 
+        assert self.grid_data is not None
         if z_slice is None:
             z_slice = self.grid_data.dimensions[2] // 2
 
@@ -491,6 +496,7 @@ class SPE9Toolkit:
 
         # Predictions vs actual
         y_test = self.grid_data.y_test
+        assert y_test is not None
         y_pred = self.results[model_name].y_pred
 
         axes[1, 1].scatter(y_test, y_pred, alpha=0.6, color="#555555")
@@ -513,6 +519,7 @@ class SPE9Toolkit:
 
     def _predict_full_grid(self, model_name: str) -> tuple[np.ndarray, np.ndarray]:
         """Generate predictions for the full grid (internal method)."""
+        assert self.grid_data is not None
         model = self.models[model_name]
         X_grid_scaled = self.scalers["x_scaler"].transform(self.grid_data.X_grid)
 

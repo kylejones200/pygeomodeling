@@ -55,38 +55,38 @@ except (
                 "to enable SPE9GPModel support."
             ) from _gp_import_error
 
-    class SPE9GPModel(_MissingGPDependency):
+    class SPE9GPModel(_MissingGPDependency):  # type: ignore[no-redef]
         """Placeholder SPE9 Gaussian Process model."""
 
-    class DeepGPModel(_MissingGPDependency):
+    class DeepGPModel(_MissingGPDependency):  # type: ignore[no-redef]
         """Placeholder Deep Gaussian Process model."""
 
-    class MultiOutputGPModel(_MissingGPDependency):
+    class MultiOutputGPModel(_MissingGPDependency):  # type: ignore[no-redef]
         """Placeholder Multi-Output Gaussian Process model."""
 
-    class SparseGPModel(_MissingGPDependency):
+    class SparseGPModel(_MissingGPDependency):  # type: ignore[no-redef]
         """Placeholder Sparse Gaussian Process model."""
 
-    class NeuralNetworkGPModel(_MissingGPDependency):
+    class NeuralNetworkGPModel(_MissingGPDependency):  # type: ignore[no-redef]
         """Placeholder Neural Network Gaussian Process model."""
 
-    class BayesianNeuralNetwork(_MissingGPDependency):
+    class BayesianNeuralNetwork(_MissingGPDependency):  # type: ignore[no-redef]
         """Placeholder Bayesian Neural Network model."""
 
-    class NonStationaryRBFKernel(_MissingGPDependency):
+    class NonStationaryRBFKernel(_MissingGPDependency):  # type: ignore[no-redef]
         """Placeholder Non-Stationary RBF Kernel."""
 
-    class SpectralMixtureKernel(_MissingGPDependency):
+    class SpectralMixtureKernel(_MissingGPDependency):  # type: ignore[no-redef]
         """Placeholder Spectral Mixture Kernel."""
 
-    def create_gp_model(*args, **kwargs):  # type: ignore[override]
+    def create_gp_model(*args, **kwargs):  # type: ignore[no-redef,misc]
         raise ImportError(
             "Optional dependency for Gaussian Process models is missing. "
             "Install the 'advanced' extras (pip install pygeomodeling[advanced]) "
             "to enable GP model support."
         ) from _gp_import_error
 
-    def create_advanced_kernel(*args, **kwargs):  # type: ignore[override]
+    def create_advanced_kernel(*args, **kwargs):  # type: ignore[no-redef,misc]
         raise ImportError(
             "Optional dependency for advanced kernels is missing. "
             "Install the 'advanced' extras (pip install pygeomodeling[advanced]) "

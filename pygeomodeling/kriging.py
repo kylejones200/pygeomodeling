@@ -116,9 +116,9 @@ class OrdinaryKriging:
         """
         self.variogram_model = variogram_model
         self.regularization = regularization
-        self.coordinates = None
-        self.values = None
-        self.K_inv = None
+        self.coordinates: np.ndarray | None = None
+        self.values: np.ndarray | None = None
+        self.K_inv: np.ndarray | None = None
 
     def fit(self, coordinates: np.ndarray, values: np.ndarray):
         """
@@ -196,6 +196,7 @@ class OrdinaryKriging:
                 "Kriging system not fitted", suggestion="Call fit() before predict()"
             )
 
+        assert self.values is not None
         n_targets = coordinates_target.shape[0]
         n_samples = len(self.values)
 
@@ -231,6 +232,7 @@ class OrdinaryKriging:
 
             # Kriging variance: C(0) - w'k - μ
             if return_variance:
+                assert variances is not None
                 C_0 = self.variogram_model.sill - self.variogram_model.nugget
                 variances[i] = C_0 - np.dot(weights, k) - lagrange
 
@@ -254,6 +256,7 @@ class OrdinaryKriging:
         from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
         from sklearn.model_selection import KFold
 
+        assert self.values is not None and self.coordinates is not None
         if n_folds == -1:
             n_folds = len(self.values)  # Leave-one-out
 
@@ -340,7 +343,7 @@ class UniversalKriging:
         if not drift_functions:
             raise InvalidParameterError(
                 "No valid drift terms specified",
-                valid_values=["constant", "linear", "quadratic"],
+                "Valid values: ['constant', 'linear', 'quadratic']",
             )
 
         F = np.column_stack(drift_functions)

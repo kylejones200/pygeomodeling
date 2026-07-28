@@ -261,7 +261,7 @@ def cross_validate_spatial(
 
     # Perform cross-validation
     test_scores = []
-    train_scores = [] if return_train_score else None
+    train_scores: list[float] | None = [] if return_train_score else None
 
     splits = cv_splitter.split(X, y)
     iterator = tqdm(splits, desc="CV Folds") if verbose else splits
@@ -279,7 +279,7 @@ def cross_validate_spatial(
         test_score = score_func(y_test, y_pred)
         test_scores.append(test_score)
 
-        if return_train_score:
+        if return_train_score and train_scores is not None:
             y_train_pred = model_clone.predict(X_train)
             train_score = score_func(y_train, y_train_pred)
             train_scores.append(train_score)
@@ -406,6 +406,7 @@ class HyperparameterTuner:
                 "Starting hyperparameter tuning with %d trials...", self.n_trials
             )
 
+        assert self.study is not None
         self.study.optimize(
             lambda trial: self.objective(trial, X, y),
             n_trials=self.n_trials,

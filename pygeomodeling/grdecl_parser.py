@@ -40,8 +40,8 @@ class GRDECLParser:
             )
 
         self.filepath = Path(filepath)
-        self.grid_dimensions = None
-        self.properties = {}
+        self.grid_dimensions: tuple[int, int, int] | None = None
+        self.properties: dict[str, np.ndarray] = {}
 
     def parse_specgrid(self, content: str) -> tuple[int, int, int]:
         """Parse SPECGRID keyword to get grid dimensions
@@ -73,6 +73,7 @@ class GRDECLParser:
                 "GRDECL",
                 "SPECGRID keyword not found in file. This is required to define grid dimensions.",
             )
+            raise RuntimeError("unreachable")  # raise_invalid_format always raises
 
     def parse_property(self, content: str, property_name: str) -> np.ndarray:
         """Parse a property section (e.g., PERMX, PORO) from GRDECL content"""
@@ -192,6 +193,7 @@ class GRDECLParser:
         prop_3d = self.get_property_3d(property_name)
         if prop_3d is None:
             raise_property_not_found(property_name, list(self.properties.keys()))
+            raise RuntimeError("unreachable")  # raise_property_not_found always raises
 
         if axis.lower() not in ["x", "y", "z"]:
             raise DataValidationError(

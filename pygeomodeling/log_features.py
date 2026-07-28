@@ -116,7 +116,7 @@ class LogFeatureEngineer:
             null_value: Value indicating missing data
         """
         self.null_value = null_value
-        self.feature_groups = {}
+        self.feature_groups: dict[str, list[str]] = {}
 
     def compute_derivatives(
         self,

@@ -11,7 +11,7 @@ interpretation workflows.
 
 import warnings
 from dataclasses import dataclass
-from typing import Optional
+from typing import Any, Optional
 
 import numpy as np
 import pandas as pd
@@ -21,7 +21,7 @@ from scipy.stats import zscore
 from .exceptions import InvalidParameterError
 
 # Standard curve type definitions with typical statistical ranges
-CURVE_SIGNATURES = {
+CURVE_SIGNATURES: dict[str, dict[str, Any]] = {
     "GR": {
         "names": ["GR", "CGR", "GRD", "GAPI", "GR_EDTC"],
         "typical_range": (0, 200),
@@ -156,7 +156,7 @@ class WellLogProcessor:
         self.null_value = null_value
         self.min_coverage = min_coverage
         self.outlier_threshold = outlier_threshold
-        self.processing_log = []
+        self.processing_log: list[str] = []
 
     def identify_curve_type(
         self,
@@ -202,7 +202,7 @@ class WellLogProcessor:
 
         data_range = (valid_data.min(), valid_data.max())
         best_match = None
-        best_overlap = 0
+        best_overlap: float = 0.0
 
         for curve_type, signature in CURVE_SIGNATURES.items():
             overlap = self._range_overlap(data_range, signature["typical_range"])

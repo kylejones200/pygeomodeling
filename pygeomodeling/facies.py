@@ -109,7 +109,8 @@ class FaciesClassifier:
         valid_algorithms = ["svm", "random_forest", "gradient_boosting"]
         if algorithm not in valid_algorithms:
             raise InvalidParameterError(
-                f"Unknown algorithm: {algorithm}", valid_values=valid_algorithms
+                f"Unknown algorithm: {algorithm}",
+                f"Valid algorithms: {valid_algorithms}",
             )
 
         self.algorithm = algorithm
@@ -125,7 +126,7 @@ class FaciesClassifier:
         self.random_state = random_state
 
         self.scaler = StandardScaler()
-        self.model = None
+        self.model: Optional[SVC | RandomForestClassifier | GradientBoostingClassifier] = None
         self.is_fitted = False
 
     def _create_model(self, **kwargs):
@@ -191,6 +192,7 @@ class FaciesClassifier:
 
         # Create and train model
         self.model = self._create_model(**model_params)
+        assert self.model is not None
         self.model.fit(X_scaled, y)
 
         self.is_fitted = True
@@ -217,6 +219,7 @@ class FaciesClassifier:
             raise DataValidationError(
                 "Model not fitted", suggestion="Call fit() before predict()"
             )
+        assert self.model is not None
 
         # Extract features
         if isinstance(X, pd.DataFrame):
@@ -459,6 +462,7 @@ class FaciesClassifier:
             raise DataValidationError(
                 "Model not fitted", "Train model on labeled data before active learning"
             )
+        assert self.model is not None
 
         if isinstance(X_unlabeled, pd.DataFrame):
             X_unlabeled = X_unlabeled[self.feature_names].values
@@ -555,6 +559,7 @@ class FaciesClassifier:
         # Train final model on augmented data
         X_aug_scaled = self.scaler.fit_transform(X_augmented)
         self.model = self._create_model()
+        assert self.model is not None
         self.model.fit(X_aug_scaled, y_augmented)
 
         self.is_fitted = True
@@ -598,6 +603,7 @@ class FaciesClassifier:
         X_source_scaled = self.scaler.fit_transform(X_source)
 
         self.model = self._create_model()
+        assert self.model is not None
         self.model.fit(X_source_scaled, y_source)
 
         # Phase 2: Fine-tune on target data

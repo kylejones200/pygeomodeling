@@ -639,7 +639,7 @@ def load_reservoir_data(
         return ReservoirGrid(properties=properties, metadata=metadata)
 
     elif format == "petrel_ascii":
-        reader = PetrelASCIIReader(filepath)
+        reader: Any = PetrelASCIIReader(filepath)
         grid = reader.read(**kwargs)
         if crs:
             grid.metadata.crs = crs

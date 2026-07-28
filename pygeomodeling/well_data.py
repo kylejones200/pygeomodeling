@@ -65,9 +65,9 @@ class LASParser:
             filepath: Path to LAS file
         """
         self.filepath = Path(filepath)
-        self.header = None
-        self.curves = {}
-        self.data = None
+        self.header: Optional["WellHeader"] = None
+        self.curves: dict[str, "CurveInfo"] = {}
+        self.data: Optional[pd.DataFrame] = None
 
         if not self.filepath.exists():
             raise DataLoadError(
@@ -224,6 +224,7 @@ class LASParser:
         self.data = pd.DataFrame(data_array, columns=column_names)
 
         # Replace null values with NaN
+        assert self.header is not None
         self.data.replace(self.header.null_value, np.nan, inplace=True)
 
         # Set depth as index (usually first column)
@@ -243,6 +244,7 @@ class LASParser:
 
     def get_curve_data(self, curve_name: str) -> pd.Series:
         """Get data for specific curve."""
+        assert self.data is not None
         if curve_name not in self.data.columns:
             raise DataValidationError(
                 f"Curve '{curve_name}' not found",
@@ -339,6 +341,7 @@ def load_las_file(filepath: str) -> tuple[WellHeader, pd.DataFrame]:
     """
     parser = LASParser(filepath)
     data = parser.parse()
+    assert parser.header is not None
     return parser.header, data
 
 

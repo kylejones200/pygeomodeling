@@ -7,7 +7,7 @@ Includes multi-output GP, sparse GP, neural network GP, and Bayesian neural netw
 from __future__ import annotations
 
 import logging
-from typing import Optional
+from typing import Any, Optional
 
 import gpytorch
 import torch
@@ -24,8 +24,8 @@ try:
     ADVANCED_KERNELS_AVAILABLE = True
 except ImportError:
     ADVANCED_KERNELS_AVAILABLE = False
-    NonStationaryRBFKernel = None
-    SpectralMixtureKernel = None
+    NonStationaryRBFKernel: type[Any] | None = None  # type: ignore[no-redef]
+    SpectralMixtureKernel: type[Any] | None = None  # type: ignore[no-redef]
 
 
 class SPE9GPModel(gpytorch.models.ExactGP):
@@ -44,9 +44,9 @@ class SPE9GPModel(gpytorch.models.ExactGP):
         train_x: torch.Tensor,
         train_y: torch.Tensor,
         likelihood: gpytorch.likelihoods.Likelihood,
-        *,
         kernel_type: str = "combined",
         ard: bool = True,
+        **kwargs: Any,
     ) -> None:
         """Initialize the GP model.
 
@@ -780,10 +780,10 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 # Backward compatibility alias
-GPModel = SPE9GPModel
+GPModel: type[Any] = SPE9GPModel  # type: ignore[no-redef]
 
 
-def create_gp_model(
+def create_gp_model(  # type: ignore[no-redef]
     train_x: torch.Tensor,
     train_y: torch.Tensor,
     likelihood: gpytorch.likelihoods.Likelihood | None = None,

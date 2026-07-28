@@ -82,8 +82,8 @@ class FormationTopDetector:
         self.null_value = null_value
         self.min_formation_thickness = min_formation_thickness
         self.boundary_threshold = boundary_threshold
-        self.processing_log = []
-        self.boundary_classifier = None
+        self.processing_log: list[str] = []
+        self.boundary_classifier: Optional[RandomForestClassifier] = None
         self.scaler = StandardScaler()
 
     def compute_boundary_score(
@@ -429,7 +429,7 @@ class FormationTopDetector:
                 formation_tops.append(
                     FormationTop(
                         depth=boundary_depth,
-                        formation_name=best_match,
+                        formation_name=best_match or f"Unknown_{i+1}",
                         confidence=confidence,
                         method="regional_correlation",
                         log_character={},

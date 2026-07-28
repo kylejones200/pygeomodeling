@@ -40,7 +40,7 @@ except ImportError as exc:
     GPYTORCH_AVAILABLE = False
     torch = None
     gpytorch = None
-    GPModel = None  # type: ignore[assignment]
+    GPModel: type[Any] | None = None  # type: ignore[no-redef]
     warnings.warn(
         "GPyTorch backend is unavailable. Install the 'advanced' extras to enable it.",
         RuntimeWarning,
@@ -123,9 +123,6 @@ class UnifiedSPE9Toolkit:
         self.models: dict[str, Any] = {}
         self.scalers: dict[str, StandardScaler] = {}
         self.results: dict[str, dict[str, Any]] = {}
-        self.X_train_scaled: np.ndarray | None = None
-        self.y_train_scaled: np.ndarray | None = None
-
         # Configure logging level based on verbose
         if verbose:
             logging.getLogger(__name__).setLevel(logging.INFO)
@@ -280,6 +277,7 @@ class UnifiedSPE9Toolkit:
         if self.data is None:
             raise ValueError("Load data first using load_data()")
 
+        assert self.dimensions is not None
         nx, ny, nz = self.dimensions
 
         # Create normalized coordinate grids
@@ -319,6 +317,7 @@ class UnifiedSPE9Toolkit:
             )
 
         self.X_grid = np.column_stack(features)
+        assert self.permx_3d is not None
         self.y_grid = self.permx_3d.ravel()
         self.feature_names = feature_names
 
@@ -337,6 +336,8 @@ class UnifiedSPE9Toolkit:
         """Create training and test sets."""
         if self.X_grid is None:
             raise ValueError("Prepare features first using prepare_features()")
+
+        assert self.y_grid is not None
 
         # Use instance random_state if not provided
         if random_state is None:
@@ -400,6 +401,7 @@ class UnifiedSPE9Toolkit:
             raise ValueError("scaler_type must be 'standard' or 'robust'")
 
         # Fit scalers
+        assert self.y_train is not None
         x_scaler.fit(self.X_train)
         y_scaler.fit(self.y_train.reshape(-1, 1))
 
@@ -714,6 +716,8 @@ class UnifiedSPE9Toolkit:
         if model_name not in self.results:
             raise ValueError(f"Evaluate {model_name} first")
 
+        assert self.dimensions is not None
+        assert self.permx_3d is not None
         if z_slice is None:
             z_slice = self.dimensions[2] // 2
 
@@ -740,6 +744,7 @@ class UnifiedSPE9Toolkit:
 
         # Predictions vs actual
         y_test = self.y_test
+        assert y_test is not None
         y_pred = self.results[model_name]["y_pred"]
 
         axes[1, 0].scatter(y_test, y_pred, alpha=0.6, color="#555555")

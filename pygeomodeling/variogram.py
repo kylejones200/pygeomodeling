@@ -345,7 +345,7 @@ def fit_variogram_model(
     if model_type not in VARIOGRAM_MODELS:
         raise InvalidParameterError(
             f"Unknown model type: {model_type}",
-            valid_values=list(VARIOGRAM_MODELS.keys()),
+            f"Valid model types: {list(VARIOGRAM_MODELS.keys())}",
         )
 
     if len(lags) < 3:
@@ -372,7 +372,7 @@ def fit_variogram_model(
         if model_type == "linear":
             # Linear model: only nugget and slope
             p0 = [nugget_init, (sill_init - nugget_init) / range_init]
-            bounds = ([0, 0], [np.inf, np.inf])
+            bounds = ([0.0, 0.0], [np.inf, np.inf])
 
             popt, _ = curve_fit(
                 model_func,
@@ -392,7 +392,7 @@ def fit_variogram_model(
         else:
             # Bounded models: nugget, sill, range
             p0 = [nugget_init, sill_init, range_init]
-            bounds = ([0, nugget_init, 0], [sill_init, np.inf, lags[-1] * 2])
+            bounds = ([0.0, float(nugget_init), 0.0], [float(sill_init), np.inf, float(lags[-1]) * 2])
 
             popt, _ = curve_fit(
                 model_func,

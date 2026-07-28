@@ -49,7 +49,7 @@ except ImportError:
     GPYTORCH_AVAILABLE = False
     torch = None
     gpytorch = None
-    GPModel = None
+    GPModel: type[Any] | None = None  # type: ignore[no-redef]
 
 from .grdecl_parser import load_spe9_data
 
@@ -306,6 +306,7 @@ class SPE9Toolkit:
             y_scaler = MinMaxScaler()
 
         # Fit scalers
+        assert self.grid_data.y_train is not None
         x_scaler.fit(self.grid_data.X_train)
         y_scaler.fit(self.grid_data.y_train.reshape(-1, 1))
 
@@ -429,6 +430,7 @@ class SPE9Toolkit:
         """
         if not self.scalers:
             raise ValueError("Scalers must be set up first. Call setup_scalers().")
+        assert self.grid_data is not None
 
         if self.backend == "sklearn":
             logger.info("Training %s model...", model_name)
@@ -469,12 +471,14 @@ class SPE9Toolkit:
         x_scaler = self.scalers["x_scaler"]
         y_scaler = self.scalers["y_scaler"]
 
+        assert self.grid_data is not None
         # Scale test data and make predictions
         X_test_scaled = x_scaler.transform(self.grid_data.X_test)
         y_pred_scaled = model.predict(X_test_scaled)
 
         # Inverse transform predictions
         y_pred = y_scaler.inverse_transform(y_pred_scaled.reshape(-1, 1)).ravel()
+        assert self.grid_data.y_test is not None
         y_true = y_scaler.inverse_transform(
             self.grid_data.y_test.reshape(-1, 1)
         ).ravel()

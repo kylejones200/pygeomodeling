@@ -80,7 +80,7 @@ class ParallelModelTrainer:
         y_train: np.ndarray,
         X_test: np.ndarray,
         y_test: np.ndarray,
-        metrics: dict[str, Callable] = None,
+        metrics: dict[str, Callable] | None = None,
     ) -> dict[str, dict[str, Any]]:
         """Train and evaluate multiple models in parallel.
 
@@ -282,7 +282,7 @@ class ParallelCrossValidator:
         X: np.ndarray,
         y: np.ndarray,
         cv_splitter: Any,
-        scoring: Callable = None,
+        scoring: Callable | None = None,
     ) -> dict[str, np.ndarray]:
         """Perform cross-validation with parallel fold evaluation.
 
@@ -356,7 +356,7 @@ def parallel_grid_search(
     y_train: np.ndarray,
     X_test: np.ndarray,
     y_test: np.ndarray,
-    scoring: Callable = None,
+    scoring: Callable | None = None,
     n_jobs: int = -1,
     verbose: bool = True,
 ) -> dict[str, Any]:
