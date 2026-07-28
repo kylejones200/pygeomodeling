@@ -4,9 +4,10 @@ Cross-validation utilities with spatial awareness.
 Provides spatial cross-validation methods specifically designed for geostatistical data.
 """
 
-from typing import Any, Callable, Optional, Union
-
 import logging
+from collections.abc import Callable
+from typing import Any
+
 import numpy as np
 from sklearn.base import BaseEstimator, clone
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
@@ -36,7 +37,7 @@ class SpatialKFold:
         self,
         n_splits: int = 5,
         shuffle: bool = False,
-        random_state: Optional[int] = None,
+        random_state: int | None = None,
     ):
         """Initialize spatial K-Fold.
 
@@ -222,8 +223,8 @@ def cross_validate_spatial(
     model: BaseEstimator,
     X: np.ndarray,
     y: np.ndarray,
-    cv: Union[int, Any] = 5,
-    scoring: Union[str, Callable] = "r2",
+    cv: int | Any = 5,
+    scoring: str | Callable = "r2",
     return_train_score: bool = False,
     verbose: bool = True,
 ) -> dict[str, np.ndarray]:
@@ -251,9 +252,11 @@ def cross_validate_spatial(
     if scoring == "r2":
         score_func = r2_score
     elif scoring == "mse":
-        score_func = lambda y_true, y_pred: -mean_squared_error(y_true, y_pred)
+        def score_func(y_true, y_pred):
+            return -mean_squared_error(y_true, y_pred)
     elif scoring == "mae":
-        score_func = lambda y_true, y_pred: -mean_absolute_error(y_true, y_pred)
+        def score_func(y_true, y_pred):
+            return -mean_absolute_error(y_true, y_pred)
     elif callable(scoring):
         score_func = scoring
     else:
@@ -310,10 +313,10 @@ class HyperparameterTuner:
         self,
         model_class: type,
         param_space: dict[str, Any],
-        cv: Union[int, Any] = 5,
+        cv: int | Any = 5,
         n_trials: int = 100,
         scoring: str = "r2",
-        random_state: Optional[int] = None,
+        random_state: int | None = None,
     ):
         """Initialize hyperparameter tuner.
 

@@ -4,9 +4,10 @@ Parallel processing utilities for model training and prediction.
 Leverages joblib for efficient parallel computation.
 """
 
-from typing import Any, Callable, Union
-
 import logging
+from collections.abc import Callable
+from typing import Any
+
 import numpy as np
 from joblib import Parallel, delayed
 from sklearn.base import BaseEstimator, clone
@@ -176,7 +177,7 @@ class BatchPredictor:
 
     def predict(
         self, model: BaseEstimator, X: np.ndarray, return_std: bool = False
-    ) -> Union[np.ndarray, tuple[np.ndarray, np.ndarray]]:
+    ) -> np.ndarray | tuple[np.ndarray, np.ndarray]:
         """Make predictions in parallel batches.
 
         Args:
@@ -199,7 +200,7 @@ class BatchPredictor:
 
         def predict_batch(
             batch_idx: int,
-        ) -> Union[np.ndarray, tuple[np.ndarray, np.ndarray]]:
+        ) -> np.ndarray | tuple[np.ndarray, np.ndarray]:
             """Predict a single batch."""
             start_idx = batch_idx * self.batch_size
             end_idx = min((batch_idx + 1) * self.batch_size, n_samples)

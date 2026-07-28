@@ -16,14 +16,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import signalplot
 import torch
-from ..model_gp import create_gp_model
-from ..plot import SPE9Plotter
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
 
 from ..grdecl_parser import GRDECLParser
+from ..model_gp import create_gp_model
+from ..plot import SPE9Plotter
 
 # Configure logging
 logger = logging.getLogger(__name__)

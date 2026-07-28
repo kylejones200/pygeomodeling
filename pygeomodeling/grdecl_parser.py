@@ -7,7 +7,6 @@ import logging
 import re
 from importlib import resources
 from pathlib import Path
-from typing import Optional
 
 import numpy as np
 
@@ -169,13 +168,13 @@ class GRDECLParser:
         """Alias for load_data() for backward compatibility"""
         return self.load_data()
 
-    def get_property_3d(self, property_name: str) -> Optional[np.ndarray]:
+    def get_property_3d(self, property_name: str) -> np.ndarray | None:
         """Get a 3D property array"""
         return self.properties.get(property_name)
 
     def get_property_slice(
         self, property_name: str, axis: str = "z", index: int = 0
-    ) -> Optional[np.ndarray]:
+    ) -> np.ndarray | None:
         """Get a 2D slice of a property
 
         Args:
@@ -222,7 +221,7 @@ class GRDECLParser:
 
 
 def load_spe9_data(
-    data_path: Optional[str] = None,
+    data_path: str | None = None,
 ):
     """Convenience function to load SPE9 dataset
 

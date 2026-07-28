@@ -13,7 +13,6 @@ import json
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
 
 import pandas as pd
 
@@ -56,8 +55,8 @@ class CorrectionRecord:
     corrected_label: int
     confidence_score: float
     correction_date: str
-    expert_id: Optional[str] = None
-    notes: Optional[str] = None
+    expert_id: str | None = None
+    notes: str | None = None
 
     def to_dict(self) -> dict:
         """Convert to dictionary for serialization."""
@@ -182,7 +181,7 @@ class WorkflowManager:
     def start_new_iteration(
         self,
         wells_to_process: list[str],
-        model_version: Optional[str] = None,
+        model_version: str | None = None,
     ):
         """
         Start a new workflow iteration.
@@ -229,7 +228,7 @@ class WorkflowManager:
     def import_corrections(
         self,
         correction_file: str,
-        expert_id: Optional[str] = None,
+        expert_id: str | None = None,
     ) -> int:
         """
         Import expert corrections from review file.
@@ -245,7 +244,7 @@ class WorkflowManager:
 
         # Filter to corrected samples
         if "Corrected" in df.columns:
-            corrected = df[df["Corrected"] == True]
+            corrected = df[df["Corrected"]]
         else:
             # Assume all rows are corrections if no flag column
             corrected = df[df["ML_Prediction"] != df["Expert_Correction"]]
@@ -438,7 +437,7 @@ class WorkflowManager:
             (int(orig), int(corr), int(count)) for (orig, corr), count in pairs.items()
         ]
 
-    def export_workflow_summary(self, output_file: Optional[str] = None):
+    def export_workflow_summary(self, output_file: str | None = None):
         """
         Export comprehensive workflow summary.
 
@@ -453,7 +452,7 @@ class WorkflowManager:
             f.write("WORKFLOW SUMMARY\n")
             f.write("=" * 80 + "\n\n")
 
-            f.write(f"Current Status:\n")
+            f.write("Current Status:\n")
             f.write(f"  Iteration: {self.state.current_iteration}\n")
             f.write(f"  Model Version: {self.state.current_model_version}\n")
             f.write(f"  Total Wells: {self.state.total_wells}\n")

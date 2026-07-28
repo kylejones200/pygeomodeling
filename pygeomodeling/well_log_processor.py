@@ -11,7 +11,7 @@ interpretation workflows.
 
 import warnings
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -162,8 +162,8 @@ class WellLogProcessor:
         self,
         curve_name: str,
         data: pd.Series,
-        unit: Optional[str] = None,
-    ) -> Optional[str]:
+        unit: str | None = None,
+    ) -> str | None:
         """
         Automatically identify curve type from name, unit, and statistics.
 
@@ -288,7 +288,7 @@ class WellLogProcessor:
         self,
         data: pd.DataFrame,
         depth_col: str = "DEPT",
-        target_step: Optional[float] = None,
+        target_step: float | None = None,
         datum_shift: float = 0.0,
     ) -> pd.DataFrame:
         """
@@ -397,7 +397,7 @@ class WellLogProcessor:
             else:
                 raise InvalidParameterError(
                     f"Unknown imputation method: {method}",
-                    f"Valid methods: 'linear', 'polynomial', 'median', 'forward'",
+                    "Valid methods: 'linear', 'polynomial', 'median', 'forward'",
                 )
 
             imputed[col] = series.fillna(self.null_value)
@@ -414,7 +414,7 @@ class WellLogProcessor:
         self,
         data: pd.DataFrame,
         method: str = "zscore",
-        threshold: Optional[float] = None,
+        threshold: float | None = None,
     ) -> dict[str, np.ndarray]:
         """
         Detect outliers in log curves.
@@ -469,7 +469,7 @@ class WellLogProcessor:
     def assess_quality(
         self,
         data: pd.DataFrame,
-        outliers: Optional[dict[str, np.ndarray]] = None,
+        outliers: dict[str, np.ndarray] | None = None,
     ) -> dict[str, CurveQuality]:
         """
         Assess quality of each log curve.
@@ -538,11 +538,11 @@ class WellLogProcessor:
     def process_well_logs(
         self,
         data: pd.DataFrame,
-        curve_info: Optional[dict[str, dict[str, str]]] = None,
+        curve_info: dict[str, dict[str, str]] | None = None,
         normalize_names: bool = True,
         align_depth_grid: bool = True,
         impute_missing: bool = True,
-        target_depth_step: Optional[float] = None,
+        target_depth_step: float | None = None,
     ) -> ProcessedWellLogs:
         """
         Complete processing pipeline for well logs.
@@ -632,7 +632,7 @@ class WellLogProcessor:
 
 def process_multiple_wells(
     well_data_dict: dict[str, pd.DataFrame],
-    processor: Optional[WellLogProcessor] = None,
+    processor: WellLogProcessor | None = None,
     **processing_kwargs,
 ) -> dict[str, ProcessedWellLogs]:
     """

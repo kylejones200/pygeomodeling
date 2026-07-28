@@ -11,10 +11,9 @@ Supports:
 from __future__ import annotations
 
 import logging
-import struct
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import numpy as np
 
@@ -57,7 +56,7 @@ class GridMetadata:
     origin: tuple[float, float, float] = (0.0, 0.0, 0.0)
     cell_size: tuple[float, float, float] = (1.0, 1.0, 1.0)
     rotation: float = 0.0
-    crs: Optional[Any] = None  # CRS object or EPSG code
+    crs: Any | None = None  # CRS object or EPSG code
     properties: dict[str, dict[str, Any]] = None  # type: ignore[assignment]
 
     def __post_init__(self):
@@ -77,7 +76,7 @@ class ReservoirGrid:
 
     properties: dict[str, np.ndarray]
     metadata: GridMetadata
-    coordinates: Optional[np.ndarray] = None
+    coordinates: np.ndarray | None = None
 
     def __post_init__(self):
         """Validate grid data."""
@@ -102,7 +101,7 @@ class ReservoirGrid:
 
     def transform_coordinates(
         self, target_crs: str | int | Any, in_place: bool = False
-    ) -> Optional[np.ndarray]:
+    ) -> np.ndarray | None:
         """Transform coordinates to target CRS.
 
         Args:
@@ -164,7 +163,7 @@ class PetrelASCIIReader:
         if not self.filepath.exists():
             raise_file_not_found(str(self.filepath))
 
-    def read(self, property_names: Optional[list[str]] = None) -> ReservoirGrid:
+    def read(self, property_names: list[str] | None = None) -> ReservoirGrid:
         """Read Petrel ASCII grid file.
 
         Args:
@@ -174,7 +173,7 @@ class PetrelASCIIReader:
         Returns:
             ReservoirGrid object with properties and metadata
         """
-        with open(self.filepath, "r") as f:
+        with open(self.filepath) as f:
             content = f.read()
 
         lines = content.split("\n")
@@ -204,12 +203,15 @@ class PetrelASCIIReader:
             property_names = self._detect_property_names(header_lines, lines)
 
         # Read property data
-        data_lines = [l.strip() for l in lines[data_start:] if l.strip() and not l.startswith("#")]
+        data_lines = [
+            line.strip()
+            for line in lines[data_start:]
+            if line.strip() and not line.startswith("#")
+        ]
         data_array = np.array([list(map(float, line.split())) for line in data_lines if line])
 
         # Reshape based on format (column or grid)
         if data_array.shape[1] > 3:  # Column format: x, y, z, prop1, prop2, ...
-            coords = data_array[:, :3]
             for i, prop_name in enumerate(property_names):
                 if i + 3 < data_array.shape[1]:
                     prop_data = data_array[:, i + 3]
@@ -346,7 +348,7 @@ class RESQMLReader:
         if not self.filepath.exists():
             raise_file_not_found(str(self.filepath))
 
-    def read(self, property_path: Optional[str] = None) -> ReservoirGrid:
+    def read(self, property_path: str | None = None) -> ReservoirGrid:
         """Read RESQML HDF5 file.
 
         Args:
@@ -487,7 +489,7 @@ class ASCIIGridReader:
 
     def _detect_format(self) -> str:
         """Auto-detect file format."""
-        with open(self.filepath, "r") as f:
+        with open(self.filepath) as f:
             first_lines = [f.readline().strip() for _ in range(5)]
 
         # Check for Surfer format (starts with DSAA)
@@ -503,7 +505,7 @@ class ASCIIGridReader:
 
     def _read_surfer(self) -> ReservoirGrid:
         """Read Surfer ASCII grid format."""
-        with open(self.filepath, "r") as f:
+        with open(self.filepath) as f:
             lines = f.readlines()
 
         # Surfer format: DSAA header
@@ -524,7 +526,7 @@ class ASCIIGridReader:
         zmin, zmax = map(float, lines[header_idx + 4].split())
 
         # Read data
-        data_lines = [l.strip() for l in lines[header_idx + 5:] if l.strip()]
+        data_lines = [line.strip() for line in lines[header_idx + 5:] if line.strip()]
         data = np.array([float(x) for line in data_lines for x in line.split()])
 
         # Reshape (Surfer uses row-major, need to flip)
@@ -542,7 +544,7 @@ class ASCIIGridReader:
 
     def _read_gslib(self) -> ReservoirGrid:
         """Read GSLIB format."""
-        with open(self.filepath, "r") as f:
+        with open(self.filepath) as f:
             lines = f.readlines()
 
         # GSLIB format: first line is number of variables
@@ -550,7 +552,7 @@ class ASCIIGridReader:
         var_names = [lines[i].strip() for i in range(1, n_vars + 1)]
 
         # Read data
-        data_lines = [l.strip() for l in lines[n_vars + 1:] if l.strip()]
+        data_lines = [line.strip() for line in lines[n_vars + 1:] if line.strip()]
         data = np.array([list(map(float, line.split())) for line in data_lines])
 
         # Assume 2D grid (x, y, properties...)
@@ -599,8 +601,8 @@ class ASCIIGridReader:
 
 def load_reservoir_data(
     filepath: str | Path,
-    format: Optional[str] = None,
-    crs: Optional[str | int] = None,
+    format: str | None = None,
+    crs: str | int | None = None,
     **kwargs,
 ) -> ReservoirGrid:
     """Unified function to load reservoir data from various formats.
@@ -683,7 +685,7 @@ def _detect_file_format(filepath: Path) -> str:
         return "grdecl"
     elif ext in [".asc", ".ascii", ".txt"]:
         # Check content for Petrel vs generic ASCII
-        with open(filepath, "r") as f:
+        with open(filepath) as f:
             first_line = f.readline()
             if "NX" in first_line.upper() or "PETREL" in first_line.upper():
                 return "petrel_ascii"

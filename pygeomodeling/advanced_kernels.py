@@ -7,12 +7,11 @@ for capturing complex spatial patterns in geostatistical data.
 from __future__ import annotations
 
 import logging
-from typing import Optional
 
 try:
     import gpytorch
     import torch
-    import torch.nn.functional as F
+    import torch.nn.functional as F  # noqa: N812
     from gpytorch.constraints import Positive
     from gpytorch.kernels import Kernel
     from gpytorch.priors import NormalPrior
@@ -54,8 +53,8 @@ if GPYTORCH_AVAILABLE:
         def __init__(
             self,
             input_dim: int,
-            lengthscale_prior: Optional[gpytorch.priors.Prior] = None,
-            active_dims: Optional[list[int]] = None,
+            lengthscale_prior: gpytorch.priors.Prior | None = None,
+            active_dims: list[int] | None = None,
             **kwargs,
         ):
             super().__init__(**kwargs)
@@ -189,7 +188,7 @@ if GPYTORCH_AVAILABLE:
             self,
             input_dim: int,
             num_mixtures: int = 4,
-            active_dims: Optional[list[int]] = None,
+            active_dims: list[int] | None = None,
             **kwargs,
         ):
             super().__init__(**kwargs)

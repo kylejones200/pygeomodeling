@@ -7,7 +7,6 @@ reservoir characterization and resource estimation.
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional
 
 import numpy as np
 
@@ -214,7 +213,7 @@ class VolumetricsCalculator:
         cell_volumes: np.ndarray,
         porosity: np.ndarray,
         water_saturation: np.ndarray,
-        net_to_gross: Optional[np.ndarray] = None,
+        net_to_gross: np.ndarray | None = None,
         formation_volume_factor: float = 1.2,
         recovery_factor: float = 0.35,
     ) -> VolumetricResult:

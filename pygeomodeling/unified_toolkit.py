@@ -33,10 +33,11 @@ from sklearn.svm import SVR
 try:
     import gpytorch
     import torch
+
     from .model_gp import GPModel
 
     GPYTORCH_AVAILABLE = True
-except ImportError as exc:
+except ImportError:
     GPYTORCH_AVAILABLE = False
     torch = None
     gpytorch = None
@@ -757,7 +758,7 @@ class UnifiedSPE9Toolkit:
         )
         axes[1, 0].set_xlabel("True Values")
         axes[1, 0].set_ylabel("Predicted Values")
-        axes[1, 0].set_title(f"Predicted vs Actual")
+        axes[1, 0].set_title("Predicted vs Actual")
 
         # Residuals
         residuals = y_test - y_pred

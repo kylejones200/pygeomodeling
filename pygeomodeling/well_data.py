@@ -8,7 +8,6 @@ Supports standard LAS 2.0 format used in the oil & gas industry.
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -21,12 +20,12 @@ class WellHeader:
     """Well header information from LAS file."""
 
     well_name: str
-    uwi: Optional[str] = None  # Unique Well Identifier
-    field: Optional[str] = None
-    location: Optional[str] = None
-    country: Optional[str] = None
-    operator: Optional[str] = None
-    api: Optional[str] = None
+    uwi: str | None = None  # Unique Well Identifier
+    field: str | None = None
+    location: str | None = None
+    country: str | None = None
+    operator: str | None = None
+    api: str | None = None
     null_value: float = -999.25
 
     def __str__(self) -> str:
@@ -65,9 +64,9 @@ class LASParser:
             filepath: Path to LAS file
         """
         self.filepath = Path(filepath)
-        self.header: Optional["WellHeader"] = None
-        self.curves: dict[str, "CurveInfo"] = {}
-        self.data: Optional[pd.DataFrame] = None
+        self.header: WellHeader | None = None
+        self.curves: dict[str, CurveInfo] = {}
+        self.data: pd.DataFrame | None = None
 
         if not self.filepath.exists():
             raise DataLoadError(
@@ -232,7 +231,7 @@ class LASParser:
             depth_col = column_names[0]  # Typically DEPT or DEPTH
             self.data.set_index(depth_col, inplace=True)
 
-    def _extract_parameter(self, text: str, param: str) -> Optional[str]:
+    def _extract_parameter(self, text: str, param: str) -> str | None:
         """Extract parameter value from LAS section."""
         pattern = rf"{param}\s*\.\s*(\S+)"
         match = re.search(pattern, text)

@@ -12,7 +12,6 @@ Panoma gas fields dataset from University of Kansas.
 import logging
 import warnings
 from dataclasses import dataclass
-from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -67,10 +66,10 @@ class FaciesClassificationResult:
     """
 
     predictions: np.ndarray
-    probabilities: Optional[np.ndarray]
+    probabilities: np.ndarray | None
     accuracy: float
     f1_score: float
-    adjacent_accuracy: Optional[float]
+    adjacent_accuracy: float | None
     confusion_matrix: np.ndarray
     classification_report: str
 
@@ -95,7 +94,7 @@ class FaciesClassifier:
     def __init__(
         self,
         algorithm: str = "svm",
-        feature_names: Optional[list[str]] = None,
+        feature_names: list[str] | None = None,
         random_state: int = 42,
     ):
         """
@@ -126,7 +125,7 @@ class FaciesClassifier:
         self.random_state = random_state
 
         self.scaler = StandardScaler()
-        self.model: Optional[SVC | RandomForestClassifier | GradientBoostingClassifier] = None
+        self.model: SVC | RandomForestClassifier | GradientBoostingClassifier | None = None
         self.is_fitted = False
 
     def _create_model(self, **kwargs):
@@ -159,8 +158,8 @@ class FaciesClassifier:
 
     def fit(
         self,
-        X: Union[pd.DataFrame, np.ndarray],
-        y: Union[pd.Series, np.ndarray],
+        X: pd.DataFrame | np.ndarray,
+        y: pd.Series | np.ndarray,
         **model_params,
     ):
         """
@@ -201,9 +200,9 @@ class FaciesClassifier:
 
     def predict(
         self,
-        X: Union[pd.DataFrame, np.ndarray],
+        X: pd.DataFrame | np.ndarray,
         return_proba: bool = False,
-    ) -> Union[np.ndarray, tuple[np.ndarray, np.ndarray]]:
+    ) -> np.ndarray | tuple[np.ndarray, np.ndarray]:
         """
         Predict facies labels.
 
@@ -246,8 +245,8 @@ class FaciesClassifier:
 
     def evaluate(
         self,
-        X_test: Union[pd.DataFrame, np.ndarray],
-        y_test: Union[pd.Series, np.ndarray],
+        X_test: pd.DataFrame | np.ndarray,
+        y_test: pd.Series | np.ndarray,
         adjacent_facies: bool = True,
     ) -> FaciesClassificationResult:
         """
@@ -311,8 +310,8 @@ class FaciesClassifier:
 
     def cross_validate(
         self,
-        X: Union[pd.DataFrame, np.ndarray],
-        y: Union[pd.Series, np.ndarray],
+        X: pd.DataFrame | np.ndarray,
+        y: pd.Series | np.ndarray,
         cv: int = 5,
     ) -> dict[str, float]:
         """
@@ -338,9 +337,9 @@ class FaciesClassifier:
 
     def hyperparameter_search(
         self,
-        X: Union[pd.DataFrame, np.ndarray],
-        y: Union[pd.Series, np.ndarray],
-        param_grid: Optional[dict] = None,
+        X: pd.DataFrame | np.ndarray,
+        y: pd.Series | np.ndarray,
+        param_grid: dict | None = None,
         cv: int = 5,
     ) -> dict:
         """
@@ -393,7 +392,7 @@ class FaciesClassifier:
 
     def cluster_unlabeled_data(
         self,
-        X_unlabeled: Union[pd.DataFrame, np.ndarray],
+        X_unlabeled: pd.DataFrame | np.ndarray,
         n_clusters: int = 9,
         method: str = "kmeans",
     ) -> tuple[np.ndarray, np.ndarray]:
@@ -440,7 +439,7 @@ class FaciesClassifier:
 
     def active_learning_query(
         self,
-        X_unlabeled: Union[pd.DataFrame, np.ndarray],
+        X_unlabeled: pd.DataFrame | np.ndarray,
         n_samples: int = 10,
         strategy: str = "uncertainty",
     ) -> np.ndarray:
@@ -503,9 +502,9 @@ class FaciesClassifier:
 
     def semi_supervised_fit(
         self,
-        X_labeled: Union[pd.DataFrame, np.ndarray],
-        y_labeled: Union[pd.Series, np.ndarray],
-        X_unlabeled: Union[pd.DataFrame, np.ndarray],
+        X_labeled: pd.DataFrame | np.ndarray,
+        y_labeled: pd.Series | np.ndarray,
+        X_unlabeled: pd.DataFrame | np.ndarray,
         alpha: float = 0.2,
     ):
         """
@@ -573,10 +572,10 @@ class FaciesClassifier:
 
     def transfer_learning_fit(
         self,
-        X_source: Union[pd.DataFrame, np.ndarray],
-        y_source: Union[pd.Series, np.ndarray],
-        X_target: Union[pd.DataFrame, np.ndarray],
-        y_target: Union[pd.Series, np.ndarray],
+        X_source: pd.DataFrame | np.ndarray,
+        y_source: pd.Series | np.ndarray,
+        X_target: pd.DataFrame | np.ndarray,
+        y_target: pd.Series | np.ndarray,
         fine_tune_epochs: int = 50,
     ):
         """
@@ -678,9 +677,9 @@ def load_facies_data(filepath: str) -> pd.DataFrame:
 
 def prepare_facies_features(
     data: pd.DataFrame,
-    feature_names: Optional[list[str]] = None,
-    test_well: Optional[str] = None,
-) -> tuple[pd.DataFrame, pd.Series, Optional[pd.DataFrame], Optional[pd.Series]]:
+    feature_names: list[str] | None = None,
+    test_well: str | None = None,
+) -> tuple[pd.DataFrame, pd.Series, pd.DataFrame | None, pd.Series | None]:
     """
     Prepare features for facies classification.
 

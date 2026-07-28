@@ -9,7 +9,7 @@ import logging
 import pickle
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any
 
 import joblib
 
@@ -132,7 +132,7 @@ class ModelSerializer:
 
     SUPPORTED_FORMATS = ["joblib", "pickle", "torch"]
 
-    def __init__(self, save_dir: Union[str, Path] = "saved_models"):
+    def __init__(self, save_dir: str | Path = "saved_models"):
         """Initialize model serializer.
 
         Args:
@@ -219,7 +219,7 @@ class ModelSerializer:
 
     def load_model(
         self, model_name: str, format: str = "joblib"
-    ) -> tuple[Any, ModelMetadata, Optional[Any]]:
+    ) -> tuple[Any, ModelMetadata, Any | None]:
         """Load a saved model with metadata.
 
         Args:
@@ -355,7 +355,7 @@ def save_model(
     model_name: str,
     model_type: str,
     backend: str = "sklearn",
-    save_dir: Union[str, Path] = "saved_models",
+    save_dir: str | Path = "saved_models",
     scaler: Any = None,
     metrics: dict[str, float] | None = None,
     **kwargs,
@@ -386,8 +386,8 @@ def save_model(
 
 
 def load_model(
-    model_name: str, save_dir: Union[str, Path] = "saved_models"
-) -> tuple[Any, ModelMetadata, Optional[Any]]:
+    model_name: str, save_dir: str | Path = "saved_models"
+) -> tuple[Any, ModelMetadata, Any | None]:
     """Convenience function to load a model.
 
     Args:

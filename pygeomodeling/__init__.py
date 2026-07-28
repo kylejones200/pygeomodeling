@@ -25,19 +25,19 @@ except ImportError:
 
 # Import model classes if GPyTorch is available
 try:
+    from .advanced_kernels import (
+        NonStationaryRBFKernel,
+        SpectralMixtureKernel,
+        create_advanced_kernel,
+    )
     from .model_gp import (
         BayesianNeuralNetwork,
         DeepGPModel,
         MultiOutputGPModel,
         NeuralNetworkGPModel,
-        SPE9GPModel,
         SparseGPModel,
+        SPE9GPModel,
         create_gp_model,
-    )
-    from .advanced_kernels import (
-        NonStationaryRBFKernel,
-        SpectralMixtureKernel,
-        create_advanced_kernel,
     )
 except (
     ImportError
@@ -160,7 +160,21 @@ try:
         calculate_reserves_uncertainty,
         decline_curve_analysis,
     )
+    from .reservoir_formats import (
+        ASCIIGridReader,
+        GridMetadata,
+        PetrelASCIIReader,
+        PetrelBinaryReader,
+        ReservoirGrid,
+        RESQMLReader,
+        load_reservoir_data,
+    )
     from .serialization import ModelMetadata, ModelSerializer, load_model, save_model
+    from .spatial_reference import (
+        SpatialReference,
+        get_crs_from_epsg,
+        transform_coordinates,
+    )
     from .variogram import (
         VariogramModel,
         compute_experimental_variogram,
@@ -196,20 +210,6 @@ try:
         WorkflowManager,
         WorkflowState,
         create_workflow_dashboard,
-    )
-    from .reservoir_formats import (
-        ASCIIGridReader,
-        GridMetadata,
-        PetrelASCIIReader,
-        PetrelBinaryReader,
-        RESQMLReader,
-        ReservoirGrid,
-        load_reservoir_data,
-    )
-    from .spatial_reference import (
-        SpatialReference,
-        get_crs_from_epsg,
-        transform_coordinates,
     )
 except ImportError:
     # Advanced features not available

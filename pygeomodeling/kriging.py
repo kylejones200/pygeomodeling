@@ -15,7 +15,6 @@ Performance: Numba-accelerated distance calculations for 5-20x speedup.
 
 import warnings
 from dataclasses import dataclass
-from typing import Optional
 
 import numpy as np
 from scipy.spatial.distance import cdist
@@ -51,8 +50,8 @@ class KrigingResult:
 
     predictions: np.ndarray
     variance: np.ndarray
-    weights: Optional[np.ndarray] = None
-    lagrange_multiplier: Optional[np.ndarray] = None
+    weights: np.ndarray | None = None
+    lagrange_multiplier: np.ndarray | None = None
 
     def __str__(self) -> str:
         return (
@@ -179,7 +178,7 @@ class OrdinaryKriging:
         self,
         coordinates_target: np.ndarray,
         return_variance: bool = True,
-    ) -> tuple[np.ndarray, Optional[np.ndarray]]:
+    ) -> tuple[np.ndarray, np.ndarray | None]:
         """
         Predict at target locations.
 
@@ -355,7 +354,7 @@ class UniversalKriging:
         """Fit universal kriging system."""
         if coordinates.shape[0] != len(values):
             raise DataValidationError(
-                f"Coordinates and values must have same length",
+                "Coordinates and values must have same length",
                 suggestion="Check data alignment",
             )
 
@@ -396,7 +395,7 @@ class UniversalKriging:
         self,
         coordinates_target: np.ndarray,
         return_variance: bool = True,
-    ) -> tuple[np.ndarray, Optional[np.ndarray]]:
+    ) -> tuple[np.ndarray, np.ndarray | None]:
         """Predict at target locations with trend."""
         if self.K_inv is None:
             raise DataValidationError(
@@ -551,7 +550,7 @@ class CoKriging:
         self,
         coordinates_target: np.ndarray,
         return_variance: bool = True,
-    ) -> tuple[np.ndarray, Optional[np.ndarray]]:
+    ) -> tuple[np.ndarray, np.ndarray | None]:
         """Predict primary variable at target locations using both variables."""
         if self.K_inv is None:
             raise DataValidationError(

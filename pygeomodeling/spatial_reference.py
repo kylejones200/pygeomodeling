@@ -7,7 +7,6 @@ in the geomodeling toolkit.
 from __future__ import annotations
 
 import logging
-from typing import Optional, Union
 
 import numpy as np
 
@@ -29,7 +28,7 @@ class SpatialReference:
     Provides a unified interface for CRS handling across all spatial operations.
     """
 
-    def __init__(self, crs: Union[str, int, CRS, None] = None):
+    def __init__(self, crs: str | int | CRS | None = None):
         """Initialize spatial reference.
 
         Args:
@@ -53,12 +52,12 @@ class SpatialReference:
             self.crs = crs
 
     @property
-    def crs(self) -> Optional[CRS]:
+    def crs(self) -> CRS | None:
         """Get the CRS object."""
         return self._crs
 
     @crs.setter
-    def crs(self, value: Union[str, int, CRS]) -> None:
+    def crs(self, value: str | int | CRS) -> None:
         """Set the CRS.
 
         Args:
@@ -73,8 +72,8 @@ class SpatialReference:
     def transform(
         self,
         coordinates: np.ndarray,
-        target_crs: Union[str, int, CRS],
-        z_coordinate: Optional[np.ndarray] = None,
+        target_crs: str | int | CRS,
+        z_coordinate: np.ndarray | None = None,
     ) -> np.ndarray:
         """Transform coordinates to target CRS.
 
@@ -121,7 +120,7 @@ class SpatialReference:
             return axis_info[0].unit_name
         return "unknown"
 
-    def get_epsg(self) -> Optional[int]:
+    def get_epsg(self) -> int | None:
         """Get EPSG code if available.
 
         Returns:
@@ -147,9 +146,9 @@ class SpatialReference:
 
 def transform_coordinates(
     coordinates: np.ndarray,
-    source_crs: Union[str, int, CRS],
-    target_crs: Union[str, int, CRS],
-    z_coordinate: Optional[np.ndarray] = None,
+    source_crs: str | int | CRS,
+    target_crs: str | int | CRS,
+    z_coordinate: np.ndarray | None = None,
 ) -> np.ndarray:
     """Transform coordinates between CRS.
 

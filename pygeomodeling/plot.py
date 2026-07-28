@@ -5,9 +5,9 @@ Focused plotting module with proper separation of concerns.
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 
-import logging
 import matplotlib.pyplot as plt
 import numpy as np
 import signalplot

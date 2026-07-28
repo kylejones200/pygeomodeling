@@ -7,12 +7,12 @@ Includes multi-output GP, sparse GP, neural network GP, and Bayesian neural netw
 from __future__ import annotations
 
 import logging
-from typing import Any, Optional
+from typing import Any
 
 import gpytorch
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
+import torch.nn.functional as F  # noqa: N812
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -203,43 +203,6 @@ class DeepGPModel(gpytorch.models.ExactGP):
         return gpytorch.distributions.MultivariateNormal(mean_x, covar_x)
 
 
-# Backward compatibility alias
-GPModel = SPE9GPModel
-
-
-def create_gp_model(
-    train_x: torch.Tensor,
-    train_y: torch.Tensor,
-    likelihood: gpytorch.likelihoods.Likelihood | None = None,
-    *,
-    model_type: str = "standard",
-    **kwargs,
-) -> tuple[gpytorch.models.ExactGP, gpytorch.likelihoods.Likelihood]:
-    """Create GP models.
-
-    Args:
-        train_x: Training input features
-        train_y: Training target values
-        likelihood: Optional likelihood (creates Gaussian if None)
-        model_type: Type of model ('standard' or 'deep')
-        **kwargs: Additional arguments for model creation
-
-    Returns:
-        Tuple of (model, likelihood)
-    """
-    if likelihood is None:
-        likelihood = gpytorch.likelihoods.GaussianLikelihood()
-
-    if model_type == "standard":
-        model = SPE9GPModel(train_x, train_y, likelihood, **kwargs)
-    elif model_type == "deep":
-        model = DeepGPModel(train_x, train_y, likelihood, **kwargs)
-    else:
-        raise ValueError(f"Unknown model_type: {model_type}")
-
-    return model, likelihood
-
-
 class MultiOutputGPModel(gpytorch.models.ExactGP):
     """Multi-output Gaussian Process for modeling multiple correlated spatial fields.
 
@@ -264,7 +227,7 @@ class MultiOutputGPModel(gpytorch.models.ExactGP):
         num_outputs: int = 2,
         kernel_type: str = "combined",
         ard: bool = True,
-        rank: Optional[int] = None,
+        rank: int | None = None,
     ) -> None:
         if train_y.shape[-1] != num_outputs:
             raise ValueError(
@@ -780,10 +743,10 @@ class BayesianNeuralNetwork(nn.Module):
 
 
 # Backward compatibility alias
-GPModel: type[Any] = SPE9GPModel  # type: ignore[no-redef]
+GPModel: type[Any] = SPE9GPModel
 
 
-def create_gp_model(  # type: ignore[no-redef]
+def create_gp_model(
     train_x: torch.Tensor,
     train_y: torch.Tensor,
     likelihood: gpytorch.likelihoods.Likelihood | None = None,

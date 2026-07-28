@@ -8,8 +8,8 @@ Performance: Numba-accelerated for 10-50x speedup on large datasets.
 """
 
 import warnings
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable, Optional
 
 import numpy as np
 from scipy.optimize import curve_fit
@@ -209,7 +209,7 @@ def compute_experimental_variogram(
     coordinates: np.ndarray,
     values: np.ndarray,
     n_lags: int = 15,
-    max_lag: Optional[float] = None,
+    max_lag: float | None = None,
     lag_tolerance: float = 0.5,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Compute experimental semi-variogram from sample pairs.
@@ -316,10 +316,10 @@ def fit_variogram_model(
     lags: np.ndarray,
     semi_variance: np.ndarray,
     model_type: str = "spherical",
-    nugget_init: Optional[float] = None,
-    sill_init: Optional[float] = None,
-    range_init: Optional[float] = None,
-    weights: Optional[np.ndarray] = None,
+    nugget_init: float | None = None,
+    sill_init: float | None = None,
+    range_init: float | None = None,
+    weights: np.ndarray | None = None,
 ) -> VariogramModel:
     """Fit a variogram model to experimental data.
 
@@ -454,7 +454,7 @@ def directional_variogram(
     direction: float = 0.0,
     tolerance: float = 22.5,
     n_lags: int = 15,
-    max_lag: Optional[float] = None,
+    max_lag: float | None = None,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Compute directional (anisotropic) variogram.
 

@@ -71,10 +71,10 @@ def raise_file_not_found(filepath: str, file_type: str = "data"):
     raise DataLoadError(
         f"The {file_type} file was not found: {filepath}",
         suggestion=(
-            f"Please check that:\n"
-            f"  1. The file path is correct\n"
-            f"  2. The file exists at the specified location\n"
-            f"  3. You have read permissions for the file"
+            "Please check that:\n"
+            "  1. The file path is correct\n"
+            "  2. The file exists at the specified location\n"
+            "  3. You have read permissions for the file"
         ),
     )
 
@@ -103,10 +103,10 @@ def raise_property_not_found(property_name: str, available_properties: list | No
     raise PropertyNotFoundError(
         msg,
         suggestion=(
-            f"Check that:\n"
-            f"  1. The property name is spelled correctly\n"
-            f"  2. The property exists in your GRDECL file\n"
-            f"  3. The property was successfully parsed during data loading"
+            "Check that:\n"
+            "  1. The property name is spelled correctly\n"
+            "  2. The property exists in your GRDECL file\n"
+            "  3. The property was successfully parsed during data loading"
         ),
     )
 

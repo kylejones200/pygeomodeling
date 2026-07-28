@@ -509,7 +509,7 @@ class SPE9Toolkit:
         )
         axes[1, 1].set_xlabel("True PERMX (mD)")
         axes[1, 1].set_ylabel("Predicted PERMX (mD)")
-        axes[1, 1].set_title(f"Predicted vs Actual")
+        axes[1, 1].set_title("Predicted vs Actual")
 
         plt.tight_layout()
         filename = f"{model_name.lower()}_results.png"

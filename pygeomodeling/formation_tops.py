@@ -10,7 +10,6 @@ interpretation workflows.
 """
 
 from dataclasses import dataclass
-from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -83,13 +82,13 @@ class FormationTopDetector:
         self.min_formation_thickness = min_formation_thickness
         self.boundary_threshold = boundary_threshold
         self.processing_log: list[str] = []
-        self.boundary_classifier: Optional[RandomForestClassifier] = None
+        self.boundary_classifier: RandomForestClassifier | None = None
         self.scaler = StandardScaler()
 
     def compute_boundary_score(
         self,
         data: pd.DataFrame,
-        curves: Optional[list[str]] = None,
+        curves: list[str] | None = None,
         method: str = "composite",
     ) -> np.ndarray:
         """
@@ -173,7 +172,7 @@ class FormationTopDetector:
     def detect_boundaries(
         self,
         data: pd.DataFrame,
-        curves: Optional[list[str]] = None,
+        curves: list[str] | None = None,
         use_peak_detection: bool = True,
     ) -> list[float]:
         """
@@ -228,7 +227,7 @@ class FormationTopDetector:
     def train_boundary_classifier(
         self,
         training_data: list[tuple[pd.DataFrame, list[FormationTop]]],
-        curves: Optional[list[str]] = None,
+        curves: list[str] | None = None,
     ):
         """
         Train ML classifier to distinguish true boundaries from noise.
@@ -319,7 +318,7 @@ class FormationTopDetector:
         self,
         data: pd.DataFrame,
         detected_boundaries: list[float],
-        curves: Optional[list[str]] = None,
+        curves: list[str] | None = None,
     ) -> list[tuple[float, float]]:
         """
         Classify detected boundaries using trained ML model.
@@ -395,7 +394,7 @@ class FormationTopDetector:
         self,
         boundaries: list[float],
         reference_sequence: list[str],
-        regional_tops: Optional[dict[str, float]] = None,
+        regional_tops: dict[str, float] | None = None,
     ) -> list[FormationTop]:
         """
         Correlate detected boundaries with known stratigraphic sequence.
@@ -458,9 +457,9 @@ class FormationTopDetector:
     def detect_and_classify(
         self,
         data: pd.DataFrame,
-        curves: Optional[list[str]] = None,
-        reference_sequence: Optional[list[str]] = None,
-        regional_tops: Optional[dict[str, float]] = None,
+        curves: list[str] | None = None,
+        reference_sequence: list[str] | None = None,
+        regional_tops: dict[str, float] | None = None,
     ) -> BoundaryDetectionResult:
         """
         Complete workflow: detect boundaries and classify formations.

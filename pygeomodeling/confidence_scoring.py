@@ -9,7 +9,7 @@ Implements confidence assessment strategies for automated well log interpretatio
 
 import logging
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -367,7 +367,7 @@ class ConfidenceScorer:
     def confidence_by_facies(
         self,
         report: WellConfidenceReport,
-        facies_names: Optional[dict[int, str]] = None,
+        facies_names: dict[int, str] | None = None,
     ) -> pd.DataFrame:
         """
         Analyze confidence by predicted facies type.
@@ -461,7 +461,7 @@ def compare_confidence_across_wells(
 def export_review_list(
     reports: list[WellConfidenceReport],
     output_file: str,
-    max_items: Optional[int] = None,
+    max_items: int | None = None,
 ):
     """
     Export prioritized review list for expert QC.

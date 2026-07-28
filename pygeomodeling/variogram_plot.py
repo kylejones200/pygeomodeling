@@ -4,9 +4,8 @@ Variogram Visualization Utilities
 Use plots to check the fit. Clear models produce better spatial estimates.
 """
 
-from typing import Optional
-
 import logging
+
 import matplotlib.pyplot as plt
 import numpy as np
 import signalplot
@@ -25,10 +24,10 @@ signalplot.apply()
 def plot_variogram(
     lags: np.ndarray,
     semi_variance: np.ndarray,
-    model: Optional[VariogramModel] = None,
-    n_pairs: Optional[np.ndarray] = None,
+    model: VariogramModel | None = None,
+    n_pairs: np.ndarray | None = None,
     title: str = "Semi-Variogram",
-    ax: Optional[Axes] = None,
+    ax: Axes | None = None,
     show_model_params: bool = True,
 ) -> tuple[Figure, Axes]:
     """Plot experimental variogram with optional fitted model.
@@ -54,7 +53,7 @@ def plot_variogram(
     if n_pairs is not None:
         # Size points by number of pairs
         sizes = 50 + 200 * (n_pairs / n_pairs.max())
-        scatter = ax.scatter(
+        ax.scatter(
             lags,
             semi_variance,
             s=sizes,
@@ -149,7 +148,7 @@ def plot_variogram_comparison(
     lags: np.ndarray,
     semi_variance: np.ndarray,
     models: list[VariogramModel],
-    n_pairs: Optional[np.ndarray] = None,
+    n_pairs: np.ndarray | None = None,
     title: str = "Variogram Model Comparison",
 ) -> tuple[Figure, Axes]:
     """Compare multiple variogram models.
@@ -325,7 +324,7 @@ def plot_variogram_cloud(
     values: np.ndarray,
     max_pairs: int = 5000,
     title: str = "Variogram Cloud",
-    ax: Optional[Axes] = None,
+    ax: Axes | None = None,
 ) -> tuple[Figure, Axes]:
     """Plot variogram cloud (all pairwise semi-variances).
 
