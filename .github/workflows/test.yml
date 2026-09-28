@@ -2,13 +2,19 @@ name: Tests
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main]
   pull_request:
     branches: [ main, develop ]
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
+    # Pull requests run Linux. Push to main and a manual run cover macOS and Windows.
+    if: matrix.os == 'ubuntu-latest' || github.event_name != 'pull_request'
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
