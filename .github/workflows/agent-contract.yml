@@ -1,0 +1,19 @@
+name: agent-contract
+on:
+  pull_request:
+  push:
+    branches: [main]
+concurrency:
+  group: agent-contract-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: version capabilities health
+        run: |
+          python3 agent/cli.py version
+          python3 agent/cli.py capabilities
+          python3 agent/cli.py health
+          python3 agent/cli.py validate

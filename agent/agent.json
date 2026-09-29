@@ -1,0 +1,46 @@
+{
+  "agent": "pygeomodeling-agent",
+  "version": "0.1.0",
+  "owner": "pygeomodeling",
+  "git_revision": "098f1a19b960fd1c4b9ad9d1327c8096a4840cf2",
+  "runtime": "cli",
+  "repository": "pygeomodeling",
+  "image": null,
+  "tools": [
+    {
+      "name": "spe9-experiment",
+      "version": "0.3.2",
+      "description": "\"\"\"Deep GP Experiment for SPE9 Reservoir Modeling.",
+      "command": "spe9-experiment",
+      "input_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {},
+        "description": "The owner source declares no command-line flags."
+      },
+      "output_schema": {
+        "type": "string",
+        "description": "Stdout produced by the owner command. JSON is preserved inside the invocation result."
+      },
+      "side_effect_class": "READ_ONLY",
+      "approval_policy": {
+        "required": false,
+        "when_required": "never"
+      },
+      "timeout_class": "NORMAL",
+      "required_dependencies": [
+        "local executable",
+        "Python"
+      ],
+      "classification_evidence": [
+        "inspected command source; no write API"
+      ],
+      "invoke": {
+        "kind": "python",
+        "source": "/Volumes/gitty-up/landmark-workspace/pygeomodeling/pygeomodeling/experiments/deep_gp_experiment.py",
+        "bin_kind": "python-script",
+        "module": "pygeomodeling.experiments.deep_gp_experiment"
+      }
+    }
+  ]
+}

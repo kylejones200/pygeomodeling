@@ -1,0 +1,14 @@
+agent: pygeomodeling-agent
+version: "0.1.0"
+owner: pygeomodeling
+git_revision: 098f1a19b960fd1c4b9ad9d1327c8096a4840cf2
+runtime: cli
+repository: pygeomodeling
+tools:
+  - name: spe9-experiment
+    command: spe9-experiment
+    kind: python-script
+    description: "existing owner command"
+    side_effects: none
+    approval: none
+    timeout_class: standard
