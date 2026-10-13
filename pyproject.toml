@@ -60,7 +60,7 @@ dependencies = [
 # Development tools
 dev = [
   "jupyter>=1.0.0,<2.0.0",
-  "ipykernel>=6.20.0,<7.0.0",
+  "ipykernel>=6.20.0,<8.0.0",
   "black>=23.0.0",
   "pytest>=7.0.0",
   "pytest-cov>=4.0.0",
@@ -126,7 +126,7 @@ all = [
     "h5py>=3.8.0,<4.0.0",
     # Development tools
   "jupyter>=1.0.0,<2.0.0",
-  "ipykernel>=6.20.0,<7.0.0",
+  "ipykernel>=6.20.0,<8.0.0",
   "black>=23.0.0",
   "pytest>=7.0.0",
   "pytest-cov>=4.0.0",
