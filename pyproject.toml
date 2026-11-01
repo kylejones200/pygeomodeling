@@ -93,9 +93,11 @@ geospatial = [
   "pyproj>=3.6.0,<4.0.0"
 ]
 
-# Performance optimization (additional accelerators)
+# Performance optimization (additional accelerators).
+# Linux-only: uv/local-ci may resolve every optional extra, and cupy builds
+# from source need CUDA headers that are absent on macOS CI hosts.
 performance = [
-  "cupy>=12.0.0,<13.0.0"  # GPU acceleration (optional)
+  "cupy>=12.0.0,<13.0.0; sys_platform == 'linux'"
 ]
 
 # Interactive visualization (currently empty - reserved for future use)
