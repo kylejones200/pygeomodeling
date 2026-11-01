@@ -62,8 +62,8 @@ class CorrectionRecord:
     def to_dict(self) -> dict:
         """Convert to dictionary for serialization."""
         return {
-            "well_name": self.well_name,
-            "depth": self.depth,
+            "well_name": str(self.well_name),
+            "depth": float(self.depth),
             "original_prediction": int(self.original_prediction),
             "corrected_label": int(self.corrected_label),
             "confidence_score": float(self.confidence_score),
@@ -271,19 +271,21 @@ class WorkflowManager:
             wells, depths, ml_preds, expert, confidences, notes_col
         ):
             correction = CorrectionRecord(
-                well_name=well_name,
-                depth=depth,
+                well_name=str(well_name),
+                depth=float(depth),
                 original_prediction=int(ml_pred),
                 corrected_label=int(expert_corr),
-                confidence_score=confidence,
+                confidence_score=float(confidence),
                 correction_date=correction_date,
                 expert_id=expert_id,
                 notes="" if notes is None or (isinstance(notes, float) and np.isnan(notes)) else str(notes),
             )
             self.state.corrections.append(correction)
 
-        self.state.total_corrections += len(corrected)
-        self.state.reviewed_wells += len(corrected["Well"].unique())
+        self.state.total_corrections = int(self.state.total_corrections) + int(len(corrected))
+        self.state.reviewed_wells = int(self.state.reviewed_wells) + int(
+            corrected["Well"].nunique()
+        )
 
         logger.info("Imported %d corrections from %s", len(corrected), correction_file)
         logger.info("  Total corrections: %d", self.state.total_corrections)
