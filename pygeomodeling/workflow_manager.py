@@ -14,6 +14,7 @@ import logging
 from dataclasses import dataclass, field
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 # Configure logging
@@ -256,16 +257,28 @@ class WorkflowManager:
         correction_date = datetime.datetime.now().strftime("%Y-%m-%d")
 
         # Record each correction
-        for _, row in corrected.iterrows():
+        wells = corrected["Well"].to_numpy()
+        depths = corrected["Depth_m"].to_numpy()
+        ml_preds = corrected["ML_Prediction"].to_numpy()
+        expert = corrected["Expert_Correction"].to_numpy()
+        confidences = corrected["Confidence"].to_numpy()
+        notes_col = (
+            corrected["Notes"].to_numpy()
+            if "Notes" in corrected.columns
+            else np.full(len(corrected), "", dtype=object)
+        )
+        for well_name, depth, ml_pred, expert_corr, confidence, notes in zip(
+            wells, depths, ml_preds, expert, confidences, notes_col
+        ):
             correction = CorrectionRecord(
-                well_name=row["Well"],
-                depth=row["Depth_m"],
-                original_prediction=int(row["ML_Prediction"]),
-                corrected_label=int(row["Expert_Correction"]),
-                confidence_score=row["Confidence"],
+                well_name=well_name,
+                depth=depth,
+                original_prediction=int(ml_pred),
+                corrected_label=int(expert_corr),
+                confidence_score=confidence,
                 correction_date=correction_date,
                 expert_id=expert_id,
-                notes=row.get("Notes", ""),
+                notes="" if notes is None or (isinstance(notes, float) and np.isnan(notes)) else str(notes),
             )
             self.state.corrections.append(correction)
 

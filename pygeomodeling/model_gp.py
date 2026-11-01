@@ -28,6 +28,35 @@ except ImportError:
     SpectralMixtureKernel: type[Any] | None = None  # type: ignore[no-redef]
 
 
+def _standard_base_kernel(
+    kernel_type: str, input_dim: int, ard: bool
+) -> gpytorch.kernels.Kernel:
+    ard_dims = input_dim if ard else None
+    kernel_builders = {
+        "rbf": lambda: gpytorch.kernels.RBFKernel(ard_num_dims=ard_dims),
+        "matern": lambda: gpytorch.kernels.MaternKernel(nu=1.5, ard_num_dims=ard_dims),
+        "combined": lambda: (
+            gpytorch.kernels.RBFKernel(ard_num_dims=ard_dims)
+            + gpytorch.kernels.MaternKernel(nu=1.5, ard_num_dims=ard_dims)
+        ),
+    }
+    try:
+        return kernel_builders[kernel_type]()
+    except KeyError as exc:
+        raise ValueError(f"Unknown kernel_type: {kernel_type}") from exc
+
+
+def _advanced_covariance_kernel(
+    kernel_type: str, input_dim: int
+) -> gpytorch.kernels.Kernel | None:
+    if not (ADVANCED_KERNELS_AVAILABLE and kernel_type in ("nonstationary_rbf", "spectral_mixture", "sm")):
+        return None
+    if kernel_type == "nonstationary_rbf":
+        return gpytorch.kernels.ScaleKernel(NonStationaryRBFKernel(input_dim=input_dim))
+    base_kernel = SpectralMixtureKernel(input_dim=input_dim, num_mixtures=4)
+    return base_kernel
+
+
 class SPE9GPModel(gpytorch.models.ExactGP):
     """Gaussian Process model for SPE9 reservoir property prediction.
 
@@ -82,42 +111,12 @@ class SPE9GPModel(gpytorch.models.ExactGP):
         Returns:
             Configured kernel
         """
-        # Check for advanced kernels
-        if use_advanced and ADVANCED_KERNELS_AVAILABLE:
-            if kernel_type in ["nonstationary_rbf"]:
-                base_kernel = NonStationaryRBFKernel(input_dim=input_dim)
-                return gpytorch.kernels.ScaleKernel(base_kernel)
-            elif kernel_type in ["spectral_mixture", "sm"]:
-                num_mixtures = 4  # Default number of mixtures
-                base_kernel = SpectralMixtureKernel(
-                    input_dim=input_dim, num_mixtures=num_mixtures
-                )
-                return base_kernel  # SM kernel handles scaling internally
+        if use_advanced:
+            advanced = _advanced_covariance_kernel(kernel_type, input_dim)
+            if advanced is not None:
+                return advanced
 
-        # Standard kernels
-        if kernel_type == "rbf":
-            base_kernel = gpytorch.kernels.RBFKernel(
-                ard_num_dims=input_dim if ard else None
-            )
-        elif kernel_type == "matern":
-            base_kernel = gpytorch.kernels.MaternKernel(
-                nu=1.5, ard_num_dims=input_dim if ard else None
-            )
-        elif kernel_type == "combined":
-            rbf_kernel = gpytorch.kernels.RBFKernel(
-                ard_num_dims=input_dim if ard else None
-            )
-            matern_kernel = gpytorch.kernels.MaternKernel(
-                nu=1.5, ard_num_dims=input_dim if ard else None
-            )
-            base_kernel = rbf_kernel + matern_kernel
-        else:
-            raise ValueError(
-                f"Unknown kernel_type: {kernel_type}. "
-                "Choose from: 'rbf', 'matern', 'combined', 'nonstationary_rbf', 'spectral_mixture'"
-            )
-
-        # Scale kernel to learn output variance
+        base_kernel = _standard_base_kernel(kernel_type, input_dim, ard)
         return gpytorch.kernels.ScaleKernel(base_kernel)
 
     def forward(self, x: torch.Tensor) -> gpytorch.distributions.MultivariateNormal:
@@ -245,27 +244,7 @@ class MultiOutputGPModel(gpytorch.models.ExactGP):
             gpytorch.means.ConstantMean(), num_tasks=num_outputs
         )
 
-        # Base kernel for each latent function
-        if kernel_type == "rbf":
-            base_kernel = gpytorch.kernels.RBFKernel(
-                ard_num_dims=input_dim if ard else None
-            )
-        elif kernel_type == "matern":
-            base_kernel = gpytorch.kernels.MaternKernel(
-                nu=1.5, ard_num_dims=input_dim if ard else None
-            )
-        elif kernel_type == "combined":
-            rbf_kernel = gpytorch.kernels.RBFKernel(
-                ard_num_dims=input_dim if ard else None
-            )
-            matern_kernel = gpytorch.kernels.MaternKernel(
-                nu=1.5, ard_num_dims=input_dim if ard else None
-            )
-            base_kernel = rbf_kernel + matern_kernel
-        else:
-            raise ValueError(f"Unknown kernel_type: {kernel_type}")
-
-        # Scale kernel
+        base_kernel = _standard_base_kernel(kernel_type, input_dim, ard)
         scaled_kernel = gpytorch.kernels.ScaleKernel(base_kernel)
 
         # Multi-task kernel using Linear Model of Coregionalization
@@ -348,26 +327,7 @@ class SparseGPModel(gpytorch.models.ApproximateGP):
                 gpytorch.means.ConstantMean(), num_tasks=num_outputs
             )
 
-        # Kernel
-        if kernel_type == "rbf":
-            base_kernel = gpytorch.kernels.RBFKernel(
-                ard_num_dims=input_dim if ard else None
-            )
-        elif kernel_type == "matern":
-            base_kernel = gpytorch.kernels.MaternKernel(
-                nu=1.5, ard_num_dims=input_dim if ard else None
-            )
-        elif kernel_type == "combined":
-            rbf_kernel = gpytorch.kernels.RBFKernel(
-                ard_num_dims=input_dim if ard else None
-            )
-            matern_kernel = gpytorch.kernels.MaternKernel(
-                nu=1.5, ard_num_dims=input_dim if ard else None
-            )
-            base_kernel = rbf_kernel + matern_kernel
-        else:
-            raise ValueError(f"Unknown kernel_type: {kernel_type}")
-
+        base_kernel = _standard_base_kernel(kernel_type, input_dim, ard)
         self.covar_module = gpytorch.kernels.ScaleKernel(base_kernel)
 
         if num_outputs > 1:
@@ -424,24 +384,19 @@ class NeuralNetworkGPModel(gpytorch.models.ExactGP):
         input_dim = train_x.shape[-1]
         self.architecture = architecture
 
-        # Build feature extractor based on architecture
-        if architecture == "standard":
-            self.feature_extractor = self._build_standard_network(
-                input_dim, hidden_dim, num_layers, dropout
-            )
-        elif architecture == "residual":
-            self.feature_extractor = self._build_residual_network(
-                input_dim, hidden_dim, num_layers, dropout
-            )
-        elif architecture == "attention":
-            self.feature_extractor = self._build_attention_network(
-                input_dim, hidden_dim, num_layers, dropout
-            )
-        else:
+        arch_builders = {
+            "standard": self._build_standard_network,
+            "residual": self._build_residual_network,
+            "attention": self._build_attention_network,
+        }
+        try:
+            build = arch_builders[architecture]
+        except KeyError as exc:
             raise ValueError(
                 f"Unknown architecture: {architecture}. "
                 "Choose from: 'standard', 'residual', 'attention'"
-            )
+            ) from exc
+        self.feature_extractor = build(input_dim, hidden_dim, num_layers, dropout)
 
         # GP components
         self.mean_module = gpytorch.means.ConstantMean()
@@ -785,19 +740,17 @@ def create_gp_model(
         else:
             likelihood = gpytorch.likelihoods.GaussianLikelihood()
 
-    if model_type == "standard":
-        model = SPE9GPModel(train_x, train_y, likelihood, **kwargs)
-    elif model_type == "deep":
-        model = DeepGPModel(train_x, train_y, likelihood, **kwargs)
-    elif model_type == "multioutput":
+    def _build_multioutput() -> gpytorch.models.ExactGP:
         if train_y.dim() == 1:
             raise ValueError("For multi-output GP, train_y must be 2D [N, num_outputs]")
         num_outputs = kwargs.pop("num_outputs", train_y.shape[-1])
-        model = MultiOutputGPModel(train_x, train_y, likelihood, num_outputs=num_outputs, **kwargs)
-    elif model_type == "sparse":
+        return MultiOutputGPModel(
+            train_x, train_y, likelihood, num_outputs=num_outputs, **kwargs
+        )
+
+    def _build_sparse() -> gpytorch.models.ExactGP:
         inducing_points = kwargs.pop("inducing_points", None)
         if inducing_points is None:
-            # Default: use k-means to select inducing points
             from sklearn.cluster import KMeans
 
             num_inducing = kwargs.pop("num_inducing", min(500, len(train_x)))
@@ -807,14 +760,22 @@ def create_gp_model(
                 kmeans.cluster_centers_, dtype=train_x.dtype, device=train_x.device
             )
         num_outputs = kwargs.pop("num_outputs", 1)
-        model = SparseGPModel(inducing_points, num_outputs=num_outputs, **kwargs)
-    elif model_type == "neural":
-        model = NeuralNetworkGPModel(train_x, train_y, likelihood, **kwargs)
-    else:
+        return SparseGPModel(inducing_points, num_outputs=num_outputs, **kwargs)
+
+    gp_model_builders = {
+        "standard": lambda: SPE9GPModel(train_x, train_y, likelihood, **kwargs),
+        "deep": lambda: DeepGPModel(train_x, train_y, likelihood, **kwargs),
+        "multioutput": _build_multioutput,
+        "sparse": _build_sparse,
+        "neural": lambda: NeuralNetworkGPModel(train_x, train_y, likelihood, **kwargs),
+    }
+    try:
+        model = gp_model_builders[model_type]()
+    except KeyError as exc:
         raise ValueError(
             f"Unknown model_type: {model_type}. "
             "Choose from: 'standard', 'deep', 'multioutput', 'sparse', 'neural'"
-        )
+        ) from exc
 
     return model, likelihood
 

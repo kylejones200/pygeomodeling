@@ -478,14 +478,15 @@ class ASCIIGridReader:
         if self.format == "auto":
             self.format = self._detect_format()
 
-        if self.format == "surfer":
-            return self._read_surfer()
-        elif self.format == "gslib":
-            return self._read_gslib()
-        elif self.format == "column":
-            return self._read_column()
-        else:
-            raise ValueError(f"Unknown format: {self.format}")
+        readers = {
+            "surfer": self._read_surfer,
+            "gslib": self._read_gslib,
+            "column": self._read_column,
+        }
+        try:
+            return readers[self.format]()
+        except KeyError as exc:
+            raise ValueError(f"Unknown format: {self.format}") from exc
 
     def _detect_format(self) -> str:
         """Auto-detect file format."""
@@ -630,24 +631,20 @@ def load_reservoir_data(
     if format is None or format == "auto":
         format = _detect_file_format(filepath)
 
-    # Load based on format
-    if format == "grdecl":
+    def _load_grdecl() -> ReservoirGrid:
         parser = GRDECLParser(str(filepath))
         data = parser.parse()
-        properties = data["properties"]
-        dimensions = data["dimensions"]
+        metadata = GridMetadata(dimensions=data["dimensions"], crs=crs)
+        return ReservoirGrid(properties=data["properties"], metadata=metadata)
 
-        metadata = GridMetadata(dimensions=dimensions, crs=crs)
-        return ReservoirGrid(properties=properties, metadata=metadata)
-
-    elif format == "petrel_ascii":
+    def _load_petrel_ascii() -> ReservoirGrid:
         reader: Any = PetrelASCIIReader(filepath)
         grid = reader.read(**kwargs)
         if crs:
             grid.metadata.crs = crs
         return grid
 
-    elif format == "petrel_binary":
+    def _load_petrel_binary() -> ReservoirGrid:
         dimensions = kwargs.pop("dimensions", (24, 25, 15))
         reader = PetrelBinaryReader(filepath)
         grid = reader.read(dimensions=dimensions, **kwargs)
@@ -655,47 +652,54 @@ def load_reservoir_data(
             grid.metadata.crs = crs
         return grid
 
-    elif format == "resqml":
+    def _load_resqml() -> ReservoirGrid:
         reader = RESQMLReader(filepath)
         grid = reader.read(**kwargs)
         if crs:
             grid.metadata.crs = crs
         return grid
 
-    elif format == "ascii_grid":
+    def _load_ascii_grid() -> ReservoirGrid:
         reader = ASCIIGridReader(filepath, format=kwargs.pop("ascii_format", "auto"))
         grid = reader.read()
         if crs:
             grid.metadata.crs = crs
         return grid
 
-    else:
+    load_by_format = {
+        "grdecl": _load_grdecl,
+        "petrel_ascii": _load_petrel_ascii,
+        "petrel_binary": _load_petrel_binary,
+        "resqml": _load_resqml,
+        "ascii_grid": _load_ascii_grid,
+    }
+    try:
+        return load_by_format[format]()
+    except KeyError as exc:
         raise ValueError(
             f"Unknown format: {format}. "
             "Choose from: 'grdecl', 'petrel_ascii', 'petrel_binary', 'resqml', 'ascii_grid'"
-        )
+        ) from exc
 
 
 def _detect_file_format(filepath: Path) -> str:
     """Auto-detect file format from extension and content."""
     ext = filepath.suffix.lower()
 
-    # Check extension
     if ext == ".grdecl":
         return "grdecl"
-    elif ext in [".asc", ".ascii", ".txt"]:
-        # Check content for Petrel vs generic ASCII
+    if ext in (".asc", ".ascii", ".txt"):
         with open(filepath) as f:
             first_line = f.readline()
-            if "NX" in first_line.upper() or "PETREL" in first_line.upper():
-                return "petrel_ascii"
-            else:
-                return "ascii_grid"
-    elif ext == ".bin" or ext == ".petrel":
-        return "petrel_binary"
-    elif ext in [".h5", ".hdf5", ".resqml"]:
-        return "resqml"
-    else:
-        # Try to read as ASCII grid
+        if "NX" in first_line.upper() or "PETREL" in first_line.upper():
+            return "petrel_ascii"
         return "ascii_grid"
+    ext_format = {
+        ".bin": "petrel_binary",
+        ".petrel": "petrel_binary",
+        ".h5": "resqml",
+        ".hdf5": "resqml",
+        ".resqml": "resqml",
+    }
+    return ext_format.get(ext, "ascii_grid")
 

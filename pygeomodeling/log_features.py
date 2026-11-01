@@ -166,31 +166,34 @@ class LogFeatureEngineer:
             smoothed = pd.Series(smoothed).interpolate(limit=5).values
             smoothed = gaussian_filter1d(smoothed, sigma=smooth_sigma)
 
-            # Compute derivative
-            if method == "gradient":
-                deriv = np.gradient(smoothed, depth_step)
-            elif method == "savgol":
+            def _deriv_gradient() -> np.ndarray:
+                return np.gradient(smoothed, depth_step)
+
+            def _deriv_savgol() -> np.ndarray:
                 from scipy.signal import savgol_filter
 
-                # window_length must be odd
                 window_length = (
                     int(5 * smooth_sigma)
                     if int(5 * smooth_sigma) % 2 == 1
                     else int(5 * smooth_sigma) + 1
                 )
                 window_length = max(5, min(window_length, len(smoothed) // 2))
-                deriv = savgol_filter(
+                return savgol_filter(
                     smoothed,
                     window_length=window_length,
                     polyorder=2,
                     deriv=1,
                     delta=depth_step,
                 )
-            else:
+
+            deriv_by_method = {"gradient": _deriv_gradient, "savgol": _deriv_savgol}
+            try:
+                deriv = deriv_by_method[method]()
+            except KeyError as exc:
                 raise InvalidParameterError(
                     f"Unknown derivative method: {method}",
                     "Valid methods: 'gradient', 'savgol'",
-                )
+                ) from exc
 
             # Restore null values
             deriv[~valid_mask] = self.null_value
@@ -318,19 +321,18 @@ class LogFeatureEngineer:
             for window in window_sizes:
                 rolling = series.rolling(window=window, center=True, min_periods=1)
 
+                rolling_stat_ops = {
+                    "mean": rolling.mean,
+                    "std": rolling.std,
+                    "min": rolling.min,
+                    "max": rolling.max,
+                    "median": rolling.median,
+                }
                 for stat in statistics:
-                    if stat == "mean":
-                        values = rolling.mean()
-                    elif stat == "std":
-                        values = rolling.std()
-                    elif stat == "min":
-                        values = rolling.min()
-                    elif stat == "max":
-                        values = rolling.max()
-                    elif stat == "median":
-                        values = rolling.median()
-                    else:
+                    stat_fn = rolling_stat_ops.get(stat)
+                    if stat_fn is None:
                         continue
+                    values = stat_fn()
 
                     col_name = f"{curve}_ROLL{window}_{stat.upper()}"
                     rolling_stats[col_name] = values.fillna(self.null_value)
@@ -570,19 +572,18 @@ class LogFeatureEngineer:
         X = features.loc[valid_mask].values
         y = target.loc[valid_mask].values
 
-        if method == "correlation":
-            # Use F-statistic
-            scores, _ = f_classif(X, y)
-        elif method == "mutual_info":
-            scores = mutual_info_classif(X, y, random_state=42)
-        elif method == "variance":
-            # Simple variance-based selection
-            scores = np.var(X, axis=0)
-        else:
+        feature_score_fns = {
+            "correlation": lambda: f_classif(X, y)[0],
+            "mutual_info": lambda: mutual_info_classif(X, y, random_state=42),
+            "variance": lambda: np.var(X, axis=0),
+        }
+        try:
+            scores = feature_score_fns[method]()
+        except KeyError as exc:
             raise InvalidParameterError(
                 f"Unknown feature selection method: {method}",
                 "Valid methods: 'correlation', 'mutual_info', 'variance'",
-            )
+            ) from exc
 
         # Handle NaN scores
         scores = np.nan_to_num(scores, nan=0.0)
