@@ -269,7 +269,7 @@ class TestPerformanceAndMemory:
         toolkit.load_data()
 
         # Should be able to process without memory errors
-        grid_data = toolkit.prepare_features(add_geological_features=True)
+        toolkit.prepare_features(add_geological_features=True)
         X_train, X_test, y_train, y_test = toolkit.create_train_test_split(
             test_size=0.2
         )

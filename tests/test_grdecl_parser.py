@@ -10,7 +10,6 @@ from pygeomodeling.exceptions import (
     DataValidationError,
     FileFormatError,
 )
-
 from pygeomodeling.grdecl_parser import GRDECLParser, load_spe9_data
 
 

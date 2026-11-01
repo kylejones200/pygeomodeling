@@ -7,7 +7,7 @@ name = "pygeomodeling"
 version = "0.3.2"
 description = "Advanced Gaussian Process Regression and Kriging toolkit for SPE9 reservoir modeling"
 readme = {file = "README.MD", content-type = "text/markdown"}
-requires-python = ">=3.9"
+requires-python = ">=3.12"
 license = {text = "MIT"}
 authors = [
   {name = "K. Jones", email = "kyletjones@gmail.com"}
@@ -94,11 +94,10 @@ geospatial = [
 ]
 
 # Performance optimization (additional accelerators).
-# Linux-only: uv/local-ci may resolve every optional extra, and cupy builds
-# from source need CUDA headers that are absent on macOS CI hosts.
-performance = [
-  "cupy>=12.0.0,<13.0.0; sys_platform == 'linux'"
-]
+# cupy is not declared here: uv resolves every optional extra for this
+# project, and building cupy from source needs CUDA. Install manually:
+#   pip install "cupy>=12,<13"  # on a CUDA host
+performance = []
 
 # Interactive visualization (currently empty - reserved for future use)
 visualization = []
@@ -251,3 +250,7 @@ disable_error_code = [
   "call-overload",
   "no-redef",
 ]
+
+[tool.uv]
+# Prevent accidental cupy source builds when extras are fully resolved.
+override-dependencies = ["cupy; sys_platform == 'never'"]

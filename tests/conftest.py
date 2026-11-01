@@ -108,24 +108,21 @@ def mock_spe9_toolkit():
 @pytest.fixture
 def skip_if_no_gpytorch():
     """Skip test if GPyTorch is not available."""
-    try:
-        import gpytorch
-        import torch
+    import importlib.util
 
-        return True
-    except ImportError:
+    if importlib.util.find_spec("gpytorch") is None or importlib.util.find_spec("torch") is None:
         pytest.skip("GPyTorch not available")
+    return True
 
 
 @pytest.fixture
 def skip_if_no_sklearn():
     """Skip test if scikit-learn is not available."""
-    try:
-        import sklearn
+    import importlib.util
 
-        return True
-    except ImportError:
+    if importlib.util.find_spec("sklearn") is None:
         pytest.skip("scikit-learn not available")
+    return True
 
 
 @pytest.fixture
