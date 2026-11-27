@@ -63,23 +63,29 @@ cd pygeomodeling
 ### Basic Usage
 
 ```python
-from pygeomodeling import GRDECLParser, UnifiedSPE9Toolkit
+from pygeomodeling import UnifiedSPE9Toolkit, load_spe9_data
 
-# Load SPE9 dataset
-parser = GRDECLParser('path/to/SPE9.GRDECL')
-data = parser.load_data()
+# The loader returns "dimensions", not "grid_shape".
+# The bundled file has PERMX only.
 
-# Create toolkit and train model
+data = load_spe9_data()
+print(data["dimensions"], list(data["properties"]))
+
 toolkit = UnifiedSPE9Toolkit()
 toolkit.load_spe9_data(data)
-X_train, X_test, y_train, y_test = toolkit.create_train_test_split()
+toolkit.prepare_features()
+toolkit.create_train_test_split(
+    test_size=0.2, train_size=400, random_state=42, log_transform=True
+)
+toolkit.setup_scalers()
 
-# Train traditional GP model
-model = toolkit.create_sklearn_model('gpr', kernel_type='combined')
-toolkit.train_sklearn_model(model, 'combined_gpr')
-results = toolkit.evaluate_model('combined_gpr', X_test, y_test)
+model = toolkit.create_sklearn_model(
+    "gpr", kernel_type="rbf", n_restarts_optimizer=0, alpha=0.1
+)
+toolkit.train_sklearn_model(model, "rbf_gpr")
+results = toolkit.evaluate_model("rbf_gpr")
 
-print(f"R² Score: {results.r2:.4f}")
+print(f"R² Score (log1p PERMX): {results['r2']:.4f}")
 ```
 
 ### Deep GP Experiment

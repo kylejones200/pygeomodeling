@@ -10,7 +10,6 @@ This script performs:
 """
 
 import logging
-import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -34,7 +33,7 @@ signalplot.apply()
 
 # Load real SPE9 data
 logger.info("Loading SPE9 dataset...")
-data, _ = load_spe9_data()
+data = load_spe9_data()
 nx, ny, nz = data["dimensions"]
 n_cells = nx * ny * nz
 permx_3d = data["properties"]["PERMX"]

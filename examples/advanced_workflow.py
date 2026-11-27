@@ -61,6 +61,7 @@ def main():
     logger.info("[2/7] Preparing features...")
     toolkit = UnifiedSPE9Toolkit()
     toolkit.load_spe9_data(data)
+    toolkit.prepare_features()
     X_train, X_test, y_train, y_test = toolkit.create_train_test_split(
         test_size=0.2, random_state=42
     )
