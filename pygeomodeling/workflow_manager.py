@@ -278,11 +278,17 @@ class WorkflowManager:
                 confidence_score=float(confidence),
                 correction_date=correction_date,
                 expert_id=expert_id,
-                notes="" if notes is None or (isinstance(notes, float) and np.isnan(notes)) else str(notes),
+                notes=(
+                    ""
+                    if notes is None or (isinstance(notes, float) and np.isnan(notes))
+                    else str(notes)
+                ),
             )
             self.state.corrections.append(correction)
 
-        self.state.total_corrections = int(self.state.total_corrections) + int(len(corrected))
+        self.state.total_corrections = int(self.state.total_corrections) + int(
+            len(corrected)
+        )
         self.state.reviewed_wells = int(self.state.reviewed_wells) + int(
             corrected["Well"].nunique()
         )

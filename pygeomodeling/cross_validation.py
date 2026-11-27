@@ -252,11 +252,15 @@ def cross_validate_spatial(
     if scoring == "r2":
         score_func = r2_score
     elif scoring == "mse":
+
         def score_func(y_true, y_pred):
             return -mean_squared_error(y_true, y_pred)
+
     elif scoring == "mae":
+
         def score_func(y_true, y_pred):
             return -mean_absolute_error(y_true, y_pred)
+
     elif callable(scoring):
         score_func = scoring
     else:

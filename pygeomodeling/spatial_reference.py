@@ -89,7 +89,9 @@ class SpatialReference:
             ValueError: If source CRS is not set
         """
         if self._crs is None:
-            raise ValueError("Source CRS not set. Set CRS before transforming coordinates.")
+            raise ValueError(
+                "Source CRS not set. Set CRS before transforming coordinates."
+            )
 
         target_crs_obj = CRS.from_user_input(target_crs)
         transformer = Transformer.from_crs(self._crs, target_crs_obj, always_xy=True)
@@ -205,4 +207,3 @@ def get_crs_from_epsg(epsg_code: int) -> CRS:
         raise ImportError("pyproj is required. Install with: pip install pyproj")
 
     return CRS.from_epsg(epsg_code)
-

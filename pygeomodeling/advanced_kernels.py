@@ -93,7 +93,9 @@ if GPYTORCH_AVAILABLE:
 
         @property
         def base_lengthscale(self) -> torch.Tensor:
-            return self.raw_base_lengthscale_constraint.transform(self.raw_base_lengthscale)
+            return self.raw_base_lengthscale_constraint.transform(
+                self.raw_base_lengthscale
+            )
 
         @base_lengthscale.setter
         def base_lengthscale(self, value: torch.Tensor) -> None:
@@ -102,7 +104,11 @@ if GPYTORCH_AVAILABLE:
         def _set_base_lengthscale(self, value: torch.Tensor) -> None:
             if not torch.is_tensor(value):
                 value = torch.as_tensor(value).to(self.raw_base_lengthscale)
-            self.initialize(raw_base_lengthscale=self.raw_base_lengthscale_constraint.inverse_transform(value))
+            self.initialize(
+                raw_base_lengthscale=self.raw_base_lengthscale_constraint.inverse_transform(
+                    value
+                )
+            )
 
         @property
         def lengthscale_variation(self) -> torch.Tensor:
@@ -121,7 +127,9 @@ if GPYTORCH_AVAILABLE:
             # Transform input
             transformed = x @ torch.tanh(self.raw_spatial_transform)
             # Spatial variation component
-            variation = self.lengthscale_variation * torch.sigmoid(transformed.sum(dim=-1, keepdim=True))
+            variation = self.lengthscale_variation * torch.sigmoid(
+                transformed.sum(dim=-1, keepdim=True)
+            )
             # Base + variation
             lengthscale = self.base_lengthscale + variation.expand(-1, x.shape[-1])
             return lengthscale.clamp(min=1e-6)
@@ -148,11 +156,17 @@ if GPYTORCH_AVAILABLE:
             lengthscale2 = self._compute_lengthscale(x2)  # [M, D]
 
             # Average length scale (geometric mean)
-            avg_lengthscale = torch.sqrt(lengthscale1.unsqueeze(1) * lengthscale2.unsqueeze(0))  # [N, M, D]
+            avg_lengthscale = torch.sqrt(
+                lengthscale1.unsqueeze(1) * lengthscale2.unsqueeze(0)
+            )  # [N, M, D]
 
             # Distance scaled by length scale
-            x1_ = x1.unsqueeze(1) / avg_lengthscale  # [N, 1, D] / [N, M, D] -> [N, M, D]
-            x2_ = x2.unsqueeze(0) / avg_lengthscale  # [1, M, D] / [N, M, D] -> [N, M, D]
+            x1_ = (
+                x1.unsqueeze(1) / avg_lengthscale
+            )  # [N, 1, D] / [N, M, D] -> [N, M, D]
+            x2_ = (
+                x2.unsqueeze(0) / avg_lengthscale
+            )  # [1, M, D] / [N, M, D] -> [N, M, D]
             dist = (x1_ - x2_).pow(2).sum(dim=-1)  # [N, M]
 
             return torch.exp(-0.5 * dist)
@@ -206,7 +220,9 @@ if GPYTORCH_AVAILABLE:
             mean_freq_prior = NormalPrior(loc=0.0, scale=1.0)
             self.register_parameter(
                 name="raw_mean_frequencies",
-                parameter=torch.nn.Parameter(torch.randn(num_mixtures, input_dim) * 0.1),
+                parameter=torch.nn.Parameter(
+                    torch.randn(num_mixtures, input_dim) * 0.1
+                ),
             )
             self.register_prior(
                 "mean_frequencies_prior",
@@ -251,7 +267,9 @@ if GPYTORCH_AVAILABLE:
 
         @property
         def mixture_lengthscales(self) -> torch.Tensor:
-            return self.raw_mixture_lengthscales_constraint.transform(self.raw_mixture_lengthscales)
+            return self.raw_mixture_lengthscales_constraint.transform(
+                self.raw_mixture_lengthscales
+            )
 
         @mixture_lengthscales.setter
         def mixture_lengthscales(self, value: torch.Tensor) -> None:
@@ -261,7 +279,9 @@ if GPYTORCH_AVAILABLE:
             if not torch.is_tensor(value):
                 value = torch.as_tensor(value).to(self.raw_mixture_lengthscales)
             self.initialize(
-                raw_mixture_lengthscales=self.raw_mixture_lengthscales_constraint.inverse_transform(value)
+                raw_mixture_lengthscales=self.raw_mixture_lengthscales_constraint.inverse_transform(
+                    value
+                )
             )
 
         def forward(
@@ -300,7 +320,11 @@ if GPYTORCH_AVAILABLE:
                 rbf_term = torch.exp(-0.5 * (diff_scaled**2).sum(dim=-1))  # [N, M]
 
                 # Cosine component from mean frequency
-                freq_term = torch.cos(2 * torch.pi * (diff * mean_freq.unsqueeze(0).unsqueeze(0)).sum(dim=-1))  # [N, M]
+                freq_term = torch.cos(
+                    2
+                    * torch.pi
+                    * (diff * mean_freq.unsqueeze(0).unsqueeze(0)).sum(dim=-1)
+                )  # [N, M]
 
                 # Mixture component
                 cov_q = weights[q] * rbf_term * freq_term  # [N, M]
@@ -342,7 +366,9 @@ def create_advanced_kernel(
     """
     if kernel_type in ["spectral_mixture", "sm"]:
         num_mixtures = kwargs.pop("num_mixtures", 4)
-        return SpectralMixtureKernel(input_dim=input_dim, num_mixtures=num_mixtures, **kwargs)
+        return SpectralMixtureKernel(
+            input_dim=input_dim, num_mixtures=num_mixtures, **kwargs
+        )
     elif kernel_type == "nonstationary_rbf":
         return NonStationaryRBFKernel(input_dim=input_dim, **kwargs)
     else:
@@ -350,4 +376,3 @@ def create_advanced_kernel(
             f"Unknown advanced kernel type: {kernel_type}. "
             "Choose from: 'spectral_mixture', 'sm', 'nonstationary_rbf'"
         )
-

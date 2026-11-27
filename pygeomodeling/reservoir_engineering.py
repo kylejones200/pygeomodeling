@@ -138,7 +138,8 @@ class VolumetricsCalculator:
             )
         else:
             raise InvalidParameterError(
-                f"Unknown unit system: {unit_system}", "Valid values: ['field', 'metric']"
+                f"Unknown unit system: {unit_system}",
+                "Valid values: ['field', 'metric']",
             )
 
         return stoiip
@@ -203,7 +204,8 @@ class VolumetricsCalculator:
             )
         else:
             raise InvalidParameterError(
-                f"Unknown unit system: {unit_system}", "Valid values: ['field', 'metric']"
+                f"Unknown unit system: {unit_system}",
+                "Valid values: ['field', 'metric']",
             )
 
         return giip

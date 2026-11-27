@@ -94,7 +94,9 @@ def raise_invalid_format(filepath: str, expected_format: str, details: str = "")
     )
 
 
-def raise_property_not_found(property_name: str, available_properties: list | None = None):
+def raise_property_not_found(
+    property_name: str, available_properties: list | None = None
+):
     """Raise a descriptive property not found error."""
     msg = f"Property '{property_name}' not found in dataset"
     if available_properties:
@@ -154,7 +156,9 @@ def raise_backend_not_available(backend: str, package: str):
     )
 
 
-def raise_invalid_parameter(param_name: str, param_value, valid_values: list | None = None):
+def raise_invalid_parameter(
+    param_name: str, param_value, valid_values: list | None = None
+):
     """Raise a descriptive invalid parameter error."""
     msg = f"Invalid value for parameter '{param_name}': {param_value}"
     if valid_values:

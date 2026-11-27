@@ -392,7 +392,10 @@ def fit_variogram_model(
         else:
             # Bounded models: nugget, sill, range
             p0 = [nugget_init, sill_init, range_init]
-            bounds = ([0.0, float(nugget_init), 0.0], [float(sill_init), np.inf, float(lags[-1]) * 2])
+            bounds = (
+                [0.0, float(nugget_init), 0.0],
+                [float(sill_init), np.inf, float(lags[-1]) * 2],
+            )
 
             popt, _ = curve_fit(
                 model_func,

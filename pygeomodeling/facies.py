@@ -125,7 +125,9 @@ class FaciesClassifier:
         self.random_state = random_state
 
         self.scaler = StandardScaler()
-        self.model: SVC | RandomForestClassifier | GradientBoostingClassifier | None = None
+        self.model: SVC | RandomForestClassifier | GradientBoostingClassifier | None = (
+            None
+        )
         self.is_fitted = False
 
     def _create_model(self, **kwargs):

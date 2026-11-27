@@ -49,7 +49,10 @@ def _standard_base_kernel(
 def _advanced_covariance_kernel(
     kernel_type: str, input_dim: int
 ) -> gpytorch.kernels.Kernel | None:
-    if not (ADVANCED_KERNELS_AVAILABLE and kernel_type in ("nonstationary_rbf", "spectral_mixture", "sm")):
+    if not (
+        ADVANCED_KERNELS_AVAILABLE
+        and kernel_type in ("nonstationary_rbf", "spectral_mixture", "sm")
+    ):
         return None
     if kernel_type == "nonstationary_rbf":
         return gpytorch.kernels.ScaleKernel(NonStationaryRBFKernel(input_dim=input_dim))
@@ -94,7 +97,9 @@ class SPE9GPModel(gpytorch.models.ExactGP):
         # Covariance function based on kernel type
         input_dim = train_x.shape[-1]
         use_advanced = kwargs.pop("use_advanced_kernels", False)
-        self.covar_module = self._create_kernel(kernel_type, input_dim, ard, use_advanced)
+        self.covar_module = self._create_kernel(
+            kernel_type, input_dim, ard, use_advanced
+        )
 
     def _create_kernel(
         self, kernel_type: str, input_dim: int, ard: bool, use_advanced: bool = False
@@ -294,12 +299,16 @@ class SparseGPModel(gpytorch.models.ApproximateGP):
     ) -> None:
         # Variational strategy
         if num_outputs == 1:
-            variational_distribution = gpytorch.variational.CholeskyVariationalDistribution(
-                inducing_points.shape[0]
+            variational_distribution = (
+                gpytorch.variational.CholeskyVariationalDistribution(
+                    inducing_points.shape[0]
+                )
             )
         else:
-            variational_distribution = gpytorch.variational.MeanFieldVariationalDistribution(
-                inducing_points.shape[0]
+            variational_distribution = (
+                gpytorch.variational.MeanFieldVariationalDistribution(
+                    inducing_points.shape[0]
+                )
             )
 
         variational_strategy = gpytorch.variational.VariationalStrategy(
@@ -467,7 +476,9 @@ class NeuralNetworkGPModel(gpytorch.models.ExactGP):
         class AttentionBlock(nn.Module):
             def __init__(self, dim: int, dropout: float):
                 super().__init__()
-                self.attention = nn.MultiheadAttention(dim, num_heads=4, dropout=dropout, batch_first=True)
+                self.attention = nn.MultiheadAttention(
+                    dim, num_heads=4, dropout=dropout, batch_first=True
+                )
                 self.norm1 = nn.LayerNorm(dim)
                 self.norm2 = nn.LayerNorm(dim)
                 self.ff = nn.Sequential(
@@ -708,7 +719,10 @@ def create_gp_model(
     *,
     model_type: str = "standard",
     **kwargs,
-) -> tuple[gpytorch.models.ExactGP | gpytorch.models.ApproximateGP, gpytorch.likelihoods.Likelihood]:
+) -> tuple[
+    gpytorch.models.ExactGP | gpytorch.models.ApproximateGP,
+    gpytorch.likelihoods.Likelihood,
+]:
     """Create GP models.
 
     Args:

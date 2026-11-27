@@ -187,7 +187,10 @@ class PetrelASCIIReader:
                 continue
 
             # Look for dimension keywords
-            if any(keyword in line_stripped.upper() for keyword in ["NX", "NY", "NZ", "DIM"]):
+            if any(
+                keyword in line_stripped.upper()
+                for keyword in ["NX", "NY", "NZ", "DIM"]
+            ):
                 header_lines.append((i, line_stripped))
             elif line_stripped.replace(".", "").replace("-", "").isdigit():
                 data_start = i
@@ -208,7 +211,9 @@ class PetrelASCIIReader:
             for line in lines[data_start:]
             if line.strip() and not line.startswith("#")
         ]
-        data_array = np.array([list(map(float, line.split())) for line in data_lines if line])
+        data_array = np.array(
+            [list(map(float, line.split())) for line in data_lines if line]
+        )
 
         # Reshape based on format (column or grid)
         if data_array.shape[1] > 3:  # Column format: x, y, z, prop1, prop2, ...
@@ -223,14 +228,18 @@ class PetrelASCIIReader:
         else:  # Grid format
             # Assume single property in grid format
             if data_array.size == nx * ny * nz:
-                properties[property_names[0] if property_names else "property"] = data_array.flatten()
+                properties[property_names[0] if property_names else "property"] = (
+                    data_array.flatten()
+                )
 
         # Create metadata
         metadata = GridMetadata(dimensions=(nx, ny, nz))
 
         return ReservoirGrid(properties=properties, metadata=metadata)
 
-    def _parse_dimensions(self, header_lines: list, all_lines: list) -> tuple[int, int, int]:
+    def _parse_dimensions(
+        self, header_lines: list, all_lines: list
+    ) -> tuple[int, int, int]:
         """Parse grid dimensions from header."""
         # Try common Petrel dimension formats
         for i, line in header_lines:
@@ -372,9 +381,17 @@ class RESQMLReader:
                 if len(dims) == 3:
                     dimensions = tuple(dims)
                 else:
-                    dimensions = prop_data.shape[:3] if prop_data.ndim >= 3 else (1, 1, prop_data.size)
+                    dimensions = (
+                        prop_data.shape[:3]
+                        if prop_data.ndim >= 3
+                        else (1, 1, prop_data.size)
+                    )
             else:
-                dimensions = prop_data.shape[:3] if prop_data.ndim >= 3 else (1, 1, prop_data.size)
+                dimensions = (
+                    prop_data.shape[:3]
+                    if prop_data.ndim >= 3
+                    else (1, 1, prop_data.size)
+                )
 
             # Extract metadata
             metadata = self._extract_metadata(f, dimensions)
@@ -388,7 +405,9 @@ class RESQMLReader:
                 properties={"property": prop_data.flatten()}, metadata=metadata
             )
 
-    def _auto_detect_property(self, h5_file: h5py.File) -> tuple[np.ndarray, tuple[int, int, int]]:
+    def _auto_detect_property(
+        self, h5_file: h5py.File
+    ) -> tuple[np.ndarray, tuple[int, int, int]]:
         """Auto-detect property data in RESQML file."""
         # Common RESQML paths
         common_paths = [
@@ -429,7 +448,9 @@ class RESQMLReader:
             str(self.filepath), "RESQML", "Could not find property data in HDF5 file"
         )
 
-    def _extract_metadata(self, h5_file: h5py.File, dimensions: tuple[int, int, int]) -> GridMetadata:
+    def _extract_metadata(
+        self, h5_file: h5py.File, dimensions: tuple[int, int, int]
+    ) -> GridMetadata:
         """Extract metadata from RESQML file."""
         metadata = GridMetadata(dimensions=dimensions)
 
@@ -517,7 +538,9 @@ class ASCIIGridReader:
                 break
 
         if header_idx is None:
-            raise raise_invalid_format(str(self.filepath), "Surfer", "DSAA header not found")
+            raise raise_invalid_format(
+                str(self.filepath), "Surfer", "DSAA header not found"
+            )
 
         # Parse header
         nx = int(lines[header_idx + 1].split()[0])
@@ -527,7 +550,7 @@ class ASCIIGridReader:
         zmin, zmax = map(float, lines[header_idx + 4].split())
 
         # Read data
-        data_lines = [line.strip() for line in lines[header_idx + 5:] if line.strip()]
+        data_lines = [line.strip() for line in lines[header_idx + 5 :] if line.strip()]
         data = np.array([float(x) for line in data_lines for x in line.split()])
 
         # Reshape (Surfer uses row-major, need to flip)
@@ -553,7 +576,7 @@ class ASCIIGridReader:
         var_names = [lines[i].strip() for i in range(1, n_vars + 1)]
 
         # Read data
-        data_lines = [line.strip() for line in lines[n_vars + 1:] if line.strip()]
+        data_lines = [line.strip() for line in lines[n_vars + 1 :] if line.strip()]
         data = np.array([list(map(float, line.split())) for line in data_lines])
 
         # Assume 2D grid (x, y, properties...)
@@ -702,4 +725,3 @@ def _detect_file_format(filepath: Path) -> str:
         ".resqml": "resqml",
     }
     return ext_format.get(ext, "ascii_grid")
-

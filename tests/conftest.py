@@ -110,7 +110,10 @@ def skip_if_no_gpytorch():
     """Skip test if GPyTorch is not available."""
     import importlib.util
 
-    if importlib.util.find_spec("gpytorch") is None or importlib.util.find_spec("torch") is None:
+    if (
+        importlib.util.find_spec("gpytorch") is None
+        or importlib.util.find_spec("torch") is None
+    ):
         pytest.skip("GPyTorch not available")
     return True
 
